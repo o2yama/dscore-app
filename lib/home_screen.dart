@@ -1,3 +1,4 @@
+import 'package:dscore_app/event_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,18 +12,18 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          _eventTile(event[0], eventEng[0]),
-          _eventTile(event[1], eventEng[1]),
-          _eventTile(event[2], eventEng[2]),
-          _eventTile(event[3], eventEng[3]),
-          _eventTile(event[4], eventEng[4]),
-          _eventTile(event[5], eventEng[5]),
+          _eventTile(context, event[0], eventEng[0]),
+          _eventTile(context, event[1], eventEng[1]),
+          _eventTile(context, event[2], eventEng[2]),
+          _eventTile(context, event[3], eventEng[3]),
+          _eventTile(context, event[4], eventEng[4]),
+          _eventTile(context, event[5], eventEng[5]),
         ],
       ),
     );
   }
 
-  _eventTile(String event, String eventEng) {
+  _eventTile(BuildContext context, String event, String eventEng) {
     return ListTile(
       title: Text(
         '$event',
@@ -32,7 +33,10 @@ class HomeScreen extends StatelessWidget {
         '$eventEng',
       ),
       onTap: () {
-        // TODO
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EventScreen()),
+        );
       },
     );
   }
