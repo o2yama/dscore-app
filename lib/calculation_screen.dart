@@ -1,64 +1,60 @@
+import 'package:dscore_app/calculation_screen_model.dart';
 import 'package:dscore_app/home_screen.dart';
+import 'package:dscore_app/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
   final String event;
 
-  // final items = List<String>.generate(10, (i) => "Item $i");
-  final List<String> order = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '終末技'
-  ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          event,
-        ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
-              }),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            //Dスコアの表示
-            _dScore(),
-            //組み合わせ加点の表示
-            _combinationScore(),
-            // 要求点の表示
-            _requestScore(),
-            //技名の表示
-            _techniqueDisplay(order[0]),
-            _techniqueDisplay(order[1]),
-            _techniqueDisplay(order[2]),
-            _techniqueDisplay(order[3]),
-            _techniqueDisplay(order[4]),
-            _techniqueDisplay(order[5]),
-            _techniqueDisplay(order[6]),
-            _techniqueDisplay(order[7]),
-            _techniqueDisplay(order[8]),
-            _techniqueDisplay(order[9]),
+    return ChangeNotifierProvider<CalculationScreenModel>(
+      create: (_) => CalculationScreenModel(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            event,
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                }),
           ],
         ),
+        body:
+            Consumer<CalculationScreenModel>(builder: (context, model, child) {
+          return Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              children: [
+                //Dスコアの表示
+                _dScore(),
+                //組み合わせ加点の表示
+                _combinationScore(),
+                // 要求点の表示
+                _requestScore(),
+                //技名の表示
+                _techniqueDisplay(context, model.order[0]),
+                _techniqueDisplay(context, model.order[1]),
+                _techniqueDisplay(context, model.order[2]),
+                _techniqueDisplay(context, model.order[3]),
+                _techniqueDisplay(context, model.order[4]),
+                _techniqueDisplay(context, model.order[5]),
+                _techniqueDisplay(context, model.order[6]),
+                _techniqueDisplay(context, model.order[7]),
+                _techniqueDisplay(context, model.order[8]),
+                _techniqueLastDisplay(context),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -121,74 +117,100 @@ class CalculationScreen extends StatelessWidget {
   }
 
 //技名の表示
-  Widget _techniqueDisplay(String order) {
-    return Row(
+  Widget _techniqueDisplay(BuildContext context, String order) {
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.only(bottom: 3.0),
-            child: Text(
-              order,
-              style: TextStyle(fontSize: 28.0),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.only(bottom: 3.0),
-            child: ListTile(
-              title: Text(
-                '+',
-                style: TextStyle(fontSize: 28.0),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 3.0),
+                child: Center(
+                  child: Text(
+                    order,
+                    style: TextStyle(fontSize: 28.0),
+                  ),
+                ),
               ),
-              onTap: () {
-                //  TODO
-              },
             ),
-          ),
+            Expanded(
+              flex: 8,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 3.0),
+                child: ListTile(
+                  title: Center(
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontSize: 28.0),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchScreen(event)),
+                    );
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+        Divider(
+          color: Colors.black,
+          height: 1,
         )
       ],
     );
-    // return Row(
-    //   children: [
-    //     Expanded(
-    //       flex: 1,
-    //       child: ListView.builder(
-    //         shrinkWrap: true,
-    //         physics: NeverScrollableScrollPhysics(),
-    //         itemCount: 10,
-    //         itemBuilder: (context, index) {
-    //           return ListTile(
-    //             title: Text(
-    //               '${index + 1}',
-    //               style: TextStyle(fontSize: 25.0),
-    //             ),
-    //           );
-    //         },
-    //       ),
-    //     ),
-    //     Expanded(
-    //       flex: 5,
-    //       child: ListView.builder(
-    //         shrinkWrap: true,
-    //         physics: NeverScrollableScrollPhysics(),
-    //         itemCount: 10,
-    //         itemBuilder: (context, index) {
-    //           return ListTile(
-    //             title: Center(
-    //               child: Text(
-    //                 '+',
-    //                 style: TextStyle(fontSize: 25.0),
-    //               ),
-    //             ),
-    //             onTap: () {
-    //               // TODO
-    //             },
-    //           );
-    //         },
-    //       ),
-    //     ),
-    //   ],
-    // );
+  }
+
+  //終末技の表示
+  Widget _techniqueLastDisplay(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 3.0),
+                child: Center(
+                  child: Text(
+                    '終末技',
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 8,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 3.0),
+                child: ListTile(
+                  title: Center(
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontSize: 28.0),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CalculationScreen(event)),
+                    );
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+        Divider(
+          color: Colors.black,
+          height: 1,
+        )
+      ],
+    );
   }
 }
