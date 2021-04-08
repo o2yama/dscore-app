@@ -5,8 +5,19 @@ class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
   final String event;
 
-  final items = List<String>.generate(10, (i) => "Item $i");
-
+  // final items = List<String>.generate(10, (i) => "Item $i");
+  final List<String> order = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '終末技'
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +47,16 @@ class CalculationScreen extends StatelessWidget {
             // 要求点の表示
             _requestScore(),
             //技名の表示
-            _techniqueDisplay(),
+            _techniqueDisplay(order[0]),
+            _techniqueDisplay(order[1]),
+            _techniqueDisplay(order[2]),
+            _techniqueDisplay(order[3]),
+            _techniqueDisplay(order[4]),
+            _techniqueDisplay(order[5]),
+            _techniqueDisplay(order[6]),
+            _techniqueDisplay(order[7]),
+            _techniqueDisplay(order[8]),
+            _techniqueDisplay(order[9]),
           ],
         ),
       ),
@@ -101,66 +121,74 @@ class CalculationScreen extends StatelessWidget {
   }
 
 //技名の表示
-  Widget _techniqueDisplay() {
+  Widget _techniqueDisplay(String order) {
     return Row(
       children: [
         Expanded(
-          flex: 1,
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  '${index + 1}',
-                  style: TextStyle(fontSize: 25.0),
-                ),
-              );
-            },
+          child: Container(
+            padding: EdgeInsets.only(bottom: 3.0),
+            child: Text(
+              order,
+              style: TextStyle(fontSize: 28.0),
+            ),
           ),
         ),
         Expanded(
-          flex: 5,
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Center(
-                  child: Text(
-                    '+',
-                    style: TextStyle(fontSize: 25.0),
-                  ),
-                ),
-                onTap: () {
-                  // TODO
-                },
-              );
-            },
+          child: Container(
+            padding: EdgeInsets.only(bottom: 3.0),
+            child: ListTile(
+              title: Text(
+                '+',
+                style: TextStyle(fontSize: 28.0),
+              ),
+              onTap: () {
+                //  TODO
+              },
+            ),
           ),
-        ),
+        )
       ],
     );
-
-    // return ElevatedButton(
-    //   onPressed: () {},
-    //   child: Row(
-    //     children: [
-    //       Text(
-    //         "3.onPressed Color Button",
-    //         style: TextStyle(
-    //           color: Colors.black,
-    //         ),
+    // return Row(
+    //   children: [
+    //     Expanded(
+    //       flex: 1,
+    //       child: ListView.builder(
+    //         shrinkWrap: true,
+    //         physics: NeverScrollableScrollPhysics(),
+    //         itemCount: 10,
+    //         itemBuilder: (context, index) {
+    //           return ListTile(
+    //             title: Text(
+    //               '${index + 1}',
+    //               style: TextStyle(fontSize: 25.0),
+    //             ),
+    //           );
+    //         },
     //       ),
-    //       Container(),
-    //     ],
-    //   ),
-    //   style: ElevatedButton.styleFrom(
-    //     primary: Colors.white,
-    //     onPrimary: Colors.black,
-    //   ),
+    //     ),
+    //     Expanded(
+    //       flex: 5,
+    //       child: ListView.builder(
+    //         shrinkWrap: true,
+    //         physics: NeverScrollableScrollPhysics(),
+    //         itemCount: 10,
+    //         itemBuilder: (context, index) {
+    //           return ListTile(
+    //             title: Center(
+    //               child: Text(
+    //                 '+',
+    //                 style: TextStyle(fontSize: 25.0),
+    //               ),
+    //             ),
+    //             onTap: () {
+    //               // TODO
+    //             },
+    //           );
+    //         },
+    //       ),
+    //     ),
+    //   ],
     // );
   }
 }
