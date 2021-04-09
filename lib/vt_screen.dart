@@ -1,3 +1,4 @@
+import 'package:dscore_app/vt_drop_down.dart';
 import 'package:flutter/material.dart';
 
 import 'event_screen.dart';
@@ -72,7 +73,7 @@ class VtScreen extends StatelessWidget {
   //Dスコアの表示
   Widget _dScore() {
     return Container(
-      padding: EdgeInsets.only(top: 50.0, bottom: 40.0),
+      padding: EdgeInsets.only(top: 50.0, bottom: 40.0, right: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -89,9 +90,10 @@ class VtScreen extends StatelessWidget {
     );
   }
 
+  // 跳馬の技名検索
   Widget _vtSearch() {
     return Container(
-      padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+      padding: EdgeInsets.only(top: 10.0, bottom: 20.0, right: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -99,10 +101,7 @@ class VtScreen extends StatelessWidget {
             '技名',
             style: TextStyle(fontSize: 40.0),
           ),
-          Text(
-            '5.4',
-            style: TextStyle(fontSize: 40.0),
-          )
+          VtDropDown(),
         ],
       ),
     );

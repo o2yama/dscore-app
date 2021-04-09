@@ -3,6 +3,7 @@ import 'package:dscore_app/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'combination_drop_down.dart';
 import 'event_screen.dart';
 
 class CalculationScreen extends StatelessWidget {
@@ -91,10 +92,7 @@ class CalculationScreen extends StatelessWidget {
           '組み合わせ加点',
           style: TextStyle(fontSize: 25.0),
         ),
-        Text(
-          '0.2',
-          style: TextStyle(fontSize: 30.0),
-        ),
+        CombinationDropDown(),
       ],
     );
   }
