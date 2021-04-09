@@ -1,8 +1,9 @@
 import 'package:dscore_app/calculation_screen_model.dart';
-import 'package:dscore_app/home_screen.dart';
 import 'package:dscore_app/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'event_screen.dart';
 
 class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
@@ -18,14 +19,16 @@ class CalculationScreen extends StatelessWidget {
             event,
           ),
           actions: [
-            IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                }),
+            TextButton(
+              child: Text(
+                '保存',
+                style: TextStyle(color: Colors.white, fontSize: 15.0),
+              ),
+              onPressed: () {
+                //試合などの名前をつける入力フォーム
+                _dScoreName(context);
+              },
+            ),
           ],
         ),
         body:
@@ -212,5 +215,33 @@ class CalculationScreen extends StatelessWidget {
         )
       ],
     );
+  }
+
+  //試合などの名前をつける入力フォーム
+  Future<void> _dScoreName(context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('保存名を入力してください'),
+            content: TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: '全日本インカレ',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => EventScreen(event)),
+                  );
+                },
+                child: Text('保存する'),
+              ),
+            ],
+          );
+        });
   }
 }

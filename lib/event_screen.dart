@@ -1,5 +1,6 @@
 import 'package:dscore_app/calculation_screen.dart';
 import 'package:dscore_app/event_screen_model.dart';
+import 'package:dscore_app/vt_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,11 +23,21 @@ class EventScreen extends StatelessWidget {
             IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CalculationScreen(event)),
-                  );
+                  if (event != '跳馬') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CalculationScreen(event),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VtScreen(event),
+                      ),
+                    );
+                  }
                 }),
           ],
         ),
