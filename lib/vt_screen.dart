@@ -58,10 +58,11 @@ class VtScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => EventScreen(event)),
-                  );
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EventScreen(event)),
+                      (_) => false);
                 },
                 child: Text('保存する'),
               ),
@@ -105,5 +106,9 @@ class VtScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<bool> _willPopCallback() async {
+    return true;
   }
 }

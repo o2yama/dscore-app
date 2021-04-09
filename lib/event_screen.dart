@@ -1,5 +1,6 @@
 import 'package:dscore_app/calculation_screen.dart';
 import 'package:dscore_app/event_screen_model.dart';
+import 'package:dscore_app/home_screen.dart';
 import 'package:dscore_app/vt_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,15 @@ class EventScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             event,
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (_) => false);
+            },
           ),
           actions: [
             IconButton(
