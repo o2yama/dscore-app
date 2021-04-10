@@ -107,8 +107,4 @@ class VtScreen extends StatelessWidget {
       ),
     );
   }
-
-  Future<bool> _willPopCallback() async {
-    return true;
-  }
 }
