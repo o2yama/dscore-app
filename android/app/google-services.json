@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "798966474399",
+    "project_id": "dscore-app-a72cf",
+    "storage_bucket": "dscore-app-a72cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798966474399:android:c08a54f4d99ba49f4564aa",
+        "android_client_info": {
+          "package_name": "com.o2yamagym.dscore_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798966474399-7653iugm9ot0n4s67a4lk5clth1g13me.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdDsRcVLy7br9MWVzF4C7SkIPWs-u7Zh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798966474399-7653iugm9ot0n4s67a4lk5clth1g13me.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "798966474399-vtrb036ek08sifbu3h38nrs5f5dlios5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.o2yamagym.dscoreApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
