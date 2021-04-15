@@ -32,25 +32,29 @@ class CalculationScreen extends StatelessWidget {
             Consumer<CalculationScreenModel>(builder: (context, model, child) {
           return Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Column(
+            child: ListView(
               children: [
-                //Dスコアの表示
-                _dScore(),
-                //組み合わせ加点の表示
-                _combinationScore(),
-                // 要求点の表示
-                _requestScore(),
-                //技名の表示
-                _techniqueDisplay(context, model.order[0]),
-                _techniqueDisplay(context, model.order[1]),
-                _techniqueDisplay(context, model.order[2]),
-                _techniqueDisplay(context, model.order[3]),
-                _techniqueDisplay(context, model.order[4]),
-                _techniqueDisplay(context, model.order[5]),
-                _techniqueDisplay(context, model.order[6]),
-                _techniqueDisplay(context, model.order[7]),
-                _techniqueDisplay(context, model.order[8]),
-                _techniqueLastDisplay(context),
+                Column(
+                  children: [
+                    //Dスコアの表示
+                    _dScore(),
+                    //組み合わせ加点の表示
+                    _combinationScore(),
+                    // 要求点の表示
+                    _requestScore(),
+                    //技名の表示
+                    _techniqueDisplay(context, model.order[0]),
+                    _techniqueDisplay(context, model.order[1]),
+                    _techniqueDisplay(context, model.order[2]),
+                    _techniqueDisplay(context, model.order[3]),
+                    _techniqueDisplay(context, model.order[4]),
+                    _techniqueDisplay(context, model.order[5]),
+                    _techniqueDisplay(context, model.order[6]),
+                    _techniqueDisplay(context, model.order[7]),
+                    _techniqueDisplay(context, model.order[8]),
+                    _techniqueLastDisplay(context),
+                  ],
+                ),
               ],
             ),
           );
