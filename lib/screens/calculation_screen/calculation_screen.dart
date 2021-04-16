@@ -1,10 +1,10 @@
-import 'package:dscore_app/calculation_screen_model.dart';
-import 'package:dscore_app/search_screen.dart';
+import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'combination_drop_down.dart';
-import 'event_screen.dart';
-import 'event_screen_model.dart';
+import '../event_screen/event_screen.dart';
+import '../event_screen/event_screen_model.dart';
+import 'calculation_screen_model.dart';
 
 class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
