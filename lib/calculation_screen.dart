@@ -1,8 +1,10 @@
 import 'package:dscore_app/calculation_screen_model.dart';
-import 'package:dscore_app/home_screen.dart';
 import 'package:dscore_app/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'combination_drop_down.dart';
+import 'event_screen.dart';
+import 'event_screen_model.dart';
 
 class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
@@ -10,26 +12,26 @@ class CalculationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<CalculationScreenModel>(
-      create: (_) => CalculationScreenModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            event,
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                }),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          event,
         ),
-        body:
-            Consumer<CalculationScreenModel>(builder: (context, model, child) {
+        actions: [
+          TextButton(
+            child: Text(
+              '保存',
+              style: TextStyle(color: Colors.white, fontSize: 15.0),
+            ),
+            onPressed: () {
+              //試合などの名前をつける入力フォーム
+              _dScoreName(context);
+            },
+          ),
+        ],
+      ),
+      body: Consumer<CalculationScreenModel>(
+        builder: (context, model, child) {
           return Padding(
             padding: const EdgeInsets.all(15.0),
             child: ListView(
@@ -58,7 +60,7 @@ class CalculationScreen extends StatelessWidget {
               ],
             ),
           );
-        }),
+        },
       ),
     );
   }
@@ -74,9 +76,12 @@ class CalculationScreen extends StatelessWidget {
             'Dスコア',
             style: TextStyle(fontSize: 40.0),
           ),
-          Text(
-            '5.4',
-            style: TextStyle(fontSize: 40.0),
+          Container(
+            padding: EdgeInsets.only(right: 15.0),
+            child: Text(
+              '5.4',
+              style: TextStyle(fontSize: 40.0),
+            ),
           )
         ],
       ),
@@ -92,10 +97,7 @@ class CalculationScreen extends StatelessWidget {
           '組み合わせ加点',
           style: TextStyle(fontSize: 25.0),
         ),
-        Text(
-          '0.2',
-          style: TextStyle(fontSize: 30.0),
-        ),
+        CombinationDropDown(),
       ],
     );
   }
@@ -111,9 +113,12 @@ class CalculationScreen extends StatelessWidget {
             '要求点',
             style: TextStyle(fontSize: 25.0),
           ),
-          Text(
-            '2.0',
-            style: TextStyle(fontSize: 30.0),
+          Container(
+            padding: EdgeInsets.only(right: 25.0),
+            child: Text(
+              '2.0',
+              style: TextStyle(fontSize: 30.0),
+            ),
           )
         ],
       ),
@@ -216,5 +221,41 @@ class CalculationScreen extends StatelessWidget {
         )
       ],
     );
+  }
+
+  //試合などの名前をつける入力フォーム
+  Future<void> _dScoreName(context) {
+    final calculationScreenModel =
+        Provider.of<CalculationScreenModel>(context, listen: false);
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Consumer<EventScreenModel>(builder: (context, model, child) {
+            return AlertDialog(
+              title: Text('保存名を入力してください'),
+              content: TextField(
+                onChanged: (text) {},
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: '全日本インカレ',
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventScreen(
+                                  event,
+                                )),
+                        (_) => false);
+                  },
+                  child: Text('保存する'),
+                ),
+              ],
+            );
+          });
+        });
   }
 }
