@@ -1,9 +1,9 @@
-import 'package:dscore_app/screens/calculation_screen.dart';
-import 'package:dscore_app/screens/event_screen_model.dart';
+import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/home_screen.dart';
-import 'package:dscore_app/screens/vt_screen.dart';
+import 'package:dscore_app/screens/vt_screen/vt_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../calculation_screen/calculation_screen.dart';
 
 class EventScreen extends StatelessWidget {
   EventScreen(this.event);
@@ -31,38 +31,41 @@ class EventScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  if (event != '跳馬') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CalculationScreen(event),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VtScreen(event),
-                      ),
-                    );
-                  }
-                }),
+              icon: Icon(Icons.add),
+              onPressed: () {
+                if (event != '跳馬') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CalculationScreen(event),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VtScreen(event),
+                    ),
+                  );
+                }
+              },
+            ),
           ],
         ),
-        body: Consumer<EventScreenModel>(builder: (context, model, child) {
-          return Column(
-            children: [
-              Row(
-                children: [
-                  _favoriteButton(),
-                  Text('試合名'),
-                ],
-              )
-            ],
-          );
-        }),
+        body: Consumer<EventScreenModel>(
+          builder: (context, model, child) {
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    _favoriteButton(),
+                    Text('試合名'),
+                  ],
+                )
+              ],
+            );
+          },
+        ),
       ),
     );
   }
