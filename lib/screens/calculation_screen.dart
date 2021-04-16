@@ -1,5 +1,5 @@
-import 'package:dscore_app/calculation_screen_model.dart';
-import 'package:dscore_app/search_screen.dart';
+import 'package:dscore_app/screens/calculation_screen_model.dart';
+import 'package:dscore_app/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'combination_drop_down.dart';

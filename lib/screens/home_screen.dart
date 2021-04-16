@@ -1,4 +1,4 @@
-import 'package:dscore_app/event_screen.dart';
+import 'package:dscore_app/screens/event_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
