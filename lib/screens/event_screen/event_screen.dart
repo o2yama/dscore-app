@@ -1,5 +1,4 @@
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
-import 'package:dscore_app/screens/home_screen.dart';
 import 'package:dscore_app/screens/vt_screen/vt_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,59 +12,53 @@ class EventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<EventScreenModel>(
-      create: (_) => EventScreenModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            event,
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                  (_) => false);
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                if (event != '跳馬') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CalculationScreen(event),
-                    ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VtScreen(event),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          event,
         ),
-        body: Consumer<EventScreenModel>(
-          builder: (context, model, child) {
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    _favoriteButton(),
-                    Text('試合名'),
-                  ],
-                )
-              ],
-            );
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              if (event != '跳馬') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CalculationScreen(event),
+                  ),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => VtScreen(event),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+      body: Consumer<EventScreenModel>(
+        builder: (context, model, child) {
+          return Column(
+            children: [
+              Row(
+                children: [
+                  _favoriteButton(),
+                  Text('試合名'),
+                ],
+              )
+            ],
+          );
+        },
       ),
     );
   }
