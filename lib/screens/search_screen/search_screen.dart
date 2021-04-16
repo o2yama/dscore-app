@@ -10,15 +10,16 @@ class SearchScreen extends StatelessWidget {
         title: Text(event),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            children: [
-              //検索バー
-              _searchBar(),
-              //検索結果
-              _searchResults(),
-            ],
-          )),
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            //検索バー
+            _searchBar(),
+            //検索結果
+            _searchResults(),
+          ],
+        ),
+      ),
     );
   }
 
