@@ -1,7 +1,7 @@
-import 'package:dscore_app/vt_drop_down.dart';
+import 'package:dscore_app/screens/vt_screen/vt_drop_down.dart';
 import 'package:flutter/material.dart';
 
-import 'event_screen.dart';
+import '../event_screen/event_screen.dart';
 
 class VtScreen extends StatelessWidget {
   VtScreen(this.event);
