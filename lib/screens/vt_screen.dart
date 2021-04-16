@@ -1,4 +1,4 @@
-import 'package:dscore_app/vt_drop_down.dart';
+import 'package:dscore_app/screens/vt_drop_down.dart';
 import 'package:flutter/material.dart';
 
 import 'event_screen.dart';
