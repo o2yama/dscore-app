@@ -1,5 +1,5 @@
-import 'package:dscore_app/screens/calculation_screen_model.dart';
-import 'package:dscore_app/screens/event_screen_model.dart';
+import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
+import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
