@@ -2,7 +2,6 @@ import 'package:dscore_app/calculation_screen_model.dart';
 import 'package:dscore_app/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'combination_drop_down.dart';
 import 'event_screen.dart';
 import 'event_screen_model.dart';
@@ -31,32 +30,38 @@ class CalculationScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<CalculationScreenModel>(builder: (context, model, child) {
-        return Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            children: [
-              //Dスコアの表示
-              _dScore(),
-              //組み合わせ加点の表示
-              _combinationScore(),
-              // 要求点の表示
-              _requestScore(),
-              //技名の表示
-              _techniqueDisplay(context, model.order[0]),
-              _techniqueDisplay(context, model.order[1]),
-              _techniqueDisplay(context, model.order[2]),
-              _techniqueDisplay(context, model.order[3]),
-              _techniqueDisplay(context, model.order[4]),
-              _techniqueDisplay(context, model.order[5]),
-              _techniqueDisplay(context, model.order[6]),
-              _techniqueDisplay(context, model.order[7]),
-              _techniqueDisplay(context, model.order[8]),
-              _techniqueLastDisplay(context),
-            ],
-          ),
-        );
-      }),
+      body: Consumer<CalculationScreenModel>(
+        builder: (context, model, child) {
+          return Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: ListView(
+              children: [
+                Column(
+                  children: [
+                    //Dスコアの表示
+                    _dScore(),
+                    //組み合わせ加点の表示
+                    _combinationScore(),
+                    // 要求点の表示
+                    _requestScore(),
+                    //技名の表示
+                    _techniqueDisplay(context, model.order[0]),
+                    _techniqueDisplay(context, model.order[1]),
+                    _techniqueDisplay(context, model.order[2]),
+                    _techniqueDisplay(context, model.order[3]),
+                    _techniqueDisplay(context, model.order[4]),
+                    _techniqueDisplay(context, model.order[5]),
+                    _techniqueDisplay(context, model.order[6]),
+                    _techniqueDisplay(context, model.order[7]),
+                    _techniqueDisplay(context, model.order[8]),
+                    _techniqueLastDisplay(context),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
