@@ -12,7 +12,7 @@ class _VtDropDownState extends State<VtDropDown> {
   void initState() {
     super.initState();
     setItems();
-    _selectItem = _items[0].value;
+    _selectItem = _items[0].value!;
   }
 
   void setItems() {
@@ -45,13 +45,6 @@ class _VtDropDownState extends State<VtDropDown> {
     return DropdownButton(
       items: _items,
       value: _selectItem,
-      onChanged: (value) => {
-        setState(
-          () {
-            _selectItem = value;
-          },
-        ),
-      },
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:dscore_app/intro_model.dart';
+import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

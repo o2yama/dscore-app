@@ -1,9 +1,8 @@
 import 'package:dscore_app/screens/event_screen/event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../intro_model.dart';
-import 'intro_screen.dart';
+import 'intro/intro_model.dart';
+import 'intro/intro_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
@@ -11,6 +10,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
+    Future(() async {
+      await introModel.getUserData();
+    });
     return FutureBuilder(
         future: introModel.checkIsIntroWatched(),
         builder: (context, snapshot) {
