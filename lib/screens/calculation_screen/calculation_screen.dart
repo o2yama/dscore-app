@@ -226,8 +226,6 @@ class CalculationScreen extends StatelessWidget {
 
   //試合などの名前をつける入力フォーム
   Future<void> _dScoreName(context) {
-    final calculationScreenModel =
-        Provider.of<CalculationScreenModel>(context, listen: false);
     return showDialog(
         context: context,
         builder: (BuildContext context) {

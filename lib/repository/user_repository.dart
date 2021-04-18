@@ -12,7 +12,7 @@ class UserRepository {
       await _auth.signInAnonymously();
       return true;
     } catch (e) {
-      throw e;
+      throw '通信環境の良いところでお試しください。';
     }
   }
 
