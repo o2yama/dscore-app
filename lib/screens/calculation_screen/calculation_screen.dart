@@ -9,6 +9,7 @@ import 'calculation_screen_model.dart';
 class CalculationScreen extends StatelessWidget {
   CalculationScreen(this.event);
   final String event;
+  final List<String> order = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +46,15 @@ class CalculationScreen extends StatelessWidget {
                     // 要求点の表示
                     _requestScore(),
                     //技名の表示
-                    _techniqueDisplay(context, model.order[0]),
-                    _techniqueDisplay(context, model.order[1]),
-                    _techniqueDisplay(context, model.order[2]),
-                    _techniqueDisplay(context, model.order[3]),
-                    _techniqueDisplay(context, model.order[4]),
-                    _techniqueDisplay(context, model.order[5]),
-                    _techniqueDisplay(context, model.order[6]),
-                    _techniqueDisplay(context, model.order[7]),
-                    _techniqueDisplay(context, model.order[8]),
+                    _techniqueDisplay(context, order[0]),
+                    _techniqueDisplay(context, order[1]),
+                    _techniqueDisplay(context, order[2]),
+                    _techniqueDisplay(context, order[3]),
+                    _techniqueDisplay(context, order[4]),
+                    _techniqueDisplay(context, order[5]),
+                    _techniqueDisplay(context, order[6]),
+                    _techniqueDisplay(context, order[7]),
+                    _techniqueDisplay(context, order[8]),
                     _techniqueLastDisplay(context),
                   ],
                 ),
@@ -225,8 +226,6 @@ class CalculationScreen extends StatelessWidget {
 
   //試合などの名前をつける入力フォーム
   Future<void> _dScoreName(context) {
-    final calculationScreenModel =
-        Provider.of<CalculationScreenModel>(context, listen: false);
     return showDialog(
         context: context,
         builder: (BuildContext context) {
