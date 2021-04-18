@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -76,16 +77,18 @@ class EventScreen extends StatelessWidget {
   }
 
   Widget _eventDisplay(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: height * 0.1,
       child: Row(
         children: [
-          SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+          SizedBox(width: width * 0.1),
           Text(
             '$event',
             style: Theme.of(context).textTheme.headline4,
           ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.5),
+          Expanded(child: Container()),
           TextButton(
             onPressed: () {
               //todo: チェックボタン表示
@@ -98,37 +101,64 @@ class EventScreen extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(width: width * 0.1),
         ],
       ),
     );
   }
 
   Widget _scoreTile(BuildContext context, num score) {
-    return Row(
-      children: [
-        Expanded(child: _favoriteButton(context)),
-        Expanded(
-          flex: 8,
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$score',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.2),
-                  _dropDownComponentsList('前方ダブル', 'two', 'three', 'four',
-                      'five', 'six', 'seven', 'eight', 'nine', 'finish')
-                ],
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CalculationScreen(event)),
+        );
+      },
+      child: Row(
+        children: [
+          Expanded(child: _favoriteButton(context)),
+          Expanded(
+            flex: 8,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: width * 0.1),
+                    Text(
+                      '$score',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Expanded(child: Container()),
+                    Container(
+                      height: height * 0.1,
+                      width: width * 0.4,
+                      child: _techsList(
+                          context,
+                          '前方ダブル',
+                          'two',
+                          'three',
+                          'four',
+                          'five',
+                          'six',
+                          'seven',
+                          'eight',
+                          'nine',
+                          'finish'),
+                    ),
+                    SizedBox(width: width * 0.1),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -138,7 +168,7 @@ class EventScreen extends StatelessWidget {
         return IconButton(
             icon: Icon(
               Icons.star,
-              size: 40,
+              size: 30,
               color: model.isFavorite
                   ? Theme.of(context).primaryColor
                   : Colors.white,
@@ -151,7 +181,8 @@ class EventScreen extends StatelessWidget {
     );
   }
 
-  Widget _dropDownComponentsList(
+  Widget _techsList(
+    BuildContext context,
     String one,
     String? two,
     String? three,
@@ -163,29 +194,38 @@ class EventScreen extends StatelessWidget {
     String? nine,
     String? finish,
   ) {
-    List<DropdownMenuItem> _techs = [
-      _dropDownItem('1.$one'),
-      _dropDownItem('2.$two'),
-      _dropDownItem('3.$three'),
-      _dropDownItem('4.$four'),
-      _dropDownItem('5.$five'),
-      _dropDownItem('6.$six'),
-      _dropDownItem('7.$seven'),
-      _dropDownItem('8.$eight'),
-      _dropDownItem('9.$nine'),
-      _dropDownItem('終末 $finish'),
+    List<String> _techs = [
+      '1. $one',
+      '2. $two',
+      '3. $three',
+      '4. $four',
+      '5. $five',
+      '6. $six',
+      '7. $seven',
+      '8. $eight',
+      '9. $nine',
+      '10. $finish',
     ];
 
-    return DropdownButton(
-      items: _techs,
-      elevation: 0,
-      underline: Container(),
-    );
-  }
-
-  DropdownMenuItem _dropDownItem(String tech) {
-    return DropdownMenuItem(
-      child: Text(tech),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: ListView(
+        children: _techs
+            .map(
+              (tech) => Card(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('$tech'),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }

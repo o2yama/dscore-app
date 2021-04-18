@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'package:dscore_app/screens/intro/intro_model.dart';
-import 'package:dscore_app/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -28,46 +28,48 @@ class IntroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<IntroModel>(builder: (context, model, child) {
-        return model.isLoading
-            ? Center(child: CircularProgressIndicator())
-            : IntroductionScreen(
-                pages: introViews,
-                onDone: () async {
-                  await model.finishIntro();
-                  await model.signIn();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => HomeScreen()),
-                    (_) => false,
-                  );
-                },
-                onSkip: () async {
-                  await model.finishIntro();
-                  await model.signIn();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => HomeScreen()),
-                    (_) => false,
-                  );
-                },
-                showSkipButton: true,
-                skip: const Text('スキップ'),
-                next: const Text('次へ'),
-                done: const Text("アプリへ",
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                dotsDecorator: DotsDecorator(
-                  size: const Size.square(10.0),
-                  activeSize: const Size(20.0, 10.0),
-                  activeColor: Theme.of(context).primaryColor,
-                  color: Colors.black26,
-                  spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-                  activeShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
+        return Stack(
+          children: [
+            IntroductionScreen(
+              pages: introViews,
+              onDone: () async {
+                await model.finishIntro();
+                await model.signIn();
+                await model.checkIsIntroWatched();
+              },
+              onSkip: () async {
+                await model.finishIntro();
+                await model.signIn();
+                await model.checkIsIntroWatched();
+              },
+              showSkipButton: true,
+              skip: const Text('スキップ'),
+              next: const Text('次へ'),
+              done: const Text("アプリへ",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              dotsDecorator: DotsDecorator(
+                size: const Size.square(10.0),
+                activeSize: const Size(20.0, 10.0),
+                activeColor: Theme.of(context).primaryColor,
+                color: Colors.black26,
+                spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+                activeShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
                 ),
-              );
+              ),
+            ),
+            model.isLoading
+                ? Container(
+                    color: Colors.grey.withOpacity(0.7),
+                    child: Center(
+                      child: Platform.isIOS
+                          ? CupertinoActivityIndicator()
+                          : CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(),
+          ],
+        );
       }),
     );
   }
