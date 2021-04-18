@@ -3,7 +3,7 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/home_screen.dart';
-import 'package:dscore_app/theme_color_model.dart';
+import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,28 +49,31 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.yellow[600],
-        backgroundColor: Colors.grey[100],
-        cardTheme: CardTheme(
-          color: Colors.white,
-          elevation: 0,
-          margin: EdgeInsets.all(12),
-          shadowColor: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+    return Consumer<ThemeColorModel>(builder: (context, model, child) {
+      Future(() async => model.getThemeColor());
+      return MaterialApp(
+        theme: ThemeData(
+          primaryColor: model.themeColor,
+          backgroundColor: Colors.grey[100],
+          cardTheme: CardTheme(
+            color: Colors.white,
+            elevation: 0,
+            margin: EdgeInsets.all(12),
+            shadowColor: Theme.of(context).primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          buttonTheme: ButtonThemeData(
+            shape: RoundedRectangleBorder(),
+            buttonColor: Theme.of(context).primaryColor,
+            textTheme: ButtonTextTheme.primary,
+            focusColor: Colors.white,
+            hoverColor: Theme.of(context).primaryColor,
           ),
         ),
-        buttonTheme: ButtonThemeData(
-          shape: RoundedRectangleBorder(),
-          buttonColor: Theme.of(context).primaryColor,
-          textTheme: ButtonTextTheme.primary,
-          focusColor: Colors.white,
-          hoverColor: Theme.of(context).primaryColor,
-        ),
-      ),
-      home: HomeScreen(),
-    );
+        home: HomeScreen(),
+      );
+    });
   }
 }

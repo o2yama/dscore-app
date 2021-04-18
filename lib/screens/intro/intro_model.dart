@@ -29,7 +29,11 @@ class IntroModel extends ChangeNotifier {
   }
 
   Future<void> getUserData() async {
-    await userRepository.getUserData();
+    try {
+      await userRepository.getUserData();
+    } catch (e) {
+      throw e;
+    }
   }
 
   Future<void> finishIntro() async {
@@ -40,11 +44,6 @@ class IntroModel extends ChangeNotifier {
   Future<void> checkIsIntroWatched() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     this.isIntroWatched = prefs.getBool('intro') ?? false;
-    notifyListeners();
-  }
-
-  void toNext() {
-    currentIndex++;
     notifyListeners();
   }
 }
