@@ -228,4 +228,6 @@ class EventScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> onEditButtonPressed() async {}
 }
