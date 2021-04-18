@@ -5,14 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 class UserRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static CurrentUser currentUser;
+  static CurrentUser? currentUser;
 
   Future<bool> signIn() async {
     try {
       await _auth.signInAnonymously();
       return true;
     } catch (e) {
-      throw e;
+      throw '通信環境の良いところでお試しください。';
     }
   }
 
@@ -29,8 +29,12 @@ class UserRepository {
 
   Future<void> getUserData() async {
     final user = _auth.currentUser;
-    final query =
-        await _db.collection('users').where('id', isEqualTo: user.uid).get();
-    currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
+    if (user != null) {
+      final query =
+          await _db.collection('users').where('id', isEqualTo: user.uid).get();
+      currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
+    } else {
+      throw 'データの取得に失敗しました。';
+    }
   }
 }
