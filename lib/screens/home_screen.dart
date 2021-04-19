@@ -1,8 +1,8 @@
-import 'package:dscore_app/screens/event_screen/event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../intro_model.dart';
+import 'event_screen/event_screen.dart';
 import 'intro_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,38 +17,142 @@ class HomeScreen extends StatelessWidget {
           return !(introModel.isIntroWatched)
               ? IntroScreen()
               : Scaffold(
-                  appBar: AppBar(
-                    title: Text('6種目'),
-                  ),
-                  body: Column(
-                    children: [
-                      _eventTile(context, event[0], eventEng[0]),
-                      _eventTile(context, event[1], eventEng[1]),
-                      _eventTile(context, event[2], eventEng[2]),
-                      _eventTile(context, event[3], eventEng[3]),
-                      _eventTile(context, event[4], eventEng[4]),
-                      _eventTile(context, event[5], eventEng[5]),
-                    ],
+                  body: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        children: [
+                          // 広告
+                          _advertising(),
+                          //設定ボタンと使い方ボタン
+                          _settingButton(context),
+                          //６種目のカード
+                          _eventCard(context, event[0], eventEng[0]),
+                          _eventCard(context, event[1], eventEng[1]),
+                          _eventCard(context, event[2], eventEng[2]),
+                          _eventCard(context, event[3], eventEng[3]),
+                          _eventCard(context, event[4], eventEng[4]),
+                          _eventCard(context, event[5], eventEng[5]),
+                          //  6種目の合計
+                          _totalScore(),
+                        ],
+                      ),
+                    ),
                   ),
                 );
         });
   }
 
-  _eventTile(BuildContext context, String event, String eventEng) {
-    return ListTile(
-      title: Text(
-        '$event',
-        style: TextStyle(fontSize: 20),
+  //設定ボタンと使い方ボタン
+  _settingButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+          icon: Icon(
+            Icons.miscellaneous_services,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.info_outline,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {},
+        )
+      ],
+    );
+  }
+
+  //６種目のカード
+  _eventCard(BuildContext context, String event, String eventEng) {
+    return SizedBox(
+      height: 90,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EventScreen(event)),
+            );
+          },
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Container(
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Text(
+                    '$event',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  '5.5',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {},
+                ),
+              )
+            ],
+          ),
+        ),
       ),
-      subtitle: Text(
-        '$eventEng',
+    );
+  }
+
+  //  6種目の合計
+  _totalScore() {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 30.0),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20.0, right: 160.0),
+                child: Text(
+                  '合計',
+                  style: TextStyle(fontSize: 30),
+                ),
+              ),
+              Text(
+                '5.5',
+                style: TextStyle(fontSize: 30),
+              ),
+            ],
+          ),
+        ),
+        Divider(color: Colors.black)
+      ],
+    );
+  }
+
+  _advertising() {
+    return Container(
+      height: 100,
+      child: Center(
+        child: Text(
+          '広告',
+          style: TextStyle(fontSize: 20.0),
+        ),
       ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => EventScreen(event)),
-        );
-      },
     );
   }
 }
