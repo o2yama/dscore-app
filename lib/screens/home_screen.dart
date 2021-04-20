@@ -142,35 +142,99 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => EventScreen(event)),
             );
           },
-          child: Row(
+          child: Column(
             children: [
               Expanded(
-                flex: 3,
-                child: Container(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    '$event',
-                    style: TextStyle(fontSize: 20),
-                  ),
+                flex: 2,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          '$event',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        '5.5',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: () {},
+                      ),
+                    )
+                  ],
                 ),
               ),
               Expanded(
                 flex: 1,
-                child: Text(
-                  '5.5',
-                  style: TextStyle(fontSize: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          '$eventEng',
+                          style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              'ルドルフ',
+                              style:
+                                  TextStyle(fontSize: 15.0, color: Colors.grey),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              '1回〜2回半',
+                              style:
+                                  TextStyle(fontSize: 15.0, color: Colors.grey),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              '1回半〜回',
+                              style:
+                                  TextStyle(fontSize: 15.0, color: Colors.grey),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 10.0),
+                            child: Text(
+                              '２回半〜1回',
+                              style:
+                                  TextStyle(fontSize: 15.0, color: Colors.grey),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  onPressed: () {},
-                ),
-              )
             ],
           ),
         ),
@@ -194,7 +258,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '5.5',
+                '30.4',
                 style: TextStyle(fontSize: 30),
               ),
             ],
