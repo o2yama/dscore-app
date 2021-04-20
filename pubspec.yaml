@@ -19,6 +19,7 @@ dependencies:
   cloud_firestore: ^1.0.5
   introduction_screen: ^2.1.0
   shared_preferences: ^2.0.5
+  google_mobile_ads: ^0.12.1+1
 
 dev_dependencies:
   flutter_test:
