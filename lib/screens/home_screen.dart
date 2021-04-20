@@ -58,42 +58,27 @@ class HomeScreen extends StatelessWidget {
           return Stack(
             children: [
               Scaffold(
-                appBar: AppBar(
-                  title: Text('6種目'),
-                  actions: [
-                    CupertinoButton(
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        color: Theme.of(context).primaryColor,
-                        child: Icon(Icons.color_lens, color: Colors.white),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ThemeColorScreen()),
-                        );
-                      },
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        // 広告
+                        _advertising(),
+                        //設定ボタンと使い方ボタン
+                        _settingButton(context),
+                        //６種目のカード
+                        _eventCard(context, event[0], eventEng[0]),
+                        _eventCard(context, event[1], eventEng[1]),
+                        _eventCard(context, event[2], eventEng[2]),
+                        _eventCard(context, event[3], eventEng[3]),
+                        _eventCard(context, event[4], eventEng[4]),
+                        _eventCard(context, event[5], eventEng[5]),
+                        //  6種目の合計
+                        _totalScore(),
+                      ],
                     ),
-                  ],
-                ),
-                body: Column(
-                  children: [
-                    // 広告
-                    _advertising(),
-                    //設定ボタンと使い方ボタン
-                    _settingButton(context),
-                    //６種目のカード
-                    _eventCard(context, event[0], eventEng[0]),
-                    _eventCard(context, event[1], eventEng[1]),
-                    _eventCard(context, event[2], eventEng[2]),
-                    _eventCard(context, event[3], eventEng[3]),
-                    _eventCard(context, event[4], eventEng[4]),
-                    _eventCard(context, event[5], eventEng[5]),
-                    //  6種目の合計
-                    _totalScore(),
-                  ],
+                  ),
                 ),
               ),
               (!model.isIntroWatched) ? IntroScreen() : Container(),
@@ -121,10 +106,15 @@ class HomeScreen extends StatelessWidget {
       children: [
         IconButton(
           icon: Icon(
-            Icons.miscellaneous_services,
+            Icons.color_lens,
             color: Theme.of(context).primaryColor,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ThemeColorScreen()),
+            );
+          },
         ),
         IconButton(
           icon: Icon(
