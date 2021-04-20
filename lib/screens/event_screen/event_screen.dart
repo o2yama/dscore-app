@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../ad_state.dart';
@@ -38,33 +40,40 @@ class _EventScreenState extends State<EventScreen> {
     return Scaffold(
       body: Consumer<EventScreenModel>(
         builder: (context, model, child) {
-          final height = MediaQuery.of(context).size.height;
-
-          return SingleChildScrollView(
-            child: Container(
-              color: Theme.of(context).backgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  banner == null
-                      ? Container(height: height * 0.15)
-                      : Container(
-                          height: height * 0.15,
-                          child: AdWidget(ad: banner!),
-                        ),
-                  _backButton(context, widget.event),
-                  _eventDisplay(context),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    child: ListView(
-                      children: [
-                        _scoreTile(context, 5.5),
-                        _scoreTile(context, 5.8),
-                        _scoreTile(context, 6.0),
-                      ],
+          final height = MediaQuery.of(context).size.height - 50;
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                color: Theme.of(context).backgroundColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    banner == null
+                        ? Container(height: 50)
+                        : Container(
+                            height: 50,
+                            child: AdWidget(ad: banner!),
+                          ),
+                    Container(
+                      height: height * 0.1,
+                      child: _backButton(context, widget.event),
                     ),
-                  ),
-                ],
+                    Container(
+                      height: height * 0.1,
+                      child: _eventDisplay(context),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: ListView(
+                        children: [
+                          _scoreTile(context, 5.5),
+                          _scoreTile(context, 5.8),
+                          _scoreTile(context, 6.0),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
