@@ -2,25 +2,57 @@ import 'dart:io';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import '../../ad_state.dart';
 
-class EventScreen extends StatelessWidget {
+class EventScreen extends StatefulWidget {
   EventScreen(this.event);
   final String event;
+
+  @override
+  _EventScreenState createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+  BannerAd? banner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: AdRequest(),
+          listener: adState.adListener,
+        )..load();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<EventScreenModel>(
         builder: (context, model, child) {
+          final height = MediaQuery.of(context).size.height;
+
           return SingleChildScrollView(
             child: Container(
               color: Theme.of(context).backgroundColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ad(context),
-                  _backButton(context, event),
+                  banner == null
+                      ? Container(height: height * 0.15)
+                      : Container(
+                          height: height * 0.15,
+                          child: AdWidget(ad: banner!),
+                        ),
+                  _backButton(context, widget.event),
                   _eventDisplay(context),
                   Container(
                     height: MediaQuery.of(context).size.height * 0.7,
@@ -38,14 +70,6 @@ class EventScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  Widget ad(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      height: MediaQuery.of(context).size.height * 0.15,
-      child: Center(child: Text('広告')),
     );
   }
 
@@ -85,7 +109,7 @@ class EventScreen extends StatelessWidget {
         children: [
           SizedBox(width: width * 0.1),
           Text(
-            '$event',
+            '${widget.event}',
             style: Theme.of(context).textTheme.headline4,
           ),
           Expanded(child: Container()),
@@ -114,7 +138,8 @@ class EventScreen extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CalculationScreen(event)),
+          MaterialPageRoute(
+              builder: (context) => CalculationScreen(widget.event)),
         );
       },
       child: Row(
