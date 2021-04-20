@@ -1,3 +1,4 @@
+import 'package:dscore_app/ad_state.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
@@ -6,6 +7,7 @@ import 'package:dscore_app/screens/home_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -38,10 +40,15 @@ List<SingleChildWidget> viewModels = [
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final initFuture = MobileAds.instance.initialize();
+  final adState = AdState(initFuture);
   runApp(
-    MultiProvider(
-      providers: multiProviders,
-      child: MyApp(),
+    Provider.value(
+      value: adState,
+      builder: (context, child) => MultiProvider(
+        providers: multiProviders,
+        child: MyApp(),
+      ),
     ),
   );
 }
@@ -54,7 +61,7 @@ class MyApp extends StatelessWidget {
       return MaterialApp(
         theme: ThemeData(
           primaryColor: model.themeColor,
-          backgroundColor: Colors.grey[100],
+          backgroundColor: Colors.grey[200],
           cardTheme: CardTheme(
             color: Colors.white,
             elevation: 3,
