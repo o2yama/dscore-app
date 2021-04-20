@@ -9,12 +9,12 @@ Map<String, Color> themes = {
   'オレンジ': Colors.orange,
   'グレー': Colors.grey,
   'グリーン': Colors.green,
-  'ブラック': Colors.black,
   'ピンク': Colors.pinkAccent,
+  'ブラック': Colors.black,
 };
 
 class ThemeColorModel extends ChangeNotifier {
-  Color themeColor = Colors.yellow;
+  Color themeColor = Colors.white;
   bool isSelected = false;
 
   Future<void> setThemeColor(String color) async {
