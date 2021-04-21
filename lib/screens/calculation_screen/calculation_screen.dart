@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'combination_drop_down.dart';
+
 import '../event_screen/event_screen.dart';
 import '../event_screen/event_screen_model.dart';
 import 'calculation_screen_model.dart';
@@ -14,55 +16,100 @@ class CalculationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          event,
-        ),
-        actions: [
-          TextButton(
-            child: Text(
-              '保存',
-              style: TextStyle(color: Colors.white, fontSize: 15.0),
-            ),
-            onPressed: () {
-              //試合などの名前をつける入力フォーム
-              _dScoreName(context);
-            },
-          ),
-        ],
-      ),
-      body: Consumer<CalculationScreenModel>(
-        builder: (context, model, child) {
-          return Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: ListView(
-              children: [
-                Column(
+      body: SafeArea(
+        child: Consumer<CalculationScreenModel>(
+          builder: (context, model, child) {
+            return Container(
+              color: Theme.of(context).backgroundColor,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ListView(
                   children: [
-                    //Dスコアの表示
-                    _dScore(),
-                    //組み合わせ加点の表示
-                    _combinationScore(),
-                    // 要求点の表示
-                    _requestScore(),
-                    //技名の表示
-                    _techniqueDisplay(context, order[0]),
-                    _techniqueDisplay(context, order[1]),
-                    _techniqueDisplay(context, order[2]),
-                    _techniqueDisplay(context, order[3]),
-                    _techniqueDisplay(context, order[4]),
-                    _techniqueDisplay(context, order[5]),
-                    _techniqueDisplay(context, order[6]),
-                    _techniqueDisplay(context, order[7]),
-                    _techniqueDisplay(context, order[8]),
-                    _techniqueLastDisplay(context),
+                    Column(
+                      children: [
+                        //広告
+                        ad(context),
+                        //戻るボタン
+                        _backButton(context, event),
+                        //Dスコアの表示
+                        _dScore(),
+                        //スコアの詳細
+                        _detailsScore(),
+                        //技名の表示
+                        _techniqueDisplay(context, order[0]),
+                        _techniqueDisplay(context, order[1]),
+                        _techniqueDisplay(context, order[2]),
+                        _techniqueDisplay(context, order[3]),
+                        _techniqueDisplay(context, order[4]),
+                        _techniqueDisplay(context, order[5]),
+                        _techniqueDisplay(context, order[6]),
+                        _techniqueDisplay(context, order[7]),
+                        _techniqueDisplay(context, order[8]),
+                        _techniqueLastDisplay(context),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
+    );
+  }
+
+  //広告
+  Widget ad(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: 50,
+      child: Center(
+        child: Text('広告'),
+      ),
+    );
+  }
+
+  //戻るボタン
+  _backButton(BuildContext context, String event) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Platform.isIOS
+              ? Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    Text(
+                      '$eventスコア一覧',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                )
+              : Icon(
+                  Icons.clear,
+                  color: Theme.of(context).primaryColor,
+                ),
+        ),
+        TextButton(
+          child: Text(
+            '保存',
+            style: TextStyle(
+                color: Theme.of(context).primaryColor, fontSize: 15.0),
+          ),
+          onPressed: () {
+            //試合などの名前をつける入力フォーム
+            _dScoreName(context);
+          },
+        ),
+      ],
     );
   }
 
@@ -71,12 +118,8 @@ class CalculationScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(
-            'Dスコア',
-            style: TextStyle(fontSize: 40.0),
-          ),
           Container(
             padding: EdgeInsets.only(right: 15.0),
             child: Text(
@@ -89,40 +132,69 @@ class CalculationScreen extends StatelessWidget {
     );
   }
 
-  //組み合わせ加点の表示
-  Widget _combinationScore() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  _detailsScore() {
+    return Column(
       children: [
-        Text(
-          '組み合わせ加点',
-          style: TextStyle(fontSize: 25.0),
-        ),
-        CombinationDropDown(),
-      ],
-    );
-  }
-
-  // 要求点の表示
-  Widget _requestScore() {
-    return Container(
-      padding: EdgeInsets.only(bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '要求点',
-            style: TextStyle(fontSize: 25.0),
-          ),
-          Container(
-            padding: EdgeInsets.only(right: 25.0),
-            child: Text(
-              '2.0',
-              style: TextStyle(fontSize: 30.0),
+        Row(
+          children: [
+            Expanded(
+              child: Center(
+                child: Text(
+                  '難度点',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
             ),
-          )
-        ],
-      ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  '要求点',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  '組み合わせ',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Center(
+                child: Text(
+                  '３.1',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  '2.0',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  '2.0',
+                  style: TextStyle(fontSize: 15.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -139,7 +211,9 @@ class CalculationScreen extends StatelessWidget {
                 child: Center(
                   child: Text(
                     order,
-                    style: TextStyle(fontSize: 28.0),
+                    style: TextStyle(
+                      fontSize: 28.0,
+                    ),
                   ),
                 ),
               ),
@@ -152,7 +226,10 @@ class CalculationScreen extends StatelessWidget {
                   title: Center(
                     child: Text(
                       '+',
-                      style: TextStyle(fontSize: 28.0),
+                      style: TextStyle(
+                        fontSize: 28.0,
+                        color: Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
                   onTap: () {
@@ -164,7 +241,7 @@ class CalculationScreen extends StatelessWidget {
                   },
                 ),
               ),
-            )
+            ),
           ],
         ),
         Divider(

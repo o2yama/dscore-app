@@ -64,6 +64,7 @@ import 'package:provider/provider.dart';
 
 class CombinationDropDown extends StatelessWidget {
   final List<DropdownMenuItem> _cvPoints = [
+    _cvPointItem(0.0),
     _cvPointItem(0.1),
     _cvPointItem(0.2),
     _cvPointItem(0.3),
