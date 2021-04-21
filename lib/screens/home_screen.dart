@@ -59,24 +59,27 @@ class HomeScreen extends StatelessWidget {
             children: [
               Scaffold(
                 body: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // 広告
-                        _advertising(),
-                        //設定ボタンと使い方ボタン
-                        _settingButton(context),
-                        //６種目のカード
-                        _eventCard(context, event[0], eventEng[0]),
-                        _eventCard(context, event[1], eventEng[1]),
-                        _eventCard(context, event[2], eventEng[2]),
-                        _eventCard(context, event[3], eventEng[3]),
-                        _eventCard(context, event[4], eventEng[4]),
-                        _eventCard(context, event[5], eventEng[5]),
-                        //  6種目の合計
-                        _totalScore(),
-                      ],
+                  child: Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          // 広告
+                          ad(context),
+                          //設定ボタンと使い方ボタン
+                          _settingButton(context),
+                          //６種目のカード
+                          _eventCard(context, event[0], eventEng[0]),
+                          _eventCard(context, event[1], eventEng[1]),
+                          _eventCard(context, event[2], eventEng[2]),
+                          _eventCard(context, event[3], eventEng[3]),
+                          _eventCard(context, event[4], eventEng[4]),
+                          _eventCard(context, event[5], eventEng[5]),
+                          //  6種目の合計
+                          _totalScore(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -96,6 +99,15 @@ class HomeScreen extends StatelessWidget {
           );
         });
       },
+    );
+  }
+
+  //広告
+  Widget ad(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: 50,
+      child: Center(child: Text('広告')),
     );
   }
 
@@ -129,8 +141,10 @@ class HomeScreen extends StatelessWidget {
 
   //６種目のカード
   _eventCard(BuildContext context, String event, String eventEng) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: 90,
+      height: 100,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -142,16 +156,16 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => EventScreen(event)),
             );
           },
-          child: Column(
+          child: Row(
             children: [
               Expanded(
                 flex: 2,
-                child: Row(
+                child: Column(
                   children: [
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
+                        padding: EdgeInsets.only(left: 15.0, top: 10.0),
                         child: Text(
                           '$event',
                           style: TextStyle(fontSize: 20),
@@ -160,81 +174,43 @@ class HomeScreen extends StatelessWidget {
                     ),
                     Expanded(
                       flex: 1,
-                      child: Text(
-                        '5.5',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onPressed: () {},
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
                       child: Container(
-                        padding: EdgeInsets.only(left: 20.0),
+                        padding: EdgeInsets.only(left: 15.0),
                         child: Text(
                           '$eventEng',
                           style: TextStyle(fontSize: 15.0, color: Colors.grey),
                         ),
                       ),
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(right: 10.0),
-                            child: Text(
-                              'ルドルフ',
-                              style:
-                                  TextStyle(fontSize: 15.0, color: Colors.grey),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(right: 10.0),
-                            child: Text(
-                              '1回〜2回半',
-                              style:
-                                  TextStyle(fontSize: 15.0, color: Colors.grey),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(right: 10.0),
-                            child: Text(
-                              '1回半〜回',
-                              style:
-                                  TextStyle(fontSize: 15.0, color: Colors.grey),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(right: 10.0),
-                            child: Text(
-                              '２回半〜1回',
-                              style:
-                                  TextStyle(fontSize: 15.0, color: Colors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.only(left: 30.0),
+                  child: Text(
+                    '5.5',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: height * 0.07,
+                  width: width * 0.4,
+                  child: _techsList(context, '前方ダブル', 'two', 'three', 'four',
+                      'five', 'six', 'seven', 'eight', 'nine', 'finish'),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
             ],
           ),
         ),
@@ -269,14 +245,50 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  _advertising() {
+  Widget _techsList(
+    BuildContext context,
+    String one,
+    String? two,
+    String? three,
+    String? four,
+    String? five,
+    String? six,
+    String? seven,
+    String? eight,
+    String? nine,
+    String? finish,
+  ) {
+    List<String> _techs = [
+      '1. $one',
+      '2. $two',
+      '3. $three',
+      '4. $four',
+      '5. $five',
+      '6. $six',
+      '7. $seven',
+      '8. $eight',
+      '9. $nine',
+      '10. $finish',
+    ];
+
     return Container(
-      height: 100,
-      child: Center(
-        child: Text(
-          '広告',
-          style: TextStyle(fontSize: 20.0),
-        ),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: ListView(
+        children: _techs
+            .map(
+              (tech) => Card(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('$tech'),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
