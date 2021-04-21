@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class EventScreen extends StatefulWidget {
@@ -96,7 +97,7 @@ class _EventScreenState extends State<EventScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
                 Text(
-                  '$eventスコア一覧',
+                  '6種目一覧',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                   ),

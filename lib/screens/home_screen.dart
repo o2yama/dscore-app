@@ -4,14 +4,40 @@ import 'package:dscore_app/screens/event_screen/event_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
+import '../ad_state.dart';
 import 'intro/intro_model.dart';
 import 'intro/intro_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
   final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  BannerAd? banner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: AdRequest(),
+          listener: adState.adListener,
+        )..load();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
@@ -70,12 +96,18 @@ class HomeScreen extends StatelessWidget {
                           //設定ボタンと使い方ボタン
                           _settingButton(context),
                           //６種目のカード
-                          _eventCard(context, event[0], eventEng[0]),
-                          _eventCard(context, event[1], eventEng[1]),
-                          _eventCard(context, event[2], eventEng[2]),
-                          _eventCard(context, event[3], eventEng[3]),
-                          _eventCard(context, event[4], eventEng[4]),
-                          _eventCard(context, event[5], eventEng[5]),
+                          _eventCard(
+                              context, widget.event[0], widget.eventEng[0]),
+                          _eventCard(
+                              context, widget.event[1], widget.eventEng[1]),
+                          _eventCard(
+                              context, widget.event[2], widget.eventEng[2]),
+                          _eventCard(
+                              context, widget.event[3], widget.eventEng[3]),
+                          _eventCard(
+                              context, widget.event[4], widget.eventEng[4]),
+                          _eventCard(
+                              context, widget.event[5], widget.eventEng[5]),
                           //  6種目の合計
                           _totalScore(),
                         ],
@@ -104,11 +136,12 @@ class HomeScreen extends StatelessWidget {
 
   //広告
   Widget ad(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      height: 50,
-      child: Center(child: Text('広告')),
-    );
+    return banner == null
+        ? Container(height: 50)
+        : Container(
+            height: 50,
+            child: AdWidget(ad: banner!),
+          );
   }
 
   //設定ボタンと使い方ボタン
