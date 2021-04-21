@@ -1,44 +1,127 @@
+import 'dart:io';
+
+import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/vt_screen/vt_drop_down.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 
-import '../event_screen/event_screen.dart';
+import '../../ad_state.dart';
+import '../home_screen.dart';
 
-class VtScreen extends StatelessWidget {
+class VtScreen extends StatefulWidget {
   VtScreen(this.event);
-
   final String event;
+
+  @override
+  _VtScreenState createState() => _VtScreenState();
+}
+
+class _VtScreenState extends State<VtScreen> {
+  BannerAd? banner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: AdRequest(),
+          listener: adState.adListener,
+        )..load();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          event,
-        ),
-        actions: [
-          TextButton(
-            child: Text(
-              '保存',
-              style: TextStyle(color: Colors.white, fontSize: 15.0),
+      body: Consumer<EventScreenModel>(builder: (context, model, child) {
+        final height = MediaQuery.of(context).size.height - 50;
+        return SafeArea(
+          child: Container(
+            color: Theme.of(context).backgroundColor,
+            child: Column(
+              children: [
+                //広告
+                ad(context),
+                //戻るボタン
+                Container(
+                  height: height * 0.1,
+                  child: _backButton(context, widget.event),
+                ),
+                //Dスコアの表示
+                Container(
+                  height: height * 0.2,
+                  child: _dScore(),
+                ),
+                // 跳馬の技名検索
+                Container(
+                  height: height * 0.2,
+                  child: _vtSearch(),
+                ),
+              ],
             ),
-            onPressed: () {
-              //試合などの名前をつける入力フォーム
-              _dScoreName(context);
-            },
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            //Dスコアの表示
-            _dScore(),
-            // 跳馬の技名検索
-            _vtSearch(),
-          ],
+        );
+      }),
+    );
+  }
+
+  //広告
+  Widget ad(BuildContext context) {
+    return banner == null
+        ? Container(height: 50)
+        : Container(
+            height: 50,
+            child: AdWidget(ad: banner!),
+          );
+  }
+
+  //戻るボタン
+  _backButton(BuildContext context, String event) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Platform.isIOS
+              ? Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    Text(
+                      '$eventスコア一覧',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                )
+              : Icon(
+                  Icons.clear,
+                  color: Theme.of(context).primaryColor,
+                ),
         ),
-      ),
+        TextButton(
+          child: Text(
+            '保存',
+            style: TextStyle(
+                color: Theme.of(context).primaryColor, fontSize: 15.0),
+          ),
+          onPressed: () {
+            //試合などの名前をつける入力フォーム
+            _dScoreName(context);
+          },
+        ),
+      ],
     );
   }
 
@@ -47,44 +130,43 @@ class VtScreen extends StatelessWidget {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('保存名を入力してください'),
-            content: TextField(
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: '全日本インカレ',
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EventScreen(event)),
-                      (_) => false);
-                },
-                child: Text('保存する'),
-              ),
-            ],
-          );
+          return Consumer<EventScreenModel>(builder: (context, model, child) {
+            return AlertDialog(
+              title: Text('保存しました'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        (_) => false);
+                  },
+                  child: Text(
+                    '0K',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
         });
   }
 
   //Dスコアの表示
   Widget _dScore() {
-    return Container(
-      padding: EdgeInsets.only(top: 50.0, bottom: 40.0, right: 10.0),
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(
-            'Dスコア',
-            style: TextStyle(fontSize: 40.0),
-          ),
-          Text(
-            '5.4',
-            style: TextStyle(fontSize: 40.0),
+          Container(
+            padding: EdgeInsets.only(right: 15.0),
+            child: Text(
+              '5.4',
+              style: TextStyle(fontSize: 40.0),
+            ),
           )
         ],
       ),
@@ -93,8 +175,8 @@ class VtScreen extends StatelessWidget {
 
   // 跳馬の技名検索
   Widget _vtSearch() {
-    return Container(
-      padding: EdgeInsets.only(top: 10.0, bottom: 20.0, right: 10.0),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30.0, right: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
