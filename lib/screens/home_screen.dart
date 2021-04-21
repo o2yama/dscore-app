@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/event_screen/event_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'intro/intro_model.dart';
 import 'intro/intro_screen.dart';
 
@@ -56,35 +58,30 @@ class HomeScreen extends StatelessWidget {
           return Stack(
             children: [
               Scaffold(
-                appBar: AppBar(
-                  title: Text('6種目'),
-                  actions: [
-                    CupertinoButton(
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        color: Theme.of(context).primaryColor,
-                        child: Icon(Icons.color_lens, color: Colors.white),
+                body: SafeArea(
+                  child: Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          // 広告
+                          ad(context),
+                          //設定ボタンと使い方ボタン
+                          _settingButton(context),
+                          //６種目のカード
+                          _eventCard(context, event[0], eventEng[0]),
+                          _eventCard(context, event[1], eventEng[1]),
+                          _eventCard(context, event[2], eventEng[2]),
+                          _eventCard(context, event[3], eventEng[3]),
+                          _eventCard(context, event[4], eventEng[4]),
+                          _eventCard(context, event[5], eventEng[5]),
+                          //  6種目の合計
+                          _totalScore(),
+                        ],
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ThemeColorScreen()),
-                        );
-                      },
                     ),
-                  ],
-                ),
-                body: Column(
-                  children: [
-                    _eventTile(context, event[0], eventEng[0]),
-                    _eventTile(context, event[1], eventEng[1]),
-                    _eventTile(context, event[2], eventEng[2]),
-                    _eventTile(context, event[3], eventEng[3]),
-                    _eventTile(context, event[4], eventEng[4]),
-                    _eventTile(context, event[5], eventEng[5]),
-                  ],
+                  ),
                 ),
               ),
               (!model.isIntroWatched) ? IntroScreen() : Container(),
@@ -105,21 +102,194 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _eventTile(BuildContext context, String event, String eventEng) {
-    return ListTile(
-      title: Text(
-        '$event',
-        style: TextStyle(fontSize: 20),
+  //広告
+  Widget ad(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: 50,
+      child: Center(child: Text('広告')),
+    );
+  }
+
+  //設定ボタンと使い方ボタン
+  _settingButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+          icon: Icon(
+            Icons.color_lens,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ThemeColorScreen()),
+            );
+          },
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.info_outline,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {},
+        )
+      ],
+    );
+  }
+
+  //６種目のカード
+  _eventCard(BuildContext context, String event, String eventEng) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    return SizedBox(
+      height: 100,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EventScreen(event)),
+            );
+          },
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                        child: Text(
+                          '$event',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          '$eventEng',
+                          style: TextStyle(fontSize: 15.0, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.only(left: 30.0),
+                  child: Text(
+                    '5.5',
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: height * 0.07,
+                  width: width * 0.4,
+                  child: _techsList(context, '前方ダブル', 'two', 'three', 'four',
+                      'five', 'six', 'seven', 'eight', 'nine', 'finish'),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Theme.of(context).primaryColor,
+                ),
+              )
+            ],
+          ),
+        ),
       ),
-      subtitle: Text(
-        '$eventEng',
+    );
+  }
+
+  //  6種目の合計
+  _totalScore() {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: 30.0),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20.0, right: 160.0),
+                child: Text(
+                  '合計',
+                  style: TextStyle(fontSize: 30),
+                ),
+              ),
+              Text(
+                '30.4',
+                style: TextStyle(fontSize: 30),
+              ),
+            ],
+          ),
+        ),
+        Divider(color: Colors.black)
+      ],
+    );
+  }
+
+  Widget _techsList(
+    BuildContext context,
+    String one,
+    String? two,
+    String? three,
+    String? four,
+    String? five,
+    String? six,
+    String? seven,
+    String? eight,
+    String? nine,
+    String? finish,
+  ) {
+    List<String> _techs = [
+      '1. $one',
+      '2. $two',
+      '3. $three',
+      '4. $four',
+      '5. $five',
+      '6. $six',
+      '7. $seven',
+      '8. $eight',
+      '9. $nine',
+      '10. $finish',
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+        borderRadius: BorderRadius.circular(5),
       ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => EventScreen(event)),
-        );
-      },
+      child: ListView(
+        children: _techs
+            .map(
+              (tech) => Card(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('$tech'),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -170,7 +171,7 @@ class _EventScreenState extends State<EventScreen> {
                     ),
                     Expanded(child: Container()),
                     Container(
-                      height: height * 0.1,
+                      height: height * 0.07,
                       width: width * 0.4,
                       child: _techsList(
                           context,
