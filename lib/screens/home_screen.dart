@@ -11,10 +11,10 @@ import '../ad_state.dart';
 import 'intro/intro_model.dart';
 import 'intro/intro_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
-  final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
+final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
+final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
 
+class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -84,33 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
           return Stack(
             children: [
               Scaffold(
-                body: SafeArea(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          // 広告
-                          ad(context),
-                          //設定ボタンと使い方ボタン
-                          _settingButton(context),
-                          //６種目のカード
-                          _eventCard(
-                              context, widget.event[0], widget.eventEng[0]),
-                          _eventCard(
-                              context, widget.event[1], widget.eventEng[1]),
-                          _eventCard(
-                              context, widget.event[2], widget.eventEng[2]),
-                          _eventCard(
-                              context, widget.event[3], widget.eventEng[3]),
-                          _eventCard(
-                              context, widget.event[4], widget.eventEng[4]),
-                          _eventCard(
-                              context, widget.event[5], widget.eventEng[5]),
-                          //  6種目の合計
-                          _totalScore(),
-                        ],
+                body: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Container(
+                      color: Theme.of(context).backgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // 広告
+                            ad(context),
+                            //設定ボタンと使い方ボタン
+                            _settingButton(context),
+                            //６種目のカード
+                            _eventCard(context, event[0], eventEng[0]),
+                            _eventCard(context, event[1], eventEng[1]),
+                            _eventCard(context, event[2], eventEng[2]),
+                            _eventCard(context, event[3], eventEng[3]),
+                            _eventCard(context, event[4], eventEng[4]),
+                            _eventCard(context, event[5], eventEng[5]),
+                            //  6種目の合計
+                            _totalScore(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
