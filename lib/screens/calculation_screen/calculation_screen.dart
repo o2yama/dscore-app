@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dscore_app/screens/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -8,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../ad_state.dart';
 import '../event_screen/event_screen_model.dart';
+import '../home_screen.dart';
 import 'calculation_screen_model.dart';
 
 class CalculationScreen extends StatefulWidget {
@@ -326,13 +326,12 @@ class _CalculationScreenState extends State<CalculationScreen> {
               ),
             ),
             Expanded(
-              child: Center(
-                child: Text(
-                  '組み合わせ',
-                  style: TextStyle(fontSize: 18.0),
-                ),
+                child: Center(
+              child: Text(
+                '組み合わせ',
+                style: TextStyle(fontSize: 18.0),
               ),
-            ),
+            )),
           ],
         ),
         SizedBox(
@@ -357,13 +356,12 @@ class _CalculationScreenState extends State<CalculationScreen> {
               ),
             ),
             Expanded(
-              child: Center(
-                child: Text(
-                  '2.0',
-                  style: TextStyle(fontSize: 15.0),
-                ),
+                child: Center(
+              child: Text(
+                '0.3',
+                style: TextStyle(fontSize: 15.0),
               ),
-            ),
+            )),
           ],
         ),
       ],
@@ -386,11 +384,10 @@ class _CalculationScreenState extends State<CalculationScreen> {
             ),
             Expanded(
               child: Center(
-                child: Text(
-                  '要求点',
-                  style: TextStyle(fontSize: 18.0),
-                ),
-              ),
+                  child: Text(
+                '要求点',
+                style: TextStyle(fontSize: 18.0),
+              )),
             ),
           ],
         ),
