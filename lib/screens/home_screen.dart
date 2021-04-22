@@ -56,27 +56,29 @@ class HomeScreen extends StatelessWidget {
           return Stack(
             children: [
               Scaffold(
-                body: SafeArea(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          // 広告
-                          ad(context),
-                          //設定ボタンと使い方ボタン
-                          _settingButton(context),
-                          //６種目のカード
-                          _eventCard(context, event[0], eventEng[0]),
-                          _eventCard(context, event[1], eventEng[1]),
-                          _eventCard(context, event[2], eventEng[2]),
-                          _eventCard(context, event[3], eventEng[3]),
-                          _eventCard(context, event[4], eventEng[4]),
-                          _eventCard(context, event[5], eventEng[5]),
-                          //  6種目の合計
-                          _totalScore(),
-                        ],
+                body: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Container(
+                      color: Theme.of(context).backgroundColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // 広告
+                            ad(context),
+                            //設定ボタンと使い方ボタン
+                            _settingButton(context),
+                            //６種目のカード
+                            _eventCard(context, event[0], eventEng[0]),
+                            _eventCard(context, event[1], eventEng[1]),
+                            _eventCard(context, event[2], eventEng[2]),
+                            _eventCard(context, event[3], eventEng[3]),
+                            _eventCard(context, event[4], eventEng[4]),
+                            _eventCard(context, event[5], eventEng[5]),
+                            //  6種目の合計
+                            _totalScore(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
