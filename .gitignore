@@ -23,6 +23,8 @@
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
+**/ios/Runner/Info-Debug.plist
+**/ios/Runner/Info-Release.plist
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
