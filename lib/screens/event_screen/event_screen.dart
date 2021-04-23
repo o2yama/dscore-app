@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
+import 'package:dscore_app/screens/vt_screen/vt_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class EventScreen extends StatefulWidget {
@@ -95,7 +97,7 @@ class _EventScreenState extends State<EventScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
                 Text(
-                  '$eventスコア一覧',
+                  '6種目一覧',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                   ),
@@ -145,11 +147,18 @@ class _EventScreenState extends State<EventScreen> {
     final height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CalculationScreen(widget.event)),
-        );
+        if (widget.event == '跳馬') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VtScreen(widget.event)),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CalculationScreen(widget.event)),
+          );
+        }
       },
       child: Row(
         children: [
@@ -172,18 +181,7 @@ class _EventScreenState extends State<EventScreen> {
                     Container(
                       height: height * 0.07,
                       width: width * 0.4,
-                      child: _techsList(
-                          context,
-                          '前方ダブル',
-                          'two',
-                          'three',
-                          'four',
-                          'five',
-                          'six',
-                          'seven',
-                          'eight',
-                          'nine',
-                          'finish'),
+                      child: _techsDivide(),
                     ),
                     SizedBox(width: width * 0.1),
                   ],
@@ -264,4 +262,37 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   Future<void> onEditButtonPressed() async {}
+
+  Widget _techsDivide() {
+    if (widget.event == '跳馬') {
+      return _vtTech();
+    } else {
+      return _techsListDisplay();
+    }
+  }
+
+  Widget _vtTech() {
+    return Center(
+      child: Text(
+        'アカピアン',
+        style: TextStyle(fontSize: 20),
+      ),
+    );
+  }
+
+  Widget _techsListDisplay() {
+    return _techsList(
+      context,
+      '前方ダブル',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'finish',
+    );
+  }
 }
