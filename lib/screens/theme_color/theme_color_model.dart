@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Map<String, Color> themes = {
-  'イエロー': Colors.yellow,
+Map<String, Color?> themes = {
+  'イエロー': Colors.yellow[600],
   'ブルー': Colors.blue,
   'インディゴ': Colors.indigo,
   'オレンジ': Colors.orange,
@@ -24,7 +24,7 @@ class ThemeColorModel extends ChangeNotifier {
 
   Future<void> getThemeColor() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    themeColor = themes[pref.getString('themeColor')] ?? Colors.yellow;
+    themeColor = (themes[pref.getString('themeColor')] ?? Colors.yellow[600])!;
     notifyListeners();
   }
 }

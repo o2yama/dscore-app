@@ -6,35 +6,11 @@ import '../../data/current_user.dart';
 class IntroModel extends ChangeNotifier {
   IntroModel({required this.userRepository});
   final UserRepository userRepository;
-  bool isIntroWatched = false;
+  bool isIntroWatched = true;
   int currentIndex = 0;
   bool isLoading = false;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
-
-  Future<void> signIn() async {
-    isLoading = true;
-    notifyListeners();
-
-    try {
-      await userRepository.signIn();
-      await userRepository.signInFireStore();
-      await userRepository.getUserData();
-    } catch (e) {
-      throw e;
-    }
-
-    isLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> getUserData() async {
-    try {
-      await userRepository.getUserData();
-    } catch (e) {
-      throw e;
-    }
-  }
 
   Future<void> finishIntro() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -42,8 +18,44 @@ class IntroModel extends ChangeNotifier {
   }
 
   Future<void> checkIsIntroWatched() async {
+    isLoading = true;
+    notifyListeners();
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.isIntroWatched = prefs.getBool('intro') ?? false;
+    isIntroWatched = prefs.getBool('intro') ?? false;
+
+    if (isIntroWatched)
+      try {
+        if (currentUser == null) await getUserData();
+      } catch (e) {
+        print(e);
+      }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> signIn() async {
+    isLoading = true;
+    notifyListeners();
+
+    await userRepository.signIn();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getUserData() async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      await userRepository.getUserData();
+      return;
+    } catch (e) {
+      print(e);
+    }
+
+    isLoading = false;
     notifyListeners();
   }
 }
