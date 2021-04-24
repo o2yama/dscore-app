@@ -326,12 +326,13 @@ class _CalculationScreenState extends State<CalculationScreen> {
               ),
             ),
             Expanded(
-                child: Center(
-              child: Text(
-                '組み合わせ',
-                style: TextStyle(fontSize: 18.0),
+              child: Center(
+                child: Text(
+                  '組み合わせ',
+                  style: TextStyle(fontSize: 18.0),
+                ),
               ),
-            )),
+            ),
           ],
         ),
         SizedBox(
