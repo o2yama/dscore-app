@@ -38,36 +38,37 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child:
-            Consumer<CalculationScreenModel>(builder: (context, model, child) {
-          final height = MediaQuery.of(context).size.height - 50;
-          return SingleChildScrollView(
-            child: Container(
-              color: Theme.of(context).backgroundColor,
-              child: Column(
-                children: [
-                  //広告
-                  ad(context),
-                  //戻るボタン
-                  Container(
-                    height: height * 0.1,
-                    child: _backButton(context, widget.event),
-                  ),
-                  //検索バー
-                  Container(
-                    height: height * 0.2,
-                    child: _searchBar(),
-                  ),
-                  //検索結果
-                  Container(
-                    height: height * 0.2,
-                    child: _searchResults(),
-                  ),
-                ],
+        child: Consumer<CalculationScreenModel>(
+          builder: (context, model, child) {
+            final height = MediaQuery.of(context).size.height - 50;
+            return SingleChildScrollView(
+              child: Container(
+                color: Theme.of(context).backgroundColor,
+                child: Column(
+                  children: [
+                    //広告
+                    ad(context),
+                    //戻るボタン
+                    Container(
+                      height: height * 0.1,
+                      child: _backButton(context, widget.event),
+                    ),
+                    //検索バー
+                    Container(
+                      height: height * 0.1,
+                      child: _searchBar(),
+                    ),
+                    //検索結果
+                    Container(
+                      height: height * 0.7,
+                      child: _searchResults(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          },
+        ),
       ),
     );
   }
@@ -145,10 +146,46 @@ class _SearchScreenState extends State<SearchScreen> {
 
   //検索結果
   Widget _searchResults() {
-    return ListTile(
-      leading: Icon(Icons.accessibility),
-      contentPadding: EdgeInsets.all(10.0),
-      title: Text('コールマン'),
+    return ListView(
+      children: [
+        SizedBox(
+          height: 80.0,
+          child: Card(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Center(
+                      child: Icon(Icons.accessibility),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 8,
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 3.0),
+                    child: ListTile(
+                      title: Center(
+                        child: Text(
+                          'コールマン',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
