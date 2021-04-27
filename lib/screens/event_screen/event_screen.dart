@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dscore_app/data/score.dart';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/vt_screen/vt_screen.dart';
@@ -67,11 +68,9 @@ class _EventScreenState extends State<EventScreen> {
                     Container(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: ListView(
-                        children: [
-                          _scoreTile(context, 5.5),
-                          _scoreTile(context, 5.8),
-                          _scoreTile(context, 6.0),
-                        ],
+                        children: model.fxScoreList
+                            .map((score) => _scoreTile(context, score))
+                            .toList(),
                       ),
                     ),
                   ],
@@ -142,7 +141,9 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _scoreTile(BuildContext context, num score) {
+  Future<void> onEditButtonPressed() async {}
+
+  Widget _scoreTile(BuildContext context, Score score) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return InkWell(
@@ -173,7 +174,7 @@ class _EventScreenState extends State<EventScreen> {
                   children: [
                     SizedBox(width: width * 0.1),
                     Text(
-                      '$score',
+                      '${score.total}',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5,
                     ),
@@ -181,7 +182,7 @@ class _EventScreenState extends State<EventScreen> {
                     Container(
                       height: height * 0.07,
                       width: width * 0.4,
-                      child: _techsDivide(),
+                      child: _techsDisplay(context, score.techs),
                     ),
                     SizedBox(width: width * 0.1),
                   ],
@@ -213,39 +214,14 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _techsList(
-    BuildContext context,
-    String one,
-    String? two,
-    String? three,
-    String? four,
-    String? five,
-    String? six,
-    String? seven,
-    String? eight,
-    String? nine,
-    String? finish,
-  ) {
-    List<String> _techs = [
-      '1. $one',
-      '2. $two',
-      '3. $three',
-      '4. $four',
-      '5. $five',
-      '6. $six',
-      '7. $seven',
-      '8. $eight',
-      '9. $nine',
-      '10. $finish',
-    ];
-
+  Widget _techsList(BuildContext context, List<String> techs) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListView(
-        children: _techs
+        children: techs
             .map(
               (tech) => Card(
                 child: Row(
@@ -261,13 +237,11 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Future<void> onEditButtonPressed() async {}
-
-  Widget _techsDivide() {
+  Widget _techsDisplay(BuildContext context, List<String> scoreList) {
     if (widget.event == '跳馬') {
       return _vtTech();
     } else {
-      return _techsListDisplay();
+      return _techsListDisplay(context, scoreList);
     }
   }
 
@@ -280,19 +254,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
-  Widget _techsListDisplay() {
-    return _techsList(
-      context,
-      '前方ダブル',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-      'finish',
-    );
+  Widget _techsListDisplay(BuildContext context, List<String> scoreList) {
+    return _techsList(context, scoreList);
   }
 }

@@ -24,12 +24,8 @@ class IntroModel extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
 
-    if (isIntroWatched)
-      try {
-        if (currentUser == null) await getUserData();
-      } catch (e) {
-        print(e);
-      }
+    if (isIntroWatched) await getUserData();
+    print(currentUser!.id);
 
     isLoading = false;
     notifyListeners();

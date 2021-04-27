@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dscore_app/screens/event_screen/event_screen.dart';
+import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
     Future(() async {
-      await introModel.checkIsIntroWatched();
+      if (introModel.currentUser == null)
+        await introModel.checkIsIntroWatched();
     });
     return Consumer<IntroModel>(
       builder: (context, model, child) {
@@ -135,6 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
   //６種目のカード
   _eventCard(BuildContext context, String event, String eventEng) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
+    final eventScreenModel =
+        Provider.of<EventScreenModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return SizedBox(
@@ -144,8 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(
-          onTap: () {
+          onTap: () async {
             print(introModel.currentUser!.id);
+            await eventScreenModel.getFXScores();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => EventScreen(event)),
