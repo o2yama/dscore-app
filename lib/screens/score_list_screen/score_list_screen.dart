@@ -122,18 +122,26 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
             style: Theme.of(context).textTheme.headline4,
           ),
           Expanded(child: Container()),
-          TextButton(
-            onPressed: () {
-              //todo: チェックボタン表示
-            },
-            child: Text(
-              '編集',
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
+          IconButton(
+              icon: Icon(Icons.add, color: Colors.grey),
+              onPressed: () {
+                //todo:ScoreEditPageへ（値を何も渡さないで）
+                if (widget.event == '跳馬') {
+                  //todo: データの取得
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VTScoreListScreen(widget.event)),
+                  );
+                } else {
+                  //todo: データの取得
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScoreEditScreen(widget.event)),
+                  );
+                }
+              }),
           SizedBox(width: width * 0.1),
         ],
       ),
@@ -148,12 +156,14 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     return InkWell(
       onTap: () {
         if (widget.event == '跳馬') {
+          //todo: データの取得
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VTScoreListScreen(widget.event)),
           );
         } else {
+          //todo: データの取得
           Navigator.push(
             context,
             MaterialPageRoute(

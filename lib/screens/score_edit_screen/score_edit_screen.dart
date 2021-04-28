@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
-import 'package:dscore_app/screens/search_screen/search_screen.dart';
+import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -156,9 +156,11 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         children: [
           Container(
             padding: EdgeInsets.only(right: 15.0),
-            child: Text(
-              '5.4',
-              style: TextStyle(fontSize: 40.0),
+            child: FittedBox(
+              child: Text(
+                '5.4',
+                style: TextStyle(fontSize: 40.0),
+              ),
             ),
           )
         ],

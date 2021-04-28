@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/screens/score_list_screen/score_list.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';

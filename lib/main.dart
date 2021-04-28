@@ -5,7 +5,6 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/home_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/score_edit_model.dart';
 import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
-import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,10 +33,7 @@ List<SingleChildWidget> viewModels = [
         scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
   ChangeNotifierProvider<ScoreEditModel>(
-    create: (context) => ScoreEditModel(),
-  ),
-  ChangeNotifierProvider<SearchModel>(
-    create: (context) => SearchModel(
+    create: (context) => ScoreEditModel(
         scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
   ChangeNotifierProvider<IntroModel>(
