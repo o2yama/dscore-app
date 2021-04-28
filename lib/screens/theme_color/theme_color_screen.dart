@@ -2,49 +2,80 @@ import 'dart:io';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
-class ThemeColorScreen extends StatelessWidget {
+import '../../ad_state.dart';
+
+class ThemeColorScreen extends StatefulWidget {
+  @override
+  _ThemeColorScreenState createState() => _ThemeColorScreenState();
+}
+
+class _ThemeColorScreenState extends State<ThemeColorScreen> {
+  BannerAd? banner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    adState.initialization.then((status) {
+      setState(() {
+        banner = BannerAd(
+          adUnitId: adState.bannerAdUnitId,
+          size: AdSize.banner,
+          request: AdRequest(),
+          listener: adState.adListener,
+        )..load();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<ThemeColorModel>(builder: (context, model, child) {
         return Container(
           color: Theme.of(context).primaryColor,
-          child: Column(
-            children: [
-              ad(context),
-              backButton(context),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.75,
-                      child: ListView(
-                        children: themes.keys
-                            .map(
-                              (color) => colorTile(context, color),
-                            )
-                            .toList(),
-                      ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ad(context),
+                  backButton(context),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.75,
+                          child: ListView(
+                            children: themes.keys
+                                .map(
+                                  (color) => colorTile(context, color),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       }),
     );
   }
 
-  Widget ad(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      height: MediaQuery.of(context).size.height * 0.15,
-      child: Center(child: Text('広告')),
-    );
+  ad(BuildContext context) {
+    return banner == null
+        ? Container(height: 50)
+        : Container(
+            height: 50,
+            child: AdWidget(ad: banner!),
+          );
   }
 
   Widget backButton(BuildContext context) {

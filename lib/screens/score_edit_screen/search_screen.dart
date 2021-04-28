@@ -34,39 +34,45 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
     return Scaffold(
-      body: SafeArea(
-        child: Consumer<ScoreEditModel>(
-          builder: (context, model, child) {
-            final height = MediaQuery.of(context).size.height - 50;
-            return SingleChildScrollView(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                child: Column(
-                  children: [
-                    //広告
-                    ad(context),
-                    //戻るボタン
-                    Container(
-                      height: height * 0.1,
-                      child: _backButton(context, widget.event),
-                    ),
-                    //検索バー
-                    Container(
-                      height: height * 0.1,
-                      child: _searchBar(),
-                    ),
-                    //検索結果
-                    Container(
-                      height: height * 0.7,
-                      child: _searchResults(),
-                    ),
-                  ],
+      body: Consumer<ScoreEditModel>(
+        builder: (context, model, child) {
+          final height = MediaQuery.of(context).size.height - 50;
+          return GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Container(
+              color: Theme.of(context).backgroundColor,
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      //広告
+                      ad(context),
+                      //戻るボタン
+                      Container(
+                        height: height * 0.1,
+                        child: _backButton(context, widget.event),
+                      ),
+                      //検索バー
+                      Container(
+                        height: height * 0.1,
+                        child: _searchBar(_searchController),
+                      ),
+                      //検索結果
+                      Container(
+                        height: height * 0.7,
+                        child: _searchResults(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -115,10 +121,12 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   //検索バー
-  Widget _searchBar() {
+  Widget _searchBar(TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
+        controller: controller,
+        cursorColor: Theme.of(context).primaryColor,
         autofocus: true,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -138,6 +146,9 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           hintText: '検索',
         ),
+        onChanged: (text) {
+          //todo:dataのキーと比較
+        },
       ),
     );
   }

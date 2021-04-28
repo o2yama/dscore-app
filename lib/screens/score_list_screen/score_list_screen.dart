@@ -123,7 +123,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ),
           Expanded(child: Container()),
           IconButton(
-              icon: Icon(Icons.add, color: Colors.grey),
+              icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
                 //todo:ScoreEditPageへ（値を何も渡さないで）
                 if (widget.event == '跳馬') {

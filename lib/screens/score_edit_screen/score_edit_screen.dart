@@ -39,11 +39,11 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Consumer<ScoreEditModel>(
-          builder: (context, model, child) {
-            final height = MediaQuery.of(context).size.height - 50;
-            return SingleChildScrollView(
+      body: Consumer<ScoreEditModel>(
+        builder: (context, model, child) {
+          final height = MediaQuery.of(context).size.height - 50;
+          return SingleChildScrollView(
+            child: SafeArea(
               child: Container(
                 color: Theme.of(context).backgroundColor,
                 child: Column(
@@ -71,24 +71,15 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       child: ListView(
                         children: [
                           _techniqueDisplay(context, widget.order[0]),
-                          _techniqueDisplay(context, widget.order[1]),
-                          _techniqueDisplay(context, widget.order[2]),
-                          _techniqueDisplay(context, widget.order[3]),
-                          _techniqueDisplay(context, widget.order[4]),
-                          _techniqueDisplay(context, widget.order[5]),
-                          _techniqueDisplay(context, widget.order[6]),
-                          _techniqueDisplay(context, widget.order[7]),
-                          _techniqueDisplay(context, widget.order[8]),
-                          _techniqueLastDisplay(context),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -220,55 +211,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  //終末技の表示
-  Widget _techniqueLastDisplay(BuildContext context) {
-    return Card(
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              width: 20.0,
-              padding: EdgeInsets.only(left: 10.0),
-              child: Center(
-                child: Text(
-                  '終末技',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Container(
-              padding: EdgeInsets.only(bottom: 3.0),
-              child: ListTile(
-                title: Center(
-                  child: Text(
-                    '+',
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScoreEditScreen(widget.event)),
-                  );
-                },
-              ),
-            ),
-          )
         ],
       ),
     );

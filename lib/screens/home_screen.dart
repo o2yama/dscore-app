@@ -50,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Scaffold(
               body: SingleChildScrollView(
-                child: SafeArea(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
+                child: Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //広告
-  Widget ad(BuildContext context) {
+  ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -134,7 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //６種目のカード
   _eventCard(BuildContext context, String event, String eventEng) {
-    final introModel = Provider.of<IntroModel>(context, listen: false);
     final eventScreenModel =
         Provider.of<ScoreListModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
