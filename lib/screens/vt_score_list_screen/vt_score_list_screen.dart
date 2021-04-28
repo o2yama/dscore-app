@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../ad_state.dart';
-import '../home_screen.dart';
+import '../total_score_list_screen.dart';
 
 class VTScoreListScreen extends StatefulWidget {
   VTScoreListScreen(this.event);
@@ -37,7 +37,7 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ScoreListModel>(builder: (context, model, child) {
+      body: Consumer<ScoreModel>(builder: (context, model, child) {
         final height = MediaQuery.of(context).size.height - 50;
         return SafeArea(
           child: Container(
@@ -128,7 +128,7 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Consumer<ScoreListModel>(builder: (context, model, child) {
+          return Consumer<ScoreModel>(builder: (context, model, child) {
             return AlertDialog(
               title: Text('保存しました'),
               actions: [
@@ -136,7 +136,8 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => TotalScoreListScreen()),
                         (_) => false);
                   },
                   child: Text(

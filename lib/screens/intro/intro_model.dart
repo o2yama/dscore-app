@@ -15,6 +15,7 @@ class IntroModel extends ChangeNotifier {
   Future<void> finishIntro() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('intro', true);
+    isIntroWatched = prefs.getBool('intro') ?? false;
   }
 
   Future<void> checkIsIntroWatched() async {

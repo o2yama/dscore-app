@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +12,12 @@ import 'intro/intro_screen.dart';
 final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
 final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
 
-class HomeScreen extends StatefulWidget {
+class TotalScoreListScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _TotalScoreListScreenState createState() => _TotalScoreListScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   BannerAd? banner;
 
   @override
@@ -50,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Scaffold(
               body: SingleChildScrollView(
-                child: SafeArea(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
+                child: Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -95,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //広告
-  Widget ad(BuildContext context) {
+  ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -134,9 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //６種目のカード
   _eventCard(BuildContext context, String event, String eventEng) {
-    final introModel = Provider.of<IntroModel>(context, listen: false);
-    final eventScreenModel =
-        Provider.of<ScoreListModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return SizedBox(
@@ -147,7 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: InkWell(
           onTap: () async {
-            await eventScreenModel.getFXScores();
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ScoreListScreen(event)),
