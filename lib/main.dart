@@ -1,4 +1,5 @@
 import 'package:dscore_app/ad_state.dart';
+import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
@@ -20,6 +21,7 @@ List<SingleChildWidget> multiProviders = [
 
 List<SingleChildWidget> independentModels = [
   Provider<UserRepository>(create: (_) => UserRepository()),
+  Provider<ScoreRepository>(create: (_) => ScoreRepository()),
 ];
 
 List<SingleChildWidget> viewModels = [
@@ -27,15 +29,15 @@ List<SingleChildWidget> viewModels = [
     create: (context) => ThemeColorModel(),
   ),
   ChangeNotifierProvider<EventScreenModel>(
-    create: (context) => EventScreenModel(),
+    create: (context) => EventScreenModel(
+        scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
   ChangeNotifierProvider<CalculationScreenModel>(
     create: (context) => CalculationScreenModel(),
   ),
   ChangeNotifierProvider<IntroModel>(
     create: (context) => IntroModel(
-      userRepository: Provider.of<UserRepository>(context, listen: false),
-    ),
+        userRepository: Provider.of<UserRepository>(context, listen: false)),
   ),
 ];
 
