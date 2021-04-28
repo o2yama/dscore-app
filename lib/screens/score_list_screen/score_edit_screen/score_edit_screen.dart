@@ -1,17 +1,16 @@
 import 'dart:io';
-import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
-import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_edit_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
-import '../home_screen.dart';
-import 'score_edit_model.dart';
+import '../../../ad_state.dart';
+import '../../total_score_list_screen.dart';
 
 class ScoreEditScreen extends StatefulWidget {
   ScoreEditScreen(this.event);
   final String event;
-  final List<String> order = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  final List<int> order = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   @override
   _ScoreEditScreenState createState() => _ScoreEditScreenState();
@@ -39,7 +38,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ScoreEditModel>(
+      body: Consumer<ScoreModel>(
         builder: (context, model, child) {
           final height = MediaQuery.of(context).size.height - 50;
           return SingleChildScrollView(
@@ -68,10 +67,15 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                     //技名の表示
                     Container(
                       height: height * 0.7,
-                      child: ListView(
-                        children: [
-                          _techniqueDisplay(context, widget.order[0]),
-                        ],
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          await model.getFXScores();
+                        },
+                        child: ListView(
+                          children: [
+                            _techDisplay(context, widget.order[0]),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -169,7 +173,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
 //技名の表示
-  Widget _techniqueDisplay(BuildContext context, String order) {
+  Widget _techDisplay(BuildContext context, int order) {
     return Card(
       child: Row(
         children: [
@@ -179,7 +183,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               padding: EdgeInsets.only(left: 10.0),
               child: Center(
                 child: Text(
-                  order,
+                  '$order',
                   style: TextStyle(
                     fontSize: 28.0,
                   ),
@@ -205,7 +209,9 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SearchScreen(widget.event)),
+                      builder: (context) => SearchScreen(widget.event),
+                      fullscreenDialog: true,
+                    ),
                   );
                 },
               ),
@@ -221,7 +227,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Consumer<ScoreListModel>(builder: (context, model, child) {
+          return Consumer<ScoreModel>(builder: (context, model, child) {
             return AlertDialog(
               title: Text('保存しました'),
               actions: [
@@ -229,7 +235,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => TotalScoreListScreen()),
                         (_) => false);
                   },
                   child: Text(

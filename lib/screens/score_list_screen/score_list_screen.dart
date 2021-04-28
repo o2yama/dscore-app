@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_edit_screen/score_edit_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,41 +40,70 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ScoreListModel>(
+      body: Consumer<ScoreModel>(
         builder: (context, model, child) {
+          Future(() async {
+            if (widget.event == '床') {
+              if (model.fxScoreList == null) await model.getFXScores();
+            }
+            if (widget.event == 'あん馬') {
+              if (model.phScoreList == null) await model.getPHScores();
+            }
+          });
           final height = MediaQuery.of(context).size.height - 50;
           return SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    banner == null
-                        ? Container(height: 50)
-                        : Container(
-                            height: 50,
-                            child: AdWidget(ad: banner!),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        banner == null
+                            ? Container(height: 50)
+                            : Container(
+                                height: 50,
+                                child: AdWidget(ad: banner!),
+                              ),
+                        Container(
+                          height: height * 0.1,
+                          child: _backButton(context, widget.event),
+                        ),
+                        Container(
+                          height: height * 0.1,
+                          child: _eventDisplay(context),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              await model.getFXScores();
+                            },
+                            child: model.fxScoreList == null
+                                ? Container()
+                                : ListView(
+                                    children: model.fxScoreList!
+                                        .map((score) =>
+                                            _scoreTile(context, score))
+                                        .toList(),
+                                  ),
                           ),
-                    Container(
-                      height: height * 0.1,
-                      child: _backButton(context, widget.event),
+                        ),
+                      ],
                     ),
-                    Container(
-                      height: height * 0.1,
-                      child: _eventDisplay(context),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      child: ListView(
-                        children: model.fxScoreList
-                            .map((score) => _scoreTile(context, score))
-                            .toList(),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                model.isLoading
+                    ? Container(
+                        color: Colors.grey.withOpacity(0.6),
+                        child: Center(
+                            child: Platform.isIOS
+                                ? CupertinoActivityIndicator()
+                                : CircularProgressIndicator()),
+                      )
+                    : Container(),
+              ],
             ),
           );
         },
@@ -206,7 +235,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _favoriteButton(BuildContext context) {
-    return Consumer<ScoreListModel>(
+    return Consumer<ScoreModel>(
       builder: (context, model, child) {
         return IconButton(
             icon: Icon(
