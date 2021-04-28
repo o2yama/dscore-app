@@ -149,7 +149,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: InkWell(
           onTap: () async {
-            print(introModel.currentUser!.id);
             await eventScreenModel.getFXScores();
             Navigator.push(
               context,

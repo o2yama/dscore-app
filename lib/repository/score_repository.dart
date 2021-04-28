@@ -7,11 +7,21 @@ class ScoreRepository {
   CurrentUser? get currentUser => UserRepository.currentUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<List<Score>> getFxScores() async {
+  Future<List<Score>> getFXScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
+        .get();
+    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    return scoreList;
+  }
+
+  Future<List<Score>> getPHScores() async {
+    final scores = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('ph')
         .get();
     List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;

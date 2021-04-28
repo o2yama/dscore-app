@@ -10,7 +10,7 @@ class EventScreenModel extends ChangeNotifier {
   List<Score> fxScoreList = [];
 
   Future<void> getFXScores() async {
-    fxScoreList = await scoreRepository.getFxScores();
+    fxScoreList = await scoreRepository.getFXScores();
   }
 
   Future<bool> getIsFavorite() async {
