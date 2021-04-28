@@ -2,9 +2,9 @@ import 'package:dscore_app/ad_state.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/repository/user_repository.dart';
-import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
-import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/home_screen.dart';
+import 'package:dscore_app/screens/score_edit_screen/score_edit_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,12 +28,13 @@ List<SingleChildWidget> viewModels = [
   ChangeNotifierProvider<ThemeColorModel>(
     create: (context) => ThemeColorModel(),
   ),
-  ChangeNotifierProvider<EventScreenModel>(
-    create: (context) => EventScreenModel(
+  ChangeNotifierProvider<ScoreListModel>(
+    create: (context) => ScoreListModel(
         scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
-  ChangeNotifierProvider<CalculationScreenModel>(
-    create: (context) => CalculationScreenModel(),
+  ChangeNotifierProvider<ScoreEditModel>(
+    create: (context) => ScoreEditModel(
+        scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
   ChangeNotifierProvider<IntroModel>(
     create: (context) => IntroModel(

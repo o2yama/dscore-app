@@ -1,9 +1,9 @@
-import 'package:dscore_app/data/score.dart';
+import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:flutter/material.dart';
 
-class EventScreenModel extends ChangeNotifier {
-  EventScreenModel({required this.scoreRepository});
+class ScoreListModel extends ChangeNotifier {
+  ScoreListModel({required this.scoreRepository});
   final ScoreRepository scoreRepository;
   bool isFavorite = false;
   String dropDownValue = 'one';

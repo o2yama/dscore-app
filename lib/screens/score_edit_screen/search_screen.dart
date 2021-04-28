@@ -1,10 +1,8 @@
 import 'dart:io';
-
-import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
+import 'package:dscore_app/screens/score_edit_screen/score_edit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -38,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Consumer<CalculationScreenModel>(
+        child: Consumer<ScoreEditModel>(
           builder: (context, model, child) {
             final height = MediaQuery.of(context).size.height - 50;
             return SingleChildScrollView(
@@ -100,7 +98,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     Text(
-                      '$eventスコア計算',
+                      '戻る',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                       ),
@@ -125,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
           prefixIcon: Icon(Icons.search),
-          border: new OutlineInputBorder(
+          border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(15.0),
             ),

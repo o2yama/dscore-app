@@ -1,7 +1,7 @@
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../data/current_user.dart';
+import '../../domain/current_user.dart';
 
 class IntroModel extends ChangeNotifier {
   IntroModel({required this.userRepository});
