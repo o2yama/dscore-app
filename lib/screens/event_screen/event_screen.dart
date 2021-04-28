@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/data/score.dart';
+import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
 import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
 import 'package:dscore_app/screens/vt_screen/vt_screen.dart';

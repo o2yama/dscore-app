@@ -1,4 +1,4 @@
-import 'package:dscore_app/data/score.dart';
+import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:flutter/material.dart';
 

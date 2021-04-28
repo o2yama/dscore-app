@@ -1,10 +1,8 @@
 import 'dart:io';
-
-import 'package:dscore_app/screens/calculation_screen/calculation_screen_model.dart';
+import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -38,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Consumer<CalculationScreenModel>(
+        child: Consumer<SearchModel>(
           builder: (context, model, child) {
             final height = MediaQuery.of(context).size.height - 50;
             return SingleChildScrollView(
