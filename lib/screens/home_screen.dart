@@ -1,13 +1,11 @@
 import 'dart:io';
-
-import 'package:dscore_app/screens/event_screen/event_screen.dart';
-import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../ad_state.dart';
 import 'intro/intro_model.dart';
 import 'intro/intro_screen.dart';
@@ -138,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _eventCard(BuildContext context, String event, String eventEng) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
     final eventScreenModel =
-        Provider.of<EventScreenModel>(context, listen: false);
+        Provider.of<ScoreListModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return SizedBox(
@@ -152,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
             await eventScreenModel.getFXScores();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => EventScreen(event)),
+              MaterialPageRoute(builder: (context) => ScoreListScreen(event)),
             );
           },
           child: Row(

@@ -1,25 +1,24 @@
 import 'dart:io';
 import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/screens/calculation_screen/calculation_screen.dart';
-import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
-import 'package:dscore_app/screens/vt_screen/vt_screen.dart';
+import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
-class EventScreen extends StatefulWidget {
-  EventScreen(this.event);
+class ScoreListScreen extends StatefulWidget {
+  ScoreListScreen(this.event);
   final String event;
 
   @override
-  _EventScreenState createState() => _EventScreenState();
+  _ScoreListScreenState createState() => _ScoreListScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _ScoreListScreenState extends State<ScoreListScreen> {
   BannerAd? banner;
 
   @override
@@ -41,7 +40,7 @@ class _EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<EventScreenModel>(
+      body: Consumer<ScoreListModel>(
         builder: (context, model, child) {
           final height = MediaQuery.of(context).size.height - 50;
           return SafeArea(
@@ -151,13 +150,14 @@ class _EventScreenState extends State<EventScreen> {
         if (widget.event == '跳馬') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => VtScreen(widget.event)),
+            MaterialPageRoute(
+                builder: (context) => VTScoreListScreen(widget.event)),
           );
         } else {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => CalculationScreen(widget.event)),
+                builder: (context) => ScoreEditScreen(widget.event)),
           );
         }
       },
@@ -196,7 +196,7 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   Widget _favoriteButton(BuildContext context) {
-    return Consumer<EventScreenModel>(
+    return Consumer<ScoreListModel>(
       builder: (context, model, child) {
         return IconButton(
             icon: Icon(

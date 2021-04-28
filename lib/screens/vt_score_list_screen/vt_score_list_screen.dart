@@ -1,23 +1,21 @@
 import 'dart:io';
-
-import 'package:dscore_app/screens/event_screen/event_screen_model.dart';
+import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/vt_screen/vt_drop_down.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 import '../home_screen.dart';
 
-class VtScreen extends StatefulWidget {
-  VtScreen(this.event);
+class VTScoreListScreen extends StatefulWidget {
+  VTScoreListScreen(this.event);
   final String event;
 
   @override
-  _VtScreenState createState() => _VtScreenState();
+  _VTScoreListScreenState createState() => _VTScoreListScreenState();
 }
 
-class _VtScreenState extends State<VtScreen> {
+class _VTScoreListScreenState extends State<VTScoreListScreen> {
   BannerAd? banner;
 
   @override
@@ -39,7 +37,7 @@ class _VtScreenState extends State<VtScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<EventScreenModel>(builder: (context, model, child) {
+      body: Consumer<ScoreListModel>(builder: (context, model, child) {
         final height = MediaQuery.of(context).size.height - 50;
         return SafeArea(
           child: Container(
@@ -130,7 +128,7 @@ class _VtScreenState extends State<VtScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Consumer<EventScreenModel>(builder: (context, model, child) {
+          return Consumer<ScoreListModel>(builder: (context, model, child) {
             return AlertDialog(
               title: Text('保存しました'),
               actions: [

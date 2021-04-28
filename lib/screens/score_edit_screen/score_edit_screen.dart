@@ -1,25 +1,23 @@
 import 'dart:io';
-
+import 'package:dscore_app/screens/score_list_screen/score_list_model.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
-import '../event_screen/event_screen_model.dart';
 import '../home_screen.dart';
-import 'calculation_screen_model.dart';
+import 'score_edit_model.dart';
 
-class CalculationScreen extends StatefulWidget {
-  CalculationScreen(this.event);
+class ScoreEditScreen extends StatefulWidget {
+  ScoreEditScreen(this.event);
   final String event;
   final List<String> order = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   @override
-  _CalculationScreenState createState() => _CalculationScreenState();
+  _ScoreEditScreenState createState() => _ScoreEditScreenState();
 }
 
-class _CalculationScreenState extends State<CalculationScreen> {
+class _ScoreEditScreenState extends State<ScoreEditScreen> {
   BannerAd? banner;
 
   @override
@@ -42,7 +40,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Consumer<CalculationScreenModel>(
+        child: Consumer<ScoreEditModel>(
           builder: (context, model, child) {
             final height = MediaQuery.of(context).size.height - 50;
             return SingleChildScrollView(
@@ -263,7 +261,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CalculationScreen(widget.event)),
+                        builder: (context) => ScoreEditScreen(widget.event)),
                   );
                 },
               ),
@@ -279,7 +277,7 @@ class _CalculationScreenState extends State<CalculationScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Consumer<EventScreenModel>(builder: (context, model, child) {
+          return Consumer<ScoreListModel>(builder: (context, model, child) {
             return AlertDialog(
               title: Text('保存しました'),
               actions: [
