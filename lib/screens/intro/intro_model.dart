@@ -26,7 +26,6 @@ class IntroModel extends ChangeNotifier {
     isIntroWatched = prefs.getBool('intro') ?? false;
 
     if (isIntroWatched) await getUserData();
-    print(currentUser!.id);
 
     isLoading = false;
     notifyListeners();

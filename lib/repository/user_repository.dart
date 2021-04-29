@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
