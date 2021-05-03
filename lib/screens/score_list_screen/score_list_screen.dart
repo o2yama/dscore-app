@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:dscore_app/domain/score.dart';
+import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/screens/score_list_screen/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -80,14 +81,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                             onRefresh: () async {
                               await model.getFXScores();
                             },
-                            child: model.fxScoreList == null
-                                ? Container()
-                                : ListView(
-                                    children: model.fxScoreList!
-                                        .map((score) =>
-                                            _scoreTile(context, score))
-                                        .toList(),
-                                  ),
+                            child: _scoreList(context),
                           ),
                         ),
                       ],
@@ -139,8 +133,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _eventDisplay(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width - 50;
+    final height = MediaQuery.of(context).size.height - 50;
     return Container(
       height: height * 0.1,
       child: Row(
@@ -154,7 +148,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           IconButton(
               icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
-                //todo:ScoreEditPageへ（値を何も渡さないで）
                 if (widget.event == '跳馬') {
                   //todo: データの取得
                   Navigator.push(
@@ -177,28 +170,94 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Future<void> onEditButtonPressed() async {}
+  Widget _scoreList(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    if (widget.event == '床') {
+      Future(() async => scoreModel.fxScoreList == null
+          ? await scoreModel.getFXScores()
+          : false);
+      return scoreModel.fxScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.fxScoreList!
+                  .map((score) => _scoreTile(context, score))
+                  .toList(),
+            );
+    }
+    if (widget.event == 'あん馬') {
+      Future(() async => scoreModel.phScoreList == null
+          ? await scoreModel.getPHScores()
+          : false);
+      return scoreModel.phScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.phScoreList!
+                  .map((score) => _scoreTile(context, score))
+                  .toList(),
+            );
+    }
+    if (widget.event == '吊り輪') {
+      Future(() async => scoreModel.srScoreList == null
+          ? await scoreModel.getSRScores()
+          : false);
+      return scoreModel.srScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.srScoreList!
+                  .map((score) => _scoreTile(context, score))
+                  .toList(),
+            );
+    }
+    if (widget.event == '跳馬') {
+      Future(() async => scoreModel.srScoreList == null
+          ? await scoreModel.getSRScores()
+          : false);
+      return scoreModel.vtScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.vtScoreList!
+                  .map((score) => _vtScoreTile(context, score))
+                  .toList(),
+            );
+    }
+    if (widget.event == '平行棒') {
+      Future(() async => scoreModel.pbScoreList == null
+          ? await scoreModel.getPBScores()
+          : false);
+      return scoreModel.pbScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.pbScoreList!
+                  .map((score) => _scoreTile(context, score))
+                  .toList(),
+            );
+    }
+    if (widget.event == '鉄棒') {
+      Future(() async => scoreModel.hbScoreList == null
+          ? await scoreModel.getHBScores()
+          : false);
+      return scoreModel.hbScoreList == null
+          ? Container()
+          : ListView(
+              children: scoreModel.hbScoreList!
+                  .map((score) => _scoreTile(context, score))
+                  .toList(),
+            );
+    } else {
+      return Center(child: Text('データの取得に失敗しました。'));
+    }
+  }
 
   Widget _scoreTile(BuildContext context, Score score) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width - 50;
+    final height = MediaQuery.of(context).size.height - 50;
     return InkWell(
       onTap: () {
-        if (widget.event == '跳馬') {
-          //todo: データの取得
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => VTScoreListScreen(widget.event)),
-          );
-        } else {
-          //todo: データの取得
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ScoreEditScreen(widget.event)),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ScoreEditScreen(widget.event)),
+        );
       },
       child: Row(
         children: [
@@ -234,6 +293,50 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
+  Widget _vtScoreTile(BuildContext context, VTScore vtScore) {
+    final width = MediaQuery.of(context).size.width - 50;
+    final height = MediaQuery.of(context).size.height - 50;
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => VTScoreListScreen(widget.event)),
+        );
+      },
+      child: Row(
+        children: [
+          Expanded(child: _favoriteButton(context)),
+          Expanded(
+            flex: 8,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: width * 0.1),
+                    Text(
+                      '${vtScore.score}',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Expanded(child: Container()),
+                    Container(
+                        height: height * 0.07,
+                        width: width * 0.4,
+                        child: Text('${vtScore.techName}')),
+                    SizedBox(width: width * 0.1),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _favoriteButton(BuildContext context) {
     return Consumer<ScoreModel>(
       builder: (context, model, child) {
@@ -246,7 +349,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   : Colors.white,
             ),
             onPressed: () {
-              //TODO: お気に入りを入れ替える
               model.onFavoriteButtonTapped();
             });
       },
