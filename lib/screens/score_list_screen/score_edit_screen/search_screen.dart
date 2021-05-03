@@ -1,40 +1,17 @@
-import 'dart:io';
+import 'package:dscore_app/data/fx.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../../ad_state.dart';
+import '../score_model.dart';
 
-class SearchScreen extends StatefulWidget {
+final TextEditingController _searchController = TextEditingController();
+
+class SearchScreen extends StatelessWidget {
   SearchScreen(this.event);
   final String event;
 
   @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
-    final height = MediaQuery.of(context).size.height - 50;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -43,43 +20,33 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Container(
           color: Theme.of(context).backgroundColor,
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  //広告
-                  ad(context),
-                  //戻るボタン
-                  Container(
-                    height: height * 0.1,
-                    child: _backButton(context, widget.event),
-                  ),
-                  //検索バー
-                  Container(
-                    height: height * 0.1,
-                    child: _searchBar(_searchController),
-                  ),
-                  //検索結果
-                  Container(
-                    height: height * 0.7,
-                    child: _searchResults(),
-                  ),
-                ],
-              ),
-            ),
+            child: Consumer<ScoreModel>(builder: (context, model, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    //戻るボタン
+                    Container(
+                      height: height * 0.1,
+                      child: _backButton(context, event),
+                    ),
+                    //検索バー
+                    Container(
+                      height: height * 0.1,
+                      child: _searchBar(context),
+                    ),
+                    //検索結果
+                    Container(
+                      height: height * 0.8,
+                      child: _searchResults(context),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ),
         ),
       ),
     );
-  }
-
-  //広告
-  Widget ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   //戻るボタン
@@ -101,11 +68,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   //検索バー
-  Widget _searchBar(TextEditingController controller) {
+  Widget _searchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
-        controller: controller,
+        controller: _searchController,
         cursorColor: Theme.of(context).primaryColor,
         autofocus: true,
         decoration: InputDecoration(
@@ -128,53 +95,59 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         onChanged: (text) {
           //todo:dataのキーと比較
+          searchBarChanged(context, text);
         },
       ),
     );
   }
 
+  //todo:技名を返す
+  void searchBarChanged(BuildContext context, String text) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    if (event == '床') {
+      //todo:床の技を表示
+      scoreModel.searchFXTechs(text);
+    }
+  }
+
   //検索結果
-  Widget _searchResults() {
+  Widget _searchResults(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return ListView(
-      children: [
-        SizedBox(
-          height: 80.0,
-          child: Card(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Center(
-                      child: Icon(Icons.accessibility),
-                    ),
+      children: scoreModel.searchResult
+          .map((result) => resultTile(context, result))
+          .toList(),
+    );
+  }
+
+  Widget resultTile(BuildContext context, String techName) {
+    return SizedBox(
+      height: 80.0,
+      child: Card(
+        child: Row(
+          children: [
+            Expanded(child: Container()),
+            Expanded(
+              flex: 8,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 3.0),
+                child: ListTile(
+                  title: Text(
+                    '$techName',
+                    style: TextStyle(fontSize: 16.0),
                   ),
+                  trailing: Text('${fxD[techName]}'),
+                  onTap: () {
+                    //todo:modelのdecidedTechListに追加
+                    _searchController.clear();
+                    Navigator.pop(context);
+                  },
                 ),
-                Expanded(
-                  flex: 8,
-                  child: Container(
-                    padding: EdgeInsets.only(bottom: 3.0),
-                    child: ListTile(
-                      title: Center(
-                        child: Text(
-                          'コールマン',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                          ),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

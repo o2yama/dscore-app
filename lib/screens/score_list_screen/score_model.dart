@@ -1,3 +1,4 @@
+import 'package:dscore_app/data/fx.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 
 class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
+
   final ScoreRepository scoreRepository;
   bool isFavorite = false;
   List<Score>? fxScoreList;
@@ -85,6 +87,37 @@ class ScoreModel extends ChangeNotifier {
       isFavorite = false;
     } else {
       isFavorite = true;
+    }
+    notifyListeners();
+  }
+
+  ///ScoreEditScreen関連
+  List<String> decidedTechList = [];
+
+  ///SearchScreen関連
+  List<String> searchResult = [];
+
+  //床の技検索
+  void searchFXTechs(String text) {
+    if (text.isEmpty) {
+      searchResult.clear();
+      return;
+    }
+    //検索
+    final List<String> cItems =
+        fxC.keys.where((techName) => techName.contains(text)).toList();
+    final List<String> dItems =
+        fxD.keys.where((techName) => techName.contains(text)).toList();
+    final List<String> eItems =
+        fxE.keys.where((techName) => techName.contains(text)).toList();
+    for (int i = 0; i < cItems.length; i++) {
+      searchResult.add(cItems[i]);
+    }
+    for (int i = 0; i < dItems.length; i++) {
+      searchResult.add(dItems[i]);
+    }
+    for (int i = 0; i < eItems.length; i++) {
+      searchResult.add(eItems[i]);
     }
     notifyListeners();
   }
