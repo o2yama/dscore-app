@@ -101,23 +101,20 @@ class ScoreModel extends ChangeNotifier {
   void searchFXTechs(String text) {
     if (text.isEmpty) {
       searchResult.clear();
-      return;
     }
+    notifyListeners();
     //検索
-    final List<String> cItems =
-        fxC.keys.where((techName) => techName.contains(text)).toList();
-    final List<String> dItems =
-        fxD.keys.where((techName) => techName.contains(text)).toList();
-    final List<String> eItems =
-        fxE.keys.where((techName) => techName.contains(text)).toList();
-    for (int i = 0; i < cItems.length; i++) {
-      searchResult.add(cItems[i]);
+    final List<String> items =
+        fxGroup.keys.where((techName) => techName.contains(text)).toList();
+    for (int i = 0; i < items.length; i++) {
+      searchResult.add(items[i]);
     }
-    for (int i = 0; i < dItems.length; i++) {
-      searchResult.add(dItems[i]);
-    }
-    for (int i = 0; i < eItems.length; i++) {
-      searchResult.add(eItems[i]);
+    notifyListeners();
+  }
+
+  void search(BuildContext context, String text, String event) {
+    if (event == '床') {
+      searchFXTechs(text);
     }
     notifyListeners();
   }

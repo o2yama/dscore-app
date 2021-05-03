@@ -36,7 +36,7 @@ class SearchScreen extends StatelessWidget {
                     ),
                     //検索結果
                     Container(
-                      height: height * 0.8,
+                      height: height * 0.75,
                       child: _searchResults(context),
                     ),
                   ],
@@ -69,6 +69,7 @@ class SearchScreen extends StatelessWidget {
 
   //検索バー
   Widget _searchBar(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
@@ -94,30 +95,22 @@ class SearchScreen extends StatelessWidget {
           hintText: '検索',
         ),
         onChanged: (text) {
-          //todo:dataのキーと比較
-          searchBarChanged(context, text);
+          scoreModel.search(context, text, event);
         },
       ),
     );
   }
 
-  //todo:技名を返す
-  void searchBarChanged(BuildContext context, String text) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    if (event == '床') {
-      //todo:床の技を表示
-      scoreModel.searchFXTechs(text);
-    }
-  }
-
   //検索結果
   Widget _searchResults(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return ListView(
-      children: scoreModel.searchResult
-          .map((result) => resultTile(context, result))
-          .toList(),
-    );
+    return Consumer<ScoreModel>(builder: (context, model, child) {
+      return ListView(
+        children: scoreModel.searchResult
+            .map((result) => resultTile(context, result))
+            .toList(),
+      );
+    });
   }
 
   Widget resultTile(BuildContext context, String techName) {
@@ -132,14 +125,13 @@ class SearchScreen extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.only(bottom: 3.0),
                 child: ListTile(
+                  leading: Text('${fxDifficulty[techName]}'),
                   title: Text(
                     '$techName',
                     style: TextStyle(fontSize: 16.0),
                   ),
-                  trailing: Text('${fxD[techName]}'),
+                  trailing: Text('${fxGroup[techName]}'),
                   onTap: () {
-                    //todo:modelのdecidedTechListに追加
-                    _searchController.clear();
                     Navigator.pop(context);
                   },
                 ),
