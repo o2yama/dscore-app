@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/score_list_screen/score_edit_screen/search_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../../ad_state.dart';
-import '../../total_score_list_screen.dart';
 
 class ScoreEditScreen extends StatefulWidget {
   ScoreEditScreen(this.event);
@@ -57,7 +57,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                     //Dスコアの表示
                     Container(
                       height: height * 0.1,
-                      child: _dScore(),
+                      child: _totalScore(),
                     ),
                     //スコアの詳細
                     Container(
@@ -71,11 +71,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                         onRefresh: () async {
                           await model.getFXScores();
                         },
-                        child: ListView(
-                          children: [
-                            _techDisplay(context, widget.order[0]),
-                          ],
-                        ),
+                        child: _techListView(context),
                       ),
                     ),
                   ],
@@ -99,7 +95,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   //戻るボタン
-  _backButton(BuildContext context, String event) {
+  Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -135,7 +131,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
           ),
           onPressed: () {
             //試合などの名前をつける入力フォーム
-            _dScoreName(context);
+            onStoreButtonPressed(context);
           },
         ),
       ],
@@ -143,7 +139,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   //Dスコアの表示
-  Widget _dScore() {
+  Widget _totalScore() {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
       padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
       child: Row(
@@ -153,7 +150,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             padding: EdgeInsets.only(right: 15.0),
             child: FittedBox(
               child: Text(
-                '5.4',
+                '${scoreModel.totalScore}',
                 style: TextStyle(fontSize: 40.0),
               ),
             ),
@@ -163,100 +160,32 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     );
   }
 
-  //スコアの詳細
-  _detailsScore() {
-    if (widget.event == '床' || widget.event == '鉄棒') {
-      return _combination();
-    } else {
-      return _noCombination();
-    }
-  }
-
-//技名の表示
-  Widget _techDisplay(BuildContext context, int order) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Card(
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Center(
-                child: Text(
-                  '$order',
-                  style: TextStyle(
-                    fontSize: 28.0,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 8,
-            child: Container(
-              padding: EdgeInsets.only(bottom: 3.0),
-              child: ListTile(
-                title: Center(
-                  child: Text(
-                    '+',
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  scoreModel.selectEvent(widget.event);
-                  scoreModel.searchResult.clear();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchScreen(widget.event),
-                      fullscreenDialog: true,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  //試合などの名前をつける入力フォーム
-  Future<void> _dScoreName(context) {
+  //保存ボタン押された時の処理
+  Future<void> onStoreButtonPressed(context) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Consumer<ScoreModel>(builder: (context, model, child) {
-            return AlertDialog(
-              title: Text('保存しました'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TotalScoreListScreen()),
-                        (_) => false);
-                  },
-                  child: Text(
-                    '0K',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+          return AlertDialog(
+            title: Text('保存しました'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  '0K',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
-              ],
-            );
-          });
+              ),
+            ],
+          );
         });
   }
 
-  //組み合わせあり
-  Widget _combination() {
+  //スコアの詳細
+  Widget _detailsScore() {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
         Row(
@@ -277,14 +206,16 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  '組み合わせ',
-                  style: TextStyle(fontSize: 18.0),
-                ),
-              ),
-            ),
+            widget.event == '床' || widget.event == '鉄棒'
+                ? Expanded(
+                    child: Center(
+                      child: Text(
+                        '組み合わせ',
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ),
+                  )
+                : Container(),
           ],
         ),
         SizedBox(
@@ -295,7 +226,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             Expanded(
               child: Center(
                 child: Text(
-                  '３.1',
+                  '${scoreModel.difficultyPoint}',
                   style: TextStyle(fontSize: 15.0),
                 ),
               ),
@@ -303,70 +234,107 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             Expanded(
               child: Center(
                 child: Text(
-                  '2.0',
+                  '${scoreModel.egr}',
                   style: TextStyle(fontSize: 15.0),
                 ),
               ),
             ),
-            Expanded(
-                child: Center(
-              child: Text(
-                '0.3',
-                style: TextStyle(fontSize: 15.0),
-              ),
-            )),
+            widget.event == '床' || widget.event == '鉄棒'
+                ? Expanded(
+                    child: Center(
+                      child: Text(
+                        '${scoreModel.cv}',
+                        style: TextStyle(fontSize: 15.0),
+                      ),
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ],
     );
   }
 
-// 組み合わせなし
-  Widget _noCombination() {
+  Widget _techListView(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return ListView(
+      children: scoreModel.decidedTechList
+          .map((tech) => _techTile(
+              context, tech, scoreModel.decidedTechList.indexOf(tech) + 1))
+          .toList(),
+    );
+  }
+
+//技名の表示
+  Widget _techTile(BuildContext context, String techName, int order) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  '難度点',
-                  style: TextStyle(fontSize: 18.0),
-                ),
+        Card(
+          child: ListTile(
+            title: Text('$techName', style: TextStyle(fontSize: 14.0)),
+            trailing: Container(
+              width: 110,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: Text('難度', style: TextStyle(fontSize: 10)),
+                      ),
+                      Expanded(
+                        child: Text(
+                            '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 24),
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: Text('グループ', style: TextStyle(fontSize: 10)),
+                      ),
+                      Expanded(
+                        child:
+                            Text('${groupDisplay[scoreModel.group[techName]]}'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            Expanded(
-              child: Center(
-                  child: Text(
-                '要求点',
-                style: TextStyle(fontSize: 18.0),
-              )),
-            ),
-          ],
+            onTap: () {
+              //todo:技の変更処理
+              searchController.clear();
+              scoreModel.searchResult.clear();
+              scoreModel.selectEvent(widget.event);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SearchScreen(widget.event)));
+            },
+          ),
         ),
-        SizedBox(
-          height: 10.0,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  '３.1',
-                  style: TextStyle(fontSize: 15.0),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  '2.0',
-                  style: TextStyle(fontSize: 15.0),
-                ),
-              ),
-            ),
-          ],
-        ),
+        scoreModel.decidedTechList.length == 0 ||
+                scoreModel.decidedTechList.length == order &&
+                    scoreModel.decidedTechList.length < 10
+            ? IconButton(
+                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                onPressed: () {
+                  searchController.clear();
+                  scoreModel.searchResult.clear();
+                  scoreModel.selectEvent(widget.event);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchScreen(widget.event)));
+                },
+              )
+            : Container(),
       ],
     );
   }

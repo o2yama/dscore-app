@@ -93,13 +93,23 @@ class ScoreModel extends ChangeNotifier {
   }
 
   ///ScoreEditScreen関連
-  List<String> decidedTechList = [];
+  List<String> decidedTechList = [
+    "前方屈伸ダブルハーフ",
+    "前方伸身三回ひねり",
+    "後方ダブルハーフ",
+    "アルバリーニョ"
+  ];
+  num totalScore = 0.0;
+  num difficultyPoint = 0.0;
+  num egr = 0.0;
+  num cv = 0.0;
 
   ///SearchScreen関連
   List<String> searchResult = [];
   Map difficulty = {};
   Map group = {};
 
+  //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
     if (event == '床') {
       difficulty = fxDifficulty;

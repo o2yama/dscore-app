@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../score_model.dart';
 
-final TextEditingController _searchController = TextEditingController();
+final TextEditingController searchController = TextEditingController();
 
 class SearchScreen extends StatelessWidget {
   SearchScreen(this.event);
@@ -74,7 +74,7 @@ class SearchScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
-        controller: _searchController,
+        controller: searchController,
         cursorColor: Theme.of(context).primaryColor,
         autofocus: true,
         decoration: InputDecoration(
