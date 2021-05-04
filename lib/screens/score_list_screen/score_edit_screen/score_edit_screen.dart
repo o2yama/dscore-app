@@ -174,6 +174,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
 
 //技名の表示
   Widget _techDisplay(BuildContext context, int order) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Card(
       child: Row(
         children: [
@@ -206,6 +207,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   ),
                 ),
                 onTap: () {
+                  scoreModel.selectEvent(widget.event);
+                  scoreModel.searchResult.clear();
                   Navigator.push(
                     context,
                     MaterialPageRoute(

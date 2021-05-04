@@ -1,4 +1,5 @@
 import 'package:dscore_app/data/fx.dart';
+import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
@@ -96,18 +97,50 @@ class ScoreModel extends ChangeNotifier {
 
   ///SearchScreen関連
   List<String> searchResult = [];
+  Map difficulty = {};
+  Map group = {};
+
+  void selectEvent(String event) {
+    if (event == '床') {
+      difficulty = fxDifficulty;
+      group = fxGroup;
+    }
+    if (event == '鉄棒') {
+      difficulty = hbDifficulty;
+      group = hbGroup;
+    }
+    notifyListeners();
+  }
 
   //床の技検索
   void searchFXTechs(String text) {
     if (text.isEmpty) {
-      searchResult.clear();
+      searchResult = [];
+    } else {
+      searchResult.clear(); //addしているため毎回クリアする必要がある
+      //検索
+      final List<String> items = fxGroup.keys
+          .where((techName) => techName.toLowerCase().contains(text))
+          .toList();
+      items.forEach((element) {
+        searchResult.add(element);
+      });
     }
     notifyListeners();
-    //検索
-    final List<String> items =
-        fxGroup.keys.where((techName) => techName.contains(text)).toList();
-    for (int i = 0; i < items.length; i++) {
-      searchResult.add(items[i]);
+  }
+
+  void searchHBTechs(String text) {
+    if (text.isEmpty) {
+      searchResult = [];
+    } else {
+      searchResult.clear(); //addしているため毎回クリアする必要がある
+      //検索
+      final List<String> items = hbGroup.keys
+          .where((techName) => techName.toLowerCase().contains(text))
+          .toList();
+      items.forEach((element) {
+        searchResult.add(element);
+      });
     }
     notifyListeners();
   }
@@ -116,6 +149,11 @@ class ScoreModel extends ChangeNotifier {
     if (event == '床') {
       searchFXTechs(text);
     }
+    if (event == '鉄棒') {
+      searchHBTechs(text);
+    }
     notifyListeners();
   }
+
+  Future<void> onTechSelected() async {}
 }

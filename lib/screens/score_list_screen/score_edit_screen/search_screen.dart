@@ -1,4 +1,5 @@
-import 'package:dscore_app/data/fx.dart';
+import 'package:dscore_app/data/score_datas.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../score_model.dart';
@@ -114,31 +115,49 @@ class SearchScreen extends StatelessWidget {
   }
 
   Widget resultTile(BuildContext context, String techName) {
-    return SizedBox(
-      height: 80.0,
-      child: Card(
-        child: Row(
-          children: [
-            Expanded(child: Container()),
-            Expanded(
-              flex: 8,
-              child: Container(
-                padding: EdgeInsets.only(bottom: 3.0),
-                child: ListTile(
-                  leading: Text('${fxDifficulty[techName]}'),
-                  title: Text(
-                    '$techName',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  trailing: Text('${fxGroup[techName]}'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
-          ],
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return Card(
+      child: ListTile(
+        title: Text(
+          '$techName',
+          style: TextStyle(fontSize: 14.0),
         ),
+        trailing: Container(
+          width: 110,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: 8),
+                  Expanded(
+                    child: Text('難度', style: TextStyle(fontSize: 10)),
+                  ),
+                  Expanded(
+                    child: Text(
+                        '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                  ),
+                ],
+              ),
+              SizedBox(width: 24),
+              Column(
+                children: [
+                  SizedBox(height: 8),
+                  Expanded(
+                    child: Text('グループ', style: TextStyle(fontSize: 10)),
+                  ),
+                  Expanded(
+                    child: Text('${groupDisplay[scoreModel.group[techName]]}'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }
