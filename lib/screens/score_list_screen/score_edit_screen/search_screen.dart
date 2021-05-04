@@ -96,7 +96,7 @@ class SearchScreen extends StatelessWidget {
           hintText: '検索',
         ),
         onChanged: (text) {
-          scoreModel.search(context, text, event);
+          scoreModel.search(text, event);
         },
       ),
     );

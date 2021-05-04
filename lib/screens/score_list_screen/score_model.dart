@@ -1,5 +1,8 @@
 import 'package:dscore_app/data/fx.dart';
 import 'package:dscore_app/data/hb.dart';
+import 'package:dscore_app/data/pb.dart';
+import 'package:dscore_app/data/ph.dart';
+import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
@@ -9,7 +12,7 @@ class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
 
   final ScoreRepository scoreRepository;
-  bool isFavorite = false;
+  // bool isFavorite = false;
   List<Score>? fxScoreList;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
@@ -83,11 +86,9 @@ class ScoreModel extends ChangeNotifier {
     return false;
   }
 
-  void onFavoriteButtonTapped() {
+  void onFavoriteButtonTapped(bool isFavorite) {
     if (isFavorite) {
       isFavorite = false;
-    } else {
-      isFavorite = true;
     }
     notifyListeners();
   }
@@ -115,6 +116,18 @@ class ScoreModel extends ChangeNotifier {
       difficulty = fxDifficulty;
       group = fxGroup;
     }
+    if (event == 'あん馬') {
+      difficulty = phDifficulty;
+      group = phGroup;
+    }
+    if (event == '吊り輪') {
+      difficulty = srDifficulty;
+      group = srGroup;
+    }
+    if (event == '平行棒') {
+      difficulty = pbDifficulty;
+      group = pbGroup;
+    }
     if (event == '鉄棒') {
       difficulty = hbDifficulty;
       group = hbGroup;
@@ -123,44 +136,52 @@ class ScoreModel extends ChangeNotifier {
   }
 
   //床の技検索
-  void searchFXTechs(String text) {
+  void search(String text, String event) {
     if (text.isEmpty) {
       searchResult = [];
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
       //検索
-      final List<String> items = fxGroup.keys
-          .where((techName) => techName.toLowerCase().contains(text))
-          .toList();
-      items.forEach((element) {
-        searchResult.add(element);
-      });
-    }
-    notifyListeners();
-  }
-
-  void searchHBTechs(String text) {
-    if (text.isEmpty) {
-      searchResult = [];
-    } else {
-      searchResult.clear(); //addしているため毎回クリアする必要がある
-      //検索
-      final List<String> items = hbGroup.keys
-          .where((techName) => techName.toLowerCase().contains(text))
-          .toList();
-      items.forEach((element) {
-        searchResult.add(element);
-      });
-    }
-    notifyListeners();
-  }
-
-  void search(BuildContext context, String text, String event) {
-    if (event == '床') {
-      searchFXTechs(text);
-    }
-    if (event == '鉄棒') {
-      searchHBTechs(text);
+      if (event == '床') {
+        final List<String> items = fxGroup.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
+      if (event == 'あん馬') {
+        final List<String> items = phGroup.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
+      if (event == '吊り輪') {
+        final List<String> items = srGroup.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
+      if (event == '平行棒') {
+        final List<String> items = pbGroup.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
+      if (event == '鉄棒') {
+        final List<String> items = hbGroup.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
     }
     notifyListeners();
   }

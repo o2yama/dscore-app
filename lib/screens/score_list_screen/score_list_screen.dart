@@ -267,7 +267,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context)),
+          Expanded(child: _favoriteButton(context, score.isFavorite)),
           Expanded(
             flex: 8,
             child: Card(
@@ -312,7 +312,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context)),
+          Expanded(child: _favoriteButton(context, vtScore.isFavorite)),
           Expanded(
             flex: 8,
             child: Card(
@@ -343,19 +343,17 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _favoriteButton(BuildContext context) {
+  Widget _favoriteButton(BuildContext context, bool isFavorite) {
     return Consumer<ScoreModel>(
       builder: (context, model, child) {
         return IconButton(
             icon: Icon(
               Icons.star,
               size: 30,
-              color: model.isFavorite
-                  ? Theme.of(context).primaryColor
-                  : Colors.white,
+              color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
             ),
             onPressed: () {
-              model.onFavoriteButtonTapped();
+              model.onFavoriteButtonTapped(isFavorite);
             });
       },
     );
