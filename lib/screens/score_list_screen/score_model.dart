@@ -1,4 +1,5 @@
 import 'package:dscore_app/data/fx.dart';
+import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
@@ -92,22 +93,64 @@ class ScoreModel extends ChangeNotifier {
   }
 
   ///ScoreEditScreen関連
-  List<String> decidedTechList = [];
+  List<String> decidedTechList = [
+    "前方屈伸ダブルハーフ",
+    "前方伸身三回ひねり",
+    "後方ダブルハーフ",
+    "アルバリーニョ"
+  ];
+  num totalScore = 0.0;
+  num difficultyPoint = 0.0;
+  num egr = 0.0;
+  num cv = 0.0;
 
   ///SearchScreen関連
   List<String> searchResult = [];
+  Map difficulty = {};
+  Map group = {};
+
+  //どの種目かの判断を各ページで行う
+  void selectEvent(String event) {
+    if (event == '床') {
+      difficulty = fxDifficulty;
+      group = fxGroup;
+    }
+    if (event == '鉄棒') {
+      difficulty = hbDifficulty;
+      group = hbGroup;
+    }
+    notifyListeners();
+  }
 
   //床の技検索
   void searchFXTechs(String text) {
     if (text.isEmpty) {
-      searchResult.clear();
+      searchResult = [];
+    } else {
+      searchResult.clear(); //addしているため毎回クリアする必要がある
+      //検索
+      final List<String> items = fxGroup.keys
+          .where((techName) => techName.toLowerCase().contains(text))
+          .toList();
+      items.forEach((element) {
+        searchResult.add(element);
+      });
     }
     notifyListeners();
-    //検索
-    final List<String> items =
-        fxGroup.keys.where((techName) => techName.contains(text)).toList();
-    for (int i = 0; i < items.length; i++) {
-      searchResult.add(items[i]);
+  }
+
+  void searchHBTechs(String text) {
+    if (text.isEmpty) {
+      searchResult = [];
+    } else {
+      searchResult.clear(); //addしているため毎回クリアする必要がある
+      //検索
+      final List<String> items = hbGroup.keys
+          .where((techName) => techName.toLowerCase().contains(text))
+          .toList();
+      items.forEach((element) {
+        searchResult.add(element);
+      });
     }
     notifyListeners();
   }
@@ -116,6 +159,11 @@ class ScoreModel extends ChangeNotifier {
     if (event == '床') {
       searchFXTechs(text);
     }
+    if (event == '鉄棒') {
+      searchHBTechs(text);
+    }
     notifyListeners();
   }
+
+  Future<void> onTechSelected() async {}
 }
