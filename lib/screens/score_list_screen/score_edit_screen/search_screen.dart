@@ -1,4 +1,5 @@
 import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/data/vt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,7 @@ class SearchScreen extends StatelessWidget {
                     //検索結果
                     Container(
                       height: height * 0.75,
-                      child: _searchResults(context),
+                      child: _searchResults(context, event),
                     ),
                   ],
                 ),
@@ -103,14 +104,20 @@ class SearchScreen extends StatelessWidget {
   }
 
   //検索結果
-  Widget _searchResults(BuildContext context) {
+  Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
-      return ListView(
-        children: scoreModel.searchResult
-            .map((result) => resultTile(context, result))
-            .toList(),
-      );
+      return event == '跳馬'
+          ? ListView(
+              children: scoreModel.searchResult
+                  .map((vtScore) => vtResultTile(context, vtScore))
+                  .toList(),
+            )
+          : ListView(
+              children: scoreModel.searchResult
+                  .map((score) => resultTile(context, score))
+                  .toList(),
+            );
     });
   }
 
@@ -149,6 +156,41 @@ class SearchScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text('${groupDisplay[scoreModel.group[techName]]}'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+
+  Widget vtResultTile(BuildContext context, String vtScore) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return Card(
+      child: ListTile(
+        title: Text(
+          '$vtScore',
+          style: TextStyle(fontSize: 14.0),
+        ),
+        trailing: Container(
+          width: 110,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: 8),
+                  Expanded(
+                    child: Text('難度', style: TextStyle(fontSize: 10)),
+                  ),
+                  Expanded(
+                    child: Text('${vtTech[vtScore]}'),
                   ),
                 ],
               ),

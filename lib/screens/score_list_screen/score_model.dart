@@ -3,6 +3,7 @@ import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
+import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
@@ -13,11 +14,10 @@ class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
 
   final ScoreRepository scoreRepository;
-  // bool isFavorite = false;
   List<ScoreWithCV>? fxScoreList;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
-  List<VTScore>? vtScoreList;
+  VTScore? vtScore;
   List<Score>? pbScoreList;
   List<ScoreWithCV>? hbScoreList;
 
@@ -57,7 +57,7 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    vtScoreList = await scoreRepository.getVTScores();
+    vtScore = await scoreRepository.getVTScore();
 
     isLoading = false;
     notifyListeners();
@@ -96,6 +96,8 @@ class ScoreModel extends ChangeNotifier {
 
   ///ScoreEditScreen関連
   List<String> decidedTechList = [
+    //todo:updateの場合ここにtechs入れる
+    //todo:addの場合ここにtechを追加していく
     // "前方屈伸ダブルハーフ",
     // "前方伸身三回ひねり",
     // "後方ダブルハーフ",
@@ -110,6 +112,7 @@ class ScoreModel extends ChangeNotifier {
   List<String> searchResult = [];
   Map difficulty = {};
   Map group = {};
+  String vtTechName = '';
 
   //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
@@ -124,6 +127,9 @@ class ScoreModel extends ChangeNotifier {
     if (event == '吊り輪') {
       difficulty = srDifficulty;
       group = srGroup;
+    }
+    if (event == '跳馬') {
+      difficulty = vtTech;
     }
     if (event == '平行棒') {
       difficulty = pbDifficulty;
@@ -167,6 +173,14 @@ class ScoreModel extends ChangeNotifier {
           searchResult.add(element);
         });
       }
+      if (event == '跳馬') {
+        final List<String> items = vtTech.keys
+            .where((techName) => techName.toLowerCase().contains(text))
+            .toList();
+        items.forEach((element) {
+          searchResult.add(element);
+        });
+      }
       if (event == '平行棒') {
         final List<String> items = pbGroup.keys
             .where((techName) => techName.toLowerCase().contains(text))
@@ -188,4 +202,16 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> onTechSelected() async {}
+
+  void onVTTechSelected(int index) {
+    final List<String> vtTechList =
+        vtTech.keys.map((tech) => tech.toString()).toList();
+    vtTechName = vtTechList[index];
+    totalScore = vtTech[vtTechList[index]]!;
+    notifyListeners();
+  }
+
+  Future<void> setVTScore() async {
+    await scoreRepository.setVTScore(vtTechName, totalScore);
+  }
 }

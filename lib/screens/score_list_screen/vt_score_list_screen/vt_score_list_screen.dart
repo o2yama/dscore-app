@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_drop_down.dart';
+import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_tech_list_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../../ad_state.dart';
-import '../../total_score_list_screen.dart';
 
-class VTScoreListScreen extends StatefulWidget {
-  VTScoreListScreen(this.event);
+class VTScoreSelectScreen extends StatefulWidget {
+  VTScoreSelectScreen(this.event);
   final String event;
 
   @override
-  _VTScoreListScreenState createState() => _VTScoreListScreenState();
+  _VTScoreSelectScreenState createState() => _VTScoreSelectScreenState();
 }
 
-class _VTScoreListScreenState extends State<VTScoreListScreen> {
+class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   BannerAd? banner;
 
   @override
@@ -39,27 +39,43 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
     return Scaffold(
       body: Consumer<ScoreModel>(builder: (context, model, child) {
         final height = MediaQuery.of(context).size.height - 50;
-        return SafeArea(
-          child: Container(
-            color: Theme.of(context).backgroundColor,
+        return Container(
+          color: Theme.of(context).backgroundColor,
+          child: SafeArea(
             child: Column(
               children: [
-                //広告
                 ad(context),
-                //戻るボタン
-                Container(
-                  height: height * 0.1,
-                  child: _backButton(context, widget.event),
-                ),
-                //Dスコアの表示
-                Container(
-                  height: height * 0.2,
-                  child: _dScore(),
-                ),
-                // 跳馬の技名検索
-                Container(
-                  height: height * 0.2,
-                  child: _vtSearch(),
+                Stack(
+                  children: [
+                    Container(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: height * 0.1,
+                            child: _backButton(context, widget.event),
+                          ),
+                          Container(
+                            height: height * 0.2,
+                            child: _dScoreDisplay(),
+                          ),
+                          Container(
+                            height: height * 0.5,
+                            child: VTTechListView(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    model.isLoading
+                        ? Container(
+                            color: Colors.grey.withOpacity(0.6),
+                            child: Center(
+                              child: Platform.isIOS
+                                  ? CupertinoActivityIndicator()
+                                  : CircularProgressIndicator(),
+                            ),
+                          )
+                        : Container(),
+                  ],
                 ),
               ],
             ),
@@ -80,7 +96,7 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
   }
 
   //戻るボタン
-  _backButton(BuildContext context, String event) {
+  Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -96,7 +112,7 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     Text(
-                      '$eventスコア一覧',
+                      'スコア一覧',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                       ),
@@ -115,77 +131,73 @@ class _VTScoreListScreenState extends State<VTScoreListScreen> {
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
           onPressed: () {
-            //試合などの名前をつける入力フォーム
-            _dScoreName(context);
+            onStoreButtonPressed(context);
           },
         ),
       ],
     );
   }
 
-  //試合などの名前をつける入力フォーム
-  Future<void> _dScoreName(context) {
+  Future<void> onStoreButtonPressed(context) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    await scoreModel.setVTScore();
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           return Consumer<ScoreModel>(builder: (context, model, child) {
-            return AlertDialog(
-              title: Text('保存しました'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TotalScoreListScreen()),
-                        (_) => false);
-                  },
-                  child: Text(
-                    '0K',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '0K',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                    ],
+                  )
+                : AlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '0K',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                    ],
+                  );
           });
         });
   }
 
-  //Dスコアの表示
-  Widget _dScore() {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: EdgeInsets.only(right: 15.0),
-            child: Text(
-              '5.4',
-              style: TextStyle(fontSize: 40.0),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  // 跳馬の技名検索
-  Widget _vtSearch() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 30.0, right: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '技名',
-            style: TextStyle(fontSize: 40.0),
+  Widget _dScoreDisplay() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          margin: EdgeInsets.only(right: 16),
+          child: Consumer<ScoreModel>(
+            builder: (context, model, child) {
+              return Text(
+                '${model.totalScore}',
+                style: TextStyle(fontSize: 40.0),
+              );
+            },
           ),
-          VtDropDown(),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

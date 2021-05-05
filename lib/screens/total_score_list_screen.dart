@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,8 +105,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
           );
   }
 
-  //設定ボタンと使い方ボタン
-  _settingButton(BuildContext context) {
+  Widget _settingButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -131,8 +132,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     );
   }
 
-  //６種目のカード
-  _eventCard(BuildContext context, String event, String eventEng) {
+  Widget _eventCard(BuildContext context, String event, String eventEng) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return SizedBox(
@@ -143,10 +144,19 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         ),
         child: InkWell(
           onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ScoreListScreen(event)),
-            );
+            scoreModel.selectEvent(event);
+            if (event == '跳馬') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => VTScoreSelectScreen(event)),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ScoreListScreen(event)),
+              );
+            }
           },
           child: Row(
             children: [
@@ -192,8 +202,19 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 child: Container(
                   height: height * 0.07,
                   width: width * 0.4,
-                  child: _techsList(context, '前方ダブル', 'two', 'three', 'four',
-                      'five', 'six', 'seven', 'eight', 'nine', 'finish'),
+                  child: _techsList(
+                      event,
+                      context,
+                      '前方ダブル',
+                      'two',
+                      'three',
+                      'four',
+                      'five',
+                      'six',
+                      'seven',
+                      'eight',
+                      'nine',
+                      'finish'),
                 ),
               ),
               Expanded(
@@ -211,7 +232,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   //  6種目の合計
-  _totalScore() {
+  Widget _totalScore() {
     return Column(
       children: [
         Container(
@@ -238,6 +259,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   Widget _techsList(
+    String event,
     BuildContext context,
     String one,
     String? two,
@@ -250,6 +272,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     String? nine,
     String? finish,
   ) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     List<String> _techs = [
       '1. $one',
       '2. $two',
@@ -268,20 +291,22 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: ListView(
-        children: _techs
-            .map(
-              (tech) => Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('$tech'),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
-      ),
+      child: event == '跳馬'
+          ? Center(child: Text('${scoreModel.vtTechName}'))
+          : ListView(
+              children: _techs
+                  .map(
+                    (tech) => Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('$tech'),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
     );
   }
 }

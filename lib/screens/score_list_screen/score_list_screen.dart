@@ -49,6 +49,15 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
             if (widget.event == 'あん馬') {
               if (model.phScoreList == null) await model.getPHScores();
             }
+            if (widget.event == '吊り輪') {
+              if (model.srScoreList == null) await model.getSRScores();
+            }
+            if (widget.event == '平行棒') {
+              if (model.pbScoreList == null) await model.getPBScores();
+            }
+            if (widget.event == '鉄棒') {
+              if (model.hbScoreList == null) await model.getHBScores();
+            }
           });
           final height = MediaQuery.of(context).size.height - 50;
           return SafeArea(
@@ -154,7 +163,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => VTScoreListScreen(widget.event)),
+                        builder: (context) =>
+                            VTScoreSelectScreen(widget.event)),
                   );
                 } else {
                   //todo: データの取得
@@ -210,18 +220,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               children: scoreModel.srScoreList!
                   .map((score) => _scoreTile(
                       context, score.techs, score.total, score.isFavorite))
-                  .toList(),
-            );
-    }
-    if (widget.event == '跳馬') {
-      Future(() async => scoreModel.srScoreList == null
-          ? await scoreModel.getSRScores()
-          : false);
-      return scoreModel.vtScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.vtScoreList!
-                  .map((score) => _vtScoreTile(context, score))
                   .toList(),
             );
     }
@@ -312,12 +310,11 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => VTScoreListScreen(widget.event)),
+              builder: (context) => VTScoreSelectScreen(widget.event)),
         );
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context, vtScore.isFavorite)),
           Expanded(
             flex: 8,
             child: Card(

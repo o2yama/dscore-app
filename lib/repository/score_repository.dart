@@ -4,10 +4,16 @@ import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/user_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class ScoreRepository {
   CurrentUser? get currentUser => UserRepository.currentUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
+  String uuid = '';
+
+  Future<void> getUuid() async {
+    uuid = Uuid().v4();
+  }
 
   Future<List<ScoreWithCV>> getFXScores() async {
     final scores = await _db
@@ -40,16 +46,6 @@ class ScoreRepository {
     return scoreList;
   }
 
-  Future<List<VTScore>> getVTScores() async {
-    final scores = await _db
-        .collection('users')
-        .doc(currentUser!.id)
-        .collection('vt')
-        .get();
-    List<VTScore> scoreList = scores.docs.map((doc) => VTScore(doc)).toList();
-    return scoreList;
-  }
-
   Future<List<Score>> getPBScores() async {
     final scores = await _db
         .collection('users')
@@ -69,5 +65,41 @@ class ScoreRepository {
     List<ScoreWithCV> scoreList =
         scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
+  }
+
+  Future<VTScore?> getVTScore() async {
+    final scores = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('vt')
+        .get();
+    VTScore scoreList = scores.docs.map((doc) => VTScore(doc)).toList()[0];
+    return scoreList;
+  }
+
+  Future<void> setVTScore(String techName, num score) async {
+    final vtScore = await getVTScore();
+    if (vtScore == null) {
+      await _db
+          .collection('users')
+          .doc(currentUser!.id)
+          .collection('vt')
+          .doc(currentUser!.id)
+          .set({
+        'scoreId': currentUser!.id,
+        'score': score,
+        'techName': techName,
+      });
+    } else {
+      await _db
+          .collection('users')
+          .doc(currentUser!.id)
+          .collection('vt')
+          .doc(currentUser!.id)
+          .update({
+        'score': score,
+        'techName': techName,
+      });
+    }
   }
 }
