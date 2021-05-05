@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/screens/score_list_screen/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -183,7 +182,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.fxScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -195,7 +195,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.phScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -207,7 +208,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.srScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -231,7 +233,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.pbScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -243,7 +246,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.hbScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     } else {
@@ -251,7 +255,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     }
   }
 
-  Widget _scoreTile(BuildContext context, Score score) {
+  Widget _scoreTile(
+      BuildContext context, List<String> techs, num total, bool isFavorite) {
     final width = MediaQuery.of(context).size.width - 50;
     final height = MediaQuery.of(context).size.height - 50;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
@@ -267,7 +272,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context, score.isFavorite)),
+          Expanded(child: _favoriteButton(context, isFavorite)),
           Expanded(
             flex: 8,
             child: Card(
@@ -278,7 +283,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   children: [
                     SizedBox(width: width * 0.1),
                     Text(
-                      '${score.total}',
+                      '$total',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5,
                     ),
@@ -286,7 +291,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                     Container(
                       height: height * 0.07,
                       width: width * 0.4,
-                      child: _techsDisplay(context, score.techs),
+                      child: _techsDisplay(context, techs),
                     ),
                     SizedBox(width: width * 0.1),
                   ],

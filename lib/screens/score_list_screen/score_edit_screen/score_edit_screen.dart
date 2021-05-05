@@ -69,7 +69,12 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       height: height * 0.7,
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          await model.getFXScores();
+                          if (widget.event == '床') {
+                            await model.getFXScores();
+                          }
+                          if (widget.event == 'あん馬') {
+                            await model.getPHScores();
+                          }
                         },
                         child: _techListView(context),
                       ),

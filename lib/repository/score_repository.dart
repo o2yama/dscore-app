@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/domain/score.dart';
+import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 
@@ -8,13 +9,14 @@ class ScoreRepository {
   CurrentUser? get currentUser => UserRepository.currentUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<List<Score>> getFXScores() async {
+  Future<List<ScoreWithCV>> getFXScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
         .get();
-    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    List<ScoreWithCV> scoreList =
+        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
 
@@ -58,13 +60,14 @@ class ScoreRepository {
     return scoreList;
   }
 
-  Future<List<Score>> getHBScores() async {
+  Future<List<ScoreWithCV>> getHBScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
         .get();
-    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    List<ScoreWithCV> scoreList =
+        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
 }

@@ -4,6 +4,7 @@ import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/domain/score.dart';
+import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,12 @@ class ScoreModel extends ChangeNotifier {
 
   final ScoreRepository scoreRepository;
   // bool isFavorite = false;
-  List<Score>? fxScoreList;
+  List<ScoreWithCV>? fxScoreList;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
   List<VTScore>? vtScoreList;
   List<Score>? pbScoreList;
-  List<Score>? hbScoreList;
+  List<ScoreWithCV>? hbScoreList;
 
   bool isLoading = false;
 
@@ -95,10 +96,10 @@ class ScoreModel extends ChangeNotifier {
 
   ///ScoreEditScreen関連
   List<String> decidedTechList = [
-    "前方屈伸ダブルハーフ",
-    "前方伸身三回ひねり",
-    "後方ダブルハーフ",
-    "アルバリーニョ"
+    // "前方屈伸ダブルハーフ",
+    // "前方伸身三回ひねり",
+    // "後方ダブルハーフ",
+    // "アルバリーニョ"
   ];
   num totalScore = 0.0;
   num difficultyPoint = 0.0;
