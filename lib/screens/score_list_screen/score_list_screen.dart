@@ -157,24 +157,21 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           IconButton(
               icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
-                if (widget.event == '跳馬') {
-                  //todo: データの取得
-                  scoreModel.selectEvent(widget.event);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            VTScoreSelectScreen(widget.event)),
-                  );
-                } else {
-                  //todo: データの取得
-                  scoreModel.selectEvent(widget.event);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScoreEditScreen(widget.event)),
-                  );
-                }
+                // if (widget.event == '跳馬') {
+                //   scoreModel.selectEvent(widget.event);
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) =>
+                //             VTScoreSelectScreen(widget.event)),
+                //   );
+                // } else {
+                scoreModel.selectEvent(widget.event);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScoreEditScreen(widget.event)),
+                );
               }),
           SizedBox(width: width * 0.1),
         ],
@@ -223,6 +220,18 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   .toList(),
             );
     }
+    // if (widget.event == '跳馬') {
+    //   Future(() async => scoreModel.srScoreList == null
+    //       ? await scoreModel.getSRScores()
+    //       : false);
+    //   return scoreModel.vtScore == null
+    //       ? Container()
+    //       : ListView(
+    //           children: scoreModel.vtScore!
+    //               .map((score) => _vtScoreTile(context, score))
+    //               .toList(),
+    //         );
+    // }
     if (widget.event == '平行棒') {
       Future(() async => scoreModel.pbScoreList == null
           ? await scoreModel.getPBScores()
@@ -260,7 +269,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () {
-        //todo:Modelにupdateするデータを渡す
         scoreModel.selectEvent(widget.event);
         Navigator.push(
           context,
@@ -302,48 +310,48 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _vtScoreTile(BuildContext context, VTScore vtScore) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => VTScoreSelectScreen(widget.event)),
-        );
-      },
-      child: Row(
-        children: [
-          Expanded(
-            flex: 8,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: width * 0.1),
-                    Text(
-                      '${vtScore.score}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    Expanded(child: Container()),
-                    Container(
-                        height: height * 0.07,
-                        width: width * 0.4,
-                        child: Text('${vtScore.techName}')),
-                    SizedBox(width: width * 0.1),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _vtScoreTile(BuildContext context, VTScore vtScore) {
+  //   final width = MediaQuery.of(context).size.width - 50;
+  //   final height = MediaQuery.of(context).size.height - 50;
+  //   return InkWell(
+  //     onTap: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => VTScoreSelectScreen(widget.event)),
+  //       );
+  //     },
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           flex: 8,
+  //           child: Card(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   SizedBox(width: width * 0.1),
+  //                   Text(
+  //                     '${vtScore.score}',
+  //                     textAlign: TextAlign.center,
+  //                     style: Theme.of(context).textTheme.headline5,
+  //                   ),
+  //                   Expanded(child: Container()),
+  //                   Container(
+  //                       height: height * 0.07,
+  //                       width: width * 0.4,
+  //                       child: Text('${vtScore.techName}')),
+  //                   SizedBox(width: width * 0.1),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _favoriteButton(BuildContext context, bool isFavorite) {
     return Consumer<ScoreModel>(
@@ -385,20 +393,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _techsDisplay(BuildContext context, List<String> scoreList) {
-    if (widget.event == '跳馬') {
-      return _vtTech();
-    } else {
-      return _techsListDisplay(context, scoreList);
-    }
-  }
-
-  Widget _vtTech() {
-    return Center(
-      child: Text(
-        'アカピアン',
-        style: TextStyle(fontSize: 20),
-      ),
-    );
+    return _techsListDisplay(context, scoreList);
   }
 
   Widget _techsListDisplay(BuildContext context, List<String> scoreList) {

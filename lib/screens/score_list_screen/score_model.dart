@@ -53,16 +53,6 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getVTScores() async {
-    isLoading = true;
-    notifyListeners();
-
-    vtScore = await scoreRepository.getVTScore();
-
-    isLoading = false;
-    notifyListeners();
-  }
-
   Future<void> getPBScores() async {
     isLoading = true;
     notifyListeners();

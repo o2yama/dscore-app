@@ -3,13 +3,14 @@ import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../ad_state.dart';
-import 'intro/intro_model.dart';
-import 'intro/intro_screen.dart';
+import '../../ad_state.dart';
+import '../intro/intro_model.dart';
+import '../intro/intro_screen.dart';
 
 final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
 final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
@@ -133,102 +134,154 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   Widget _eventCard(BuildContext context, String event, String eventEng) {
+    final introModel = Provider.of<IntroModel>(context, listen: false);
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return SizedBox(
-      height: 100,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: InkWell(
-          onTap: () async {
-            scoreModel.selectEvent(event);
-            if (event == '跳馬') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => VTScoreSelectScreen(event)),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ScoreListScreen(event)),
-              );
-            }
-          },
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
+    return Consumer<TotalScoreListModel>(builder: (context, model, child) {
+      Future(() async {
+        if (introModel.currentUser != null) await model.getVTScores();
+      });
+      return model.vtScore == null
+          ? SizedBox(
+              height: 100,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
                       flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 15.0, top: 10.0),
-                        child: Text(
-                          '$event',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 15.0),
-                        child: Text(
-                          '$eventEng',
-                          style: TextStyle(fontSize: 15.0, color: Colors.grey),
-                        ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                              child: Text(
+                                '$event',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 15.0),
+                              child: Text(
+                                '$eventEng',
+                                style: TextStyle(
+                                    fontSize: 15.0, color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  padding: EdgeInsets.only(left: 30.0),
-                  child: Text(
-                    '5.5',
-                    style: Theme.of(context).textTheme.headline5,
+            )
+          : SizedBox(
+              height: 100,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  onTap: () async {
+                    scoreModel.selectEvent(event);
+                    if (event == '跳馬') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VTScoreSelectScreen(event)),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScoreListScreen(event)),
+                      );
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                                child: Text(
+                                  '$event',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                padding: EdgeInsets.only(left: 15.0),
+                                child: Text(
+                                  '$eventEng',
+                                  style: TextStyle(
+                                      fontSize: 15.0, color: Colors.grey),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          padding: EdgeInsets.only(left: 30.0),
+                          child: event == '跳馬'
+                              ? Text(
+                                  '${model.vtScore!.score}',
+                                  style: Theme.of(context).textTheme.headline5,
+                                )
+                              : Text('5.5'),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: height * 0.07,
+                          width: width * 0.4,
+                          child: _techsList(
+                              event,
+                              context,
+                              '前方ダブル',
+                              'two',
+                              'three',
+                              'four',
+                              'five',
+                              'six',
+                              'seven',
+                              'eight',
+                              'nine',
+                              'finish'),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  height: height * 0.07,
-                  width: width * 0.4,
-                  child: _techsList(
-                      event,
-                      context,
-                      '前方ダブル',
-                      'two',
-                      'three',
-                      'four',
-                      'five',
-                      'six',
-                      'seven',
-                      'eight',
-                      'nine',
-                      'finish'),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Theme.of(context).primaryColor,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+            );
+    });
   }
 
   //  6種目の合計
@@ -272,7 +325,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     String? nine,
     String? finish,
   ) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
     List<String> _techs = [
       '1. $one',
       '2. $two',
@@ -292,7 +346,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: event == '跳馬'
-          ? Center(child: Text('${scoreModel.vtTechName}'))
+          ? Center(child: Text('${totalScoreListModel.vtScore!.techName}'))
           : ListView(
               children: _techs
                   .map(

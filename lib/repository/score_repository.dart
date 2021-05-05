@@ -73,10 +73,12 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('vt')
         .get();
-    VTScore scoreList = scores.docs.map((doc) => VTScore(doc)).toList()[0];
-    return scoreList;
+    VTScore score = scores.docs.map((doc) => VTScore(doc)).toList()[0];
+    return score;
   }
 
+  //初めてならset,それ以外はupdate
+  //Userごとに1つでいいから、Userと同じidでOK
   Future<void> setVTScore(String techName, num score) async {
     final vtScore = await getVTScore();
     if (vtScore == null) {

@@ -2,9 +2,10 @@ import 'package:dscore_app/ad_state.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/repository/user_repository.dart';
-import 'package:dscore_app/screens/total_score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,10 @@ List<SingleChildWidget> viewModels = [
   ChangeNotifierProvider<IntroModel>(
     create: (context) => IntroModel(
         userRepository: Provider.of<UserRepository>(context, listen: false)),
+  ),
+  ChangeNotifierProvider<TotalScoreListModel>(
+    create: (context) => TotalScoreListModel(
+        scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
 ];
 
