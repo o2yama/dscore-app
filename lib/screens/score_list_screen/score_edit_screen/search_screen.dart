@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +40,7 @@ class SearchScreen extends StatelessWidget {
                     //検索結果
                     Container(
                       height: height * 0.75,
-                      child: _searchResults(context),
+                      child: _searchResults(context, event),
                     ),
                   ],
                 ),
@@ -96,19 +98,19 @@ class SearchScreen extends StatelessWidget {
           hintText: '検索',
         ),
         onChanged: (text) {
-          scoreModel.search(context, text, event);
+          scoreModel.search(text, event);
         },
       ),
     );
   }
 
   //検索結果
-  Widget _searchResults(BuildContext context) {
+  Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
       return ListView(
         children: scoreModel.searchResult
-            .map((result) => resultTile(context, result))
+            .map((score) => resultTile(context, score))
             .toList(),
       );
     });
@@ -155,10 +157,47 @@ class SearchScreen extends StatelessWidget {
             ],
           ),
         ),
-        onTap: () {
+        onTap: () async {
+          onResultTileTapped(context, techName);
           Navigator.pop(context);
         },
       ),
     );
+  }
+
+  Future<void> onResultTileTapped(BuildContext context, String techName) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    try {
+      scoreModel.onTechSelected(techName);
+      scoreModel.calculateScore();
+    } catch (e) {
+      print(e);
+      showDialog(
+        context: context,
+        builder: (context) => Platform.isIOS
+            ? CupertinoAlertDialog(
+                title: Text('$e'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              )
+            : AlertDialog(
+                title: Text('$e'),
+                actions: [
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+      );
+    }
   }
 }

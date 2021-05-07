@@ -10,7 +10,6 @@ import '../../../ad_state.dart';
 class ScoreEditScreen extends StatefulWidget {
   ScoreEditScreen(this.event);
   final String event;
-  final List<int> order = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   @override
   _ScoreEditScreenState createState() => _ScoreEditScreenState();
@@ -67,12 +66,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                     //技名の表示
                     Container(
                       height: height * 0.7,
-                      child: RefreshIndicator(
-                        onRefresh: () async {
-                          await model.getFXScores();
-                        },
-                        child: _techListView(context),
-                      ),
+                      child: _techListView(context),
                     ),
                   ],
                 ),
@@ -130,7 +124,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
           onPressed: () {
-            //試合などの名前をつける入力フォーム
             onStoreButtonPressed(context);
           },
         ),
@@ -257,22 +250,60 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
 
   Widget _techListView(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return ListView(
-      children: scoreModel.decidedTechList
-          .map((tech) => _techTile(
-              context, tech, scoreModel.decidedTechList.indexOf(tech) + 1))
-          .toList(),
+    return Container(
+      child: scoreModel.totalScore == 0
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  width: 100,
+                  child: InkWell(
+                    child: Container(
+                      child: Icon(Icons.add,
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    onTap: () {
+                      searchController.clear();
+                      scoreModel.searchResult.clear();
+                      scoreModel.selectEvent(widget.event);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchScreen(widget.event),
+                            fullscreenDialog: true,
+                          ));
+                    },
+                  ),
+                ),
+              ],
+            )
+          : RefreshIndicator(
+              onRefresh: () async => await scoreModel.onRefresh(widget.event),
+              child: ListView(
+                children: scoreModel.decidedTechList
+                    .map((tech) => _techTile(context, tech,
+                        scoreModel.decidedTechList.indexOf(tech) + 1))
+                    .toList(),
+              ),
+            ),
     );
   }
 
-//技名の表示
   Widget _techTile(BuildContext context, String techName, int order) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
         Card(
           child: ListTile(
-            title: Text('$techName', style: TextStyle(fontSize: 14.0)),
+            title: Row(
+              children: [
+                Text('$order'),
+                SizedBox(width: 8),
+                Flexible(
+                    child: Text('$techName', style: TextStyle(fontSize: 14.0))),
+              ],
+            ),
             trailing: Container(
               width: 110,
               child: Row(
@@ -315,13 +346,14 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SearchScreen(widget.event)));
+                    builder: (context) => SearchScreen(widget.event),
+                    fullscreenDialog: true,
+                  ));
             },
           ),
         ),
-        scoreModel.decidedTechList.length == 0 ||
-                scoreModel.decidedTechList.length == order &&
-                    scoreModel.decidedTechList.length < 10
+        scoreModel.decidedTechList.length == order &&
+                scoreModel.decidedTechList.length < 10
             ? IconButton(
                 icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
                 onPressed: () {

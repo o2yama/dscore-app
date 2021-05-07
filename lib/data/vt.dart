@@ -1,4 +1,4 @@
-Map<String, num> vt = {
+Map<String, num> vtTech = {
   "前転とび": 1.6,
   "側転とび1/4ひねり": 1.6,
   "ロンダート後転とび": 1.6,

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/screens/score_list_screen/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -49,6 +48,15 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
             }
             if (widget.event == 'あん馬') {
               if (model.phScoreList == null) await model.getPHScores();
+            }
+            if (widget.event == '吊り輪') {
+              if (model.srScoreList == null) await model.getSRScores();
+            }
+            if (widget.event == '平行棒') {
+              if (model.pbScoreList == null) await model.getPBScores();
+            }
+            if (widget.event == '鉄棒') {
+              if (model.hbScoreList == null) await model.getHBScores();
             }
           });
           final height = MediaQuery.of(context).size.height - 50;
@@ -149,23 +157,21 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           IconButton(
               icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
-                if (widget.event == '跳馬') {
-                  //todo: データの取得
-                  scoreModel.selectEvent(widget.event);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => VTScoreListScreen(widget.event)),
-                  );
-                } else {
-                  //todo: データの取得
-                  scoreModel.selectEvent(widget.event);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScoreEditScreen(widget.event)),
-                  );
-                }
+                // if (widget.event == '跳馬') {
+                //   scoreModel.selectEvent(widget.event);
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) =>
+                //             VTScoreSelectScreen(widget.event)),
+                //   );
+                // } else {
+                scoreModel.selectEvent(widget.event);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ScoreEditScreen(widget.event)),
+                );
               }),
           SizedBox(width: width * 0.1),
         ],
@@ -183,7 +189,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.fxScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -195,7 +202,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.phScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -207,22 +215,23 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.srScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
-    if (widget.event == '跳馬') {
-      Future(() async => scoreModel.srScoreList == null
-          ? await scoreModel.getSRScores()
-          : false);
-      return scoreModel.vtScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.vtScoreList!
-                  .map((score) => _vtScoreTile(context, score))
-                  .toList(),
-            );
-    }
+    // if (widget.event == '跳馬') {
+    //   Future(() async => scoreModel.srScoreList == null
+    //       ? await scoreModel.getSRScores()
+    //       : false);
+    //   return scoreModel.vtScore == null
+    //       ? Container()
+    //       : ListView(
+    //           children: scoreModel.vtScore!
+    //               .map((score) => _vtScoreTile(context, score))
+    //               .toList(),
+    //         );
+    // }
     if (widget.event == '平行棒') {
       Future(() async => scoreModel.pbScoreList == null
           ? await scoreModel.getPBScores()
@@ -231,7 +240,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.pbScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     }
@@ -243,7 +253,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.hbScoreList!
-                  .map((score) => _scoreTile(context, score))
+                  .map((score) => _scoreTile(
+                      context, score.techs, score.total, score.isFavorite))
                   .toList(),
             );
     } else {
@@ -251,13 +262,13 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     }
   }
 
-  Widget _scoreTile(BuildContext context, Score score) {
+  Widget _scoreTile(
+      BuildContext context, List<String> techs, num total, bool isFavorite) {
     final width = MediaQuery.of(context).size.width - 50;
     final height = MediaQuery.of(context).size.height - 50;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () {
-        //todo:Modelにupdateするデータを渡す
         scoreModel.selectEvent(widget.event);
         Navigator.push(
           context,
@@ -267,7 +278,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context)),
+          Expanded(child: _favoriteButton(context, isFavorite)),
           Expanded(
             flex: 8,
             child: Card(
@@ -278,7 +289,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   children: [
                     SizedBox(width: width * 0.1),
                     Text(
-                      '${score.total}',
+                      '$total',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5,
                     ),
@@ -286,7 +297,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                     Container(
                       height: height * 0.07,
                       width: width * 0.4,
-                      child: _techsDisplay(context, score.techs),
+                      child: _techsDisplay(context, techs),
                     ),
                     SizedBox(width: width * 0.1),
                   ],
@@ -299,63 +310,60 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _vtScoreTile(BuildContext context, VTScore vtScore) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => VTScoreListScreen(widget.event)),
-        );
-      },
-      child: Row(
-        children: [
-          Expanded(child: _favoriteButton(context)),
-          Expanded(
-            flex: 8,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: width * 0.1),
-                    Text(
-                      '${vtScore.score}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    Expanded(child: Container()),
-                    Container(
-                        height: height * 0.07,
-                        width: width * 0.4,
-                        child: Text('${vtScore.techName}')),
-                    SizedBox(width: width * 0.1),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _vtScoreTile(BuildContext context, VTScore vtScore) {
+  //   final width = MediaQuery.of(context).size.width - 50;
+  //   final height = MediaQuery.of(context).size.height - 50;
+  //   return InkWell(
+  //     onTap: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => VTScoreSelectScreen(widget.event)),
+  //       );
+  //     },
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           flex: 8,
+  //           child: Card(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   SizedBox(width: width * 0.1),
+  //                   Text(
+  //                     '${vtScore.score}',
+  //                     textAlign: TextAlign.center,
+  //                     style: Theme.of(context).textTheme.headline5,
+  //                   ),
+  //                   Expanded(child: Container()),
+  //                   Container(
+  //                       height: height * 0.07,
+  //                       width: width * 0.4,
+  //                       child: Text('${vtScore.techName}')),
+  //                   SizedBox(width: width * 0.1),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _favoriteButton(BuildContext context) {
+  Widget _favoriteButton(BuildContext context, bool isFavorite) {
     return Consumer<ScoreModel>(
       builder: (context, model, child) {
         return IconButton(
             icon: Icon(
               Icons.star,
               size: 30,
-              color: model.isFavorite
-                  ? Theme.of(context).primaryColor
-                  : Colors.white,
+              color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
             ),
             onPressed: () {
-              model.onFavoriteButtonTapped();
+              model.onFavoriteButtonTapped(isFavorite);
             });
       },
     );
@@ -385,20 +393,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _techsDisplay(BuildContext context, List<String> scoreList) {
-    if (widget.event == '跳馬') {
-      return _vtTech();
-    } else {
-      return _techsListDisplay(context, scoreList);
-    }
-  }
-
-  Widget _vtTech() {
-    return Center(
-      child: Text(
-        'アカピアン',
-        style: TextStyle(fontSize: 20),
-      ),
-    );
+    return _techsListDisplay(context, scoreList);
   }
 
   Widget _techsListDisplay(BuildContext context, List<String> scoreList) {

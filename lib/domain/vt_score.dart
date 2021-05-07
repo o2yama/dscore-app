@@ -4,10 +4,10 @@ class VTScore {
   VTScore(DocumentSnapshot doc) {
     score = doc.data()!['score'];
     techName = doc.data()!['techName'];
-    isFavorite = doc.data()!['isFavorite'];
+    id = doc.data()!['scoreId'];
   }
 
   num score = 0;
   String techName = '';
-  bool isFavorite = false;
+  String id = '';
 }
