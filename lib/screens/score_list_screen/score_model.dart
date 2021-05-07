@@ -73,6 +73,24 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> onRefresh(String event) async {
+    if (event == '床') {
+      await getFXScores();
+    }
+    if (event == 'あん馬') {
+      await getPHScores();
+    }
+    if (event == '吊り輪') {
+      await getSRScores();
+    }
+    if (event == '平行棒') {
+      await getPBScores();
+    }
+    if (event == '鉄棒') {
+      await getHBScores();
+    }
+  }
+
   Future<bool> getIsFavorite() async {
     return false;
   }
@@ -85,14 +103,7 @@ class ScoreModel extends ChangeNotifier {
   }
 
   ///ScoreEditScreen関連
-  List<String> decidedTechList = [
-    //todo:updateの場合ここにtechs入れる
-    //todo:addの場合ここにtechを追加していく
-    // "前方屈伸ダブルハーフ",
-    // "前方伸身三回ひねり",
-    // "後方ダブルハーフ",
-    // "アルバリーニョ"
-  ];
+  List<String> decidedTechList = [];
   num totalScore = 0.0;
   num difficultyPoint = 0.0;
   num egr = 0.0;
@@ -100,8 +111,8 @@ class ScoreModel extends ChangeNotifier {
 
   ///SearchScreen関連
   List<String> searchResult = [];
-  Map difficulty = {};
-  Map group = {};
+  Map<String, num> difficulty = {};
+  Map<String, num> group = {};
   String vtTechName = '';
 
   //どの種目かの判断を各ページで行う
@@ -191,7 +202,68 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onTechSelected() async {}
+  void onTechSelected(String techName) {
+    decidedTechList.add(techName);
+    print(decidedTechList);
+    notifyListeners();
+  }
+
+  void calculateScore() {
+    //要求点の計算
+    List<String> group1 = [];
+    List<String> group2 = [];
+    List<String> group3 = [];
+    String group4 = '';
+    decidedTechList.forEach((tech) {
+      if (group[tech] == 1) {
+        group1.add(tech);
+      }
+      if (group[tech] == 2) {
+        group2.add(tech);
+      }
+      if (group[tech] == 3) {
+        group3.add(tech);
+      }
+      if (group[tech] == 4) {
+        group4 = tech;
+      }
+    });
+    if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
+      egr = 1.5;
+    } else {
+      if (group1.length > 0 && group2.length > 0 ||
+          group1.length > 0 && group3.length > 0 ||
+          group2.length > 0 && group3.length > 0) {
+        egr = 1.0;
+      } else {
+        if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
+          egr = 0.5;
+        }
+      }
+    }
+    if (group4 != '') {
+      if (difficulty[group4]! >= 4) {
+        egr = egr * 10 + 5;
+        egr /= 10;
+      } else {
+        if (difficulty[group4]! >= 3) {
+          egr = egr * 10 + 3;
+          egr /= 10;
+        }
+      }
+    }
+    //難度点の計算
+    difficultyPoint = 0;
+    decidedTechList.forEach((tech) {
+      difficultyPoint = difficultyPoint * 10 + difficulty[tech]!;
+      difficultyPoint /= 10;
+    });
+    //　トータルの計算
+    totalScore = 0;
+    totalScore = difficultyPoint * 10 + egr * 10 + cv * 10;
+    totalScore /= 10;
+    notifyListeners();
+  }
 
   void onVTTechSelected(int index) {
     final List<String> vtTechList =
