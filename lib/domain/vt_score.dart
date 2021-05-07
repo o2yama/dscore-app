@@ -4,10 +4,10 @@ class VTScore {
   VTScore(DocumentSnapshot doc) {
     score = doc.data()!['score'];
     techName = doc.data()!['techName'];
-    id = doc.data()!['scoreId'];
+    scoreId = doc.data()!['scoreId'];
   }
 
   num score = 0;
   String techName = '';
-  String id = '';
+  String scoreId = '';
 }
