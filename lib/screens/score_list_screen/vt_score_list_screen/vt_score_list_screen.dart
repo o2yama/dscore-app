@@ -183,20 +183,25 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   Widget _dScoreDisplay() {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          margin: EdgeInsets.only(right: 16),
-          child: Consumer<ScoreModel>(
-            builder: (context, model, child) {
-              return Text(
-                '${model.totalScore}',
-                style: TextStyle(fontSize: 40.0),
-              );
-            },
+          width: 200,
+          margin: EdgeInsets.only(left: 40),
+          child: Text(
+            '${scoreModel.vtTechName}',
+            style: TextStyle(fontSize: 20.0),
           ),
-        )
+        ),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+        Container(
+          margin: EdgeInsets.only(right: 16),
+          child: Text(
+            '${scoreModel.totalScore}',
+            style: TextStyle(fontSize: 40.0),
+          ),
+        ),
       ],
     );
   }

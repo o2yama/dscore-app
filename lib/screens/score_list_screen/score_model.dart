@@ -117,6 +117,7 @@ class ScoreModel extends ChangeNotifier {
 
   //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
+    decidedTechList = [];
     if (event == '床') {
       difficulty = fxDifficulty;
       group = fxGroup;
