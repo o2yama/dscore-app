@@ -15,6 +15,7 @@ class ScoreModel extends ChangeNotifier {
 
   final ScoreRepository scoreRepository;
   List<ScoreWithCV>? fxScoreList;
+  // bool isFavorite = false;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
   VTScore? vtScore;
@@ -91,14 +92,48 @@ class ScoreModel extends ChangeNotifier {
     }
   }
 
-  Future<bool> getIsFavorite() async {
-    return false;
+  //お気に入り変更するため
+  Future<List<String>> getScoreIds() async {
+    await getFXScores();
+    List<String> scoreIds = [];
+    fxScoreList!.forEach((fxScore) {
+      scoreIds.add(fxScore.scoreId);
+    });
+    return scoreIds;
   }
 
-  void onFavoriteButtonTapped(bool isFavorite) {
+  Future<void> onFavoriteButtonTapped(
+      String event, bool isFavorite, String scoreId) async {
+    isLoading = true;
+    notifyListeners();
+
     if (isFavorite) {
       isFavorite = false;
+    } else {
+      List<String> scoreIdList = await getScoreIds();
+      scoreIdList.forEach((scoreId) {
+        scoreRepository.favoriteUpdate(scoreId, false);
+      });
+      isFavorite = true;
     }
+    await scoreRepository.favoriteUpdate(scoreId, isFavorite);
+
+    if (event == '床') {
+      fxScoreList = await scoreRepository.getFXScores();
+    }
+    if (event == 'あん馬') {
+      phScoreList = await scoreRepository.getPHScores();
+    }
+    if (event == '吊り輪') {
+      srScoreList = await scoreRepository.getSRScores();
+    }
+    if (event == '平行棒') {
+      pbScoreList = await scoreRepository.getPBScores();
+    }
+    if (event == '鉄棒') {
+      hbScoreList = await scoreRepository.getHBScores();
+    }
+    isLoading = false;
     notifyListeners();
   }
 
