@@ -197,49 +197,71 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   flex: 2,
                   child: Container(
                     padding: EdgeInsets.only(left: 30.0),
-                    child: model.vt != null
-                        ? event == '床'
-                            ? Text(
-                                '${model.favoriteFxScore}',
-                                style: Theme.of(context).textTheme.headline6,
-                              )
-                            : event == 'あん馬'
-                                ? Text(
+                    child: event == '床'
+                        ? model.favoriteFx == null
+                            ? Text('0.0',
+                                style: Theme.of(context).textTheme.headline6)
+                            : Text('${model.favoriteFxScore}',
+                                style: Theme.of(context).textTheme.headline6)
+                        : event == 'あん馬'
+                            ? model.favoritePh == null
+                                ? Text('0.0',
+                                    style:
+                                        Theme.of(context).textTheme.headline6)
+                                : Text(
                                     '${model.favoritePhScore}',
                                     style:
                                         Theme.of(context).textTheme.headline6,
                                   )
-                                : event == '吊り輪'
-                                    ? Text(
+                            : event == '吊り輪'
+                                ? model.favoriteSr == null
+                                    ? Text('0.0',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6)
+                                    : Text(
                                         '${model.favoriteSrScore}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline6,
                                       )
-                                    : event == '跳馬'
-                                        ? Text(
+                                : event == '跳馬'
+                                    ? model.vt == null
+                                        ? Text('0.0',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline6)
+                                        : Text(
                                             '${model.vt!.score}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline6,
                                           )
-                                        : event == '平行棒'
-                                            ? Text(
+                                    : event == '平行棒'
+                                        ? model.favoritePb == null
+                                            ? Text('0.0',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6)
+                                            : Text(
                                                 '${model.favoritePbScore}',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .headline6,
                                               )
-                                            : event == '鉄棒'
-                                                ? Text(
+                                        : event == '鉄棒'
+                                            ? model.favoriteHb == null
+                                                ? Text('0.0',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline6)
+                                                : Text(
                                                     '${model.favoriteHbScore}',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .headline6,
                                                   )
-                                                : Text('0.0')
-                        : Text('0.0',
-                            style: Theme.of(context).textTheme.headline6),
+                                            : Text('0.0'),
                   ),
                 ),
                 Expanded(
