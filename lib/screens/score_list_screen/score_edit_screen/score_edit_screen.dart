@@ -2,14 +2,22 @@ import 'dart:io';
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/score_list_screen/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../../ad_state.dart';
 
+enum type {
+  EDIT,
+  CREATE,
+}
+
 class ScoreEditScreen extends StatefulWidget {
-  ScoreEditScreen(this.event);
+  ScoreEditScreen(this.event, this.type, {this.scoreId});
   final String event;
+  final type;
+  final String? scoreId;
 
   @override
   _ScoreEditScreenState createState() => _ScoreEditScreenState();
@@ -37,44 +45,42 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ScoreModel>(
-        builder: (context, model, child) {
-          final height = MediaQuery.of(context).size.height - 50;
-          return SingleChildScrollView(
-            child: SafeArea(
-              child: Container(
-                color: Theme.of(context).backgroundColor,
-                child: Column(
-                  children: [
-                    //広告
-                    ad(context),
-                    //戻るボタン
-                    Container(
-                      height: height * 0.1,
-                      child: _backButton(context, widget.event),
-                    ),
-                    //Dスコアの表示
-                    Container(
-                      height: height * 0.1,
-                      child: _totalScore(),
-                    ),
-                    //スコアの詳細
-                    Container(
-                      height: height * 0.1,
-                      child: _detailsScore(),
-                    ),
-                    //技名の表示
-                    Container(
-                      height: height * 0.7,
-                      child: _techListView(context),
-                    ),
-                  ],
-                ),
+      body: Consumer<ScoreModel>(builder: (context, model, child) {
+        final height = MediaQuery.of(context).size.height - 50;
+        return SingleChildScrollView(
+          child: SafeArea(
+            child: Container(
+              color: Theme.of(context).backgroundColor,
+              child: Column(
+                children: [
+                  //広告
+                  ad(context),
+                  //戻るボタン
+                  Container(
+                    height: height * 0.1,
+                    child: _backButton(context, widget.event),
+                  ),
+                  //Dスコアの表示
+                  Container(
+                    height: height * 0.1,
+                    child: _totalScore(context),
+                  ),
+                  //スコアの詳細
+                  Container(
+                    height: height * 0.1,
+                    child: _detailsScore(context),
+                  ),
+                  //技名の表示
+                  Container(
+                    height: height * 0.7,
+                    child: _techListView(context),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 
@@ -88,15 +94,12 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
           );
   }
 
-  //戻るボタン
+  //戻るボタンと保存ボタン
   Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
           child: Platform.isIOS
               ? Row(
                   children: [
@@ -116,10 +119,13 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   Icons.clear,
                   color: Theme.of(context).primaryColor,
                 ),
+          onPressed: () {
+            onBackButtonPressed(context);
+          },
         ),
         TextButton(
           child: Text(
-            '保存',
+            widget.type == type.CREATE ? '保存' : '更新',
             style: TextStyle(
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
@@ -131,8 +137,118 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     );
   }
 
+  void onBackButtonPressed(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    if (scoreModel.isEdited) {
+      showDialog(
+          context: context,
+          builder: (context) => Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('保存せずに戻ってもよろしいですか？'),
+                  content: Text('変更した内容は破棄されます。'),
+                  actions: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('キャンセル'),
+                          ),
+                        ),
+                        VerticalDivider(
+                          width: 2,
+                          color: Colors.black54,
+                        ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: Text('OK'),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('保存せずに戻ってもよろしいですか？'),
+                  content: Text('計算した内容は破棄されます。'),
+                  actions: [
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    )
+                  ],
+                ));
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  //保存ボタン押された時の処理
+  Future<void> onStoreButtonPressed(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    widget.type == type.CREATE
+        ? scoreModel.setFXScore()
+        : scoreModel.updateFXSCore(widget.scoreId!);
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('保存しました'),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        await scoreModel.getSRScores();
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '0K',
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('保存しました'),
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        await scoreModel.getSRScores();
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '0K',
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ],
+                );
+        });
+  }
+
   //Dスコアの表示
-  Widget _totalScore() {
+  Widget _totalScore(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
       padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
@@ -153,31 +269,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     );
   }
 
-  //保存ボタン押された時の処理
-  Future<void> onStoreButtonPressed(context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('保存しました'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  '0K',
-                  style: TextStyle(color: Theme.of(context).primaryColor),
-                ),
-              ),
-            ],
-          );
-        });
-  }
-
   //スコアの詳細
-  Widget _detailsScore() {
+  Widget _detailsScore(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
@@ -235,14 +328,45 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             widget.event == '床' || widget.event == '鉄棒'
                 ? Expanded(
                     child: Center(
-                      child: Text(
-                        '${scoreModel.cv}',
-                        style: TextStyle(fontSize: 15.0),
-                      ),
+                      child: cvSelectMenu(context),
                     ),
                   )
                 : Container(),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget cvSelectMenu(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final cvs = [0.0, 0.1, 0.2, 0.3, 0.4];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width: 32),
+        Text('${scoreModel.cv}', textAlign: TextAlign.center),
+        SizedBox(width: 16),
+        PopupMenuButton(
+          child: Icon(Icons.arrow_drop_down),
+          itemBuilder: (context) => cvs
+              .map(
+                (cv) => PopupMenuItem(
+                  child: Container(
+                    width: 100,
+                    height: 50,
+                    child: TextButton(
+                      child: Text('$cv'),
+                      onPressed: () {
+                        scoreModel.onCVSelected(cv);
+                        scoreModel.calculateScore(widget.event);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ],
     );
@@ -346,7 +470,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SearchScreen(widget.event),
+                    builder: (context) =>
+                        SearchScreen(widget.event, order: order),
                     fullscreenDialog: true,
                   ));
             },
@@ -354,19 +479,29 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         ),
         scoreModel.decidedTechList.length == order &&
                 scoreModel.decidedTechList.length < 10
-            ? IconButton(
-                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-                onPressed: () {
-                  searchController.clear();
-                  scoreModel.searchResult.clear();
-                  scoreModel.selectEvent(widget.event);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SearchScreen(widget.event)));
-                },
+            ? Column(
+                children: [
+                  IconButton(
+                    icon:
+                        Icon(Icons.add, color: Theme.of(context).primaryColor),
+                    onPressed: () {
+                      searchController.clear();
+                      scoreModel.searchResult.clear();
+                      scoreModel.selectEvent(widget.event);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SearchScreen(widget.event)));
+                    },
+                  ),
+                  SizedBox(height: 200),
+                ],
               )
-            : Container(),
+            : scoreModel.decidedTechList.length == order &&
+                    scoreModel.decidedTechList.length == 10
+                ? SizedBox(height: 200)
+                : Container(),
       ],
     );
   }

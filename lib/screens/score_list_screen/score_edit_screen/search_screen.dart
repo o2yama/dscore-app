@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,9 @@ import '../score_model.dart';
 final TextEditingController searchController = TextEditingController();
 
 class SearchScreen extends StatelessWidget {
-  SearchScreen(this.event);
+  SearchScreen(this.event, {this.order});
   final String event;
+  final int? order;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class SearchScreen extends StatelessWidget {
   }
 
   //戻るボタン
-  _backButton(BuildContext context, String event) {
+  Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -158,21 +158,22 @@ class SearchScreen extends StatelessWidget {
           ),
         ),
         onTap: () async {
-          onResultTileTapped(context, techName);
+          onResultTileTapped(context, techName, order);
           Navigator.pop(context);
         },
       ),
     );
   }
 
-  Future<void> onResultTileTapped(BuildContext context, String techName) async {
+  Future<void> onResultTileTapped(
+      BuildContext context, String techName, int? order) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {
-      scoreModel.onTechSelected(techName);
-      scoreModel.calculateScore();
+      scoreModel.onTechSelected(techName, order);
+      scoreModel.calculateScore(event);
     } catch (e) {
       print(e);
-      showDialog(
+      return showDialog(
         context: context,
         builder: (context) => Platform.isIOS
             ? CupertinoAlertDialog(

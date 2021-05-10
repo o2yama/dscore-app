@@ -1,16 +1,13 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_tech_list_view.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../../ad_state.dart';
+import '../../ad_state.dart';
 
 class VTScoreSelectScreen extends StatefulWidget {
-  VTScoreSelectScreen(this.event);
-  final String event;
-
   @override
   _VTScoreSelectScreenState createState() => _VTScoreSelectScreenState();
 }
@@ -52,7 +49,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                         children: [
                           Container(
                             height: height * 0.1,
-                            child: _backButton(context, widget.event),
+                            child: _backButton(context),
                           ),
                           Container(
                             height: height * 0.2,
@@ -96,7 +93,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   //戻るボタン
-  Widget _backButton(BuildContext context, String event) {
+  Widget _backButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -183,20 +180,26 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   Widget _dScoreDisplay() {
+    final width = MediaQuery.of(context).size.width;
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
-          margin: EdgeInsets.only(right: 16),
-          child: Consumer<ScoreModel>(
-            builder: (context, model, child) {
-              return Text(
-                '${model.totalScore}',
-                style: TextStyle(fontSize: 40.0),
-              );
-            },
+          width: width * 0.5,
+          margin: EdgeInsets.only(left: 40),
+          child: Text(
+            '${scoreModel.vtTechName}',
+            style: TextStyle(fontSize: 14.0),
           ),
-        )
+        ),
+        SizedBox(width: width * 0.1),
+        Container(
+          margin: EdgeInsets.only(right: 16),
+          child: Text(
+            '${scoreModel.totalScore}',
+            style: TextStyle(fontSize: 40.0),
+          ),
+        ),
       ],
     );
   }

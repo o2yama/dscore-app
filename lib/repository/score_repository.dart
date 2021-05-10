@@ -15,6 +15,18 @@ class ScoreRepository {
     uuid = Uuid().v4();
   }
 
+  Future<ScoreWithCV> getFavoriteFXScore() async {
+    final scoreList = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .where('isFavorite', isEqualTo: true)
+        .get();
+    final favoriteScore =
+        scoreList.docs.map((doc) => ScoreWithCV(doc)).toList()[0];
+    return favoriteScore;
+  }
+
   Future<List<ScoreWithCV>> getFXScores() async {
     final scores = await _db
         .collection('users')
@@ -24,6 +36,48 @@ class ScoreRepository {
     List<ScoreWithCV> scoreList =
         scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
+  }
+
+  //閲覧したり更新したりするdata
+  Future<ScoreWithCV> getFXSCore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .get();
+    final fxScore = ScoreWithCV(doc);
+    return fxScore;
+  }
+
+  Future<void> setFXScore(num total, List<String> techs, num cv) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+      'cv': cv,
+    });
+  }
+
+  Future<void> updateFXScore(
+      String scoreId, num total, List<String> techs, num cv) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+      'cv': cv,
+    });
   }
 
   Future<List<Score>> getPHScores() async {
