@@ -170,7 +170,7 @@ class SearchScreen extends StatelessWidget {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {
       scoreModel.onTechSelected(techName, order);
-      scoreModel.calculateScore();
+      scoreModel.calculateScore(event);
     } catch (e) {
       print(e);
       return showDialog(

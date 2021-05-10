@@ -359,7 +359,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       child: Text('$cv'),
                       onPressed: () {
                         scoreModel.onCVSelected(cv);
-                        scoreModel.calculateScore();
+                        scoreModel.calculateScore(widget.event);
                         Navigator.pop(context);
                       },
                     ),

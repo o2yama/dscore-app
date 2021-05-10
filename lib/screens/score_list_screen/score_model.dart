@@ -131,7 +131,7 @@ class ScoreModel extends ChangeNotifier {
     ScoreWithCV fxScore = await scoreRepository.getFXSCore(scoreId);
     decidedTechList = fxScore.techs;
     cv = fxScore.cv;
-    calculateScore();
+    calculateScore(event);
     print(decidedTechList);
     isLoading = false;
     notifyListeners();
@@ -159,47 +159,88 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void calculateScore() {
-    //要求点の計算
-    List<String> group1 = [];
-    List<String> group2 = [];
-    List<String> group3 = [];
-    String group4 = '';
-    decidedTechList.forEach((tech) {
-      if (group[tech] == 1) {
-        group1.add(tech);
-      }
-      if (group[tech] == 2) {
-        group2.add(tech);
-      }
-      if (group[tech] == 3) {
-        group3.add(tech);
-      }
-      if (group[tech] == 4) {
-        group4 = tech;
-      }
-    });
-    if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
-      egr = 1.5;
-    } else {
-      if (group1.length > 0 && group2.length > 0 ||
-          group1.length > 0 && group3.length > 0 ||
-          group2.length > 0 && group3.length > 0) {
-        egr = 1.0;
+  void calculateScore(String event) {
+    if (event == '床') {
+      List<String> group1 = [];
+      List<String> group2 = [];
+      List<String> group3 = [];
+      decidedTechList.forEach((tech) {
+        if (group[tech] == 1) {
+          group1.add(tech);
+        }
+        if (group[tech] == 2) {
+          group2.add(tech);
+        }
+        if (group[tech] == 3) {
+          group3.add(tech);
+        }
+      });
+      if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
+        egr = 1.5;
       } else {
-        if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
-          egr = 0.5;
+        if (group1.length > 0 && group2.length > 0 ||
+            group1.length > 0 && group3.length > 0 ||
+            group2.length > 0 && group3.length > 0) {
+          egr = 1.0;
+        } else {
+          if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
+            egr = 0.5;
+          }
         }
       }
-    }
-    if (group4 != '') {
-      if (difficulty[group4]! >= 4) {
-        egr = egr * 10 + 5;
-        egr /= 10;
-      } else {
-        if (difficulty[group4]! >= 3) {
-          egr = egr * 10 + 3;
+      if (group[decidedTechList.last]! != 1) {
+        if (difficulty[decidedTechList.last]! >= 4) {
+          egr = egr * 10 + 5;
           egr /= 10;
+        } else {
+          if (difficulty[decidedTechList.last]! >= 3) {
+            egr = egr * 10 + 3;
+            egr /= 10;
+          }
+        }
+      }
+    } else {
+      //要求点の計算
+      List<String> group1 = [];
+      List<String> group2 = [];
+      List<String> group3 = [];
+      String group4 = '';
+      decidedTechList.forEach((tech) {
+        if (group[tech] == 1) {
+          group1.add(tech);
+        }
+        if (group[tech] == 2) {
+          group2.add(tech);
+        }
+        if (group[tech] == 3) {
+          group3.add(tech);
+        }
+        if (group[tech] == 4) {
+          group4 = tech;
+        }
+      });
+      if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
+        egr = 1.5;
+      } else {
+        if (group1.length > 0 && group2.length > 0 ||
+            group1.length > 0 && group3.length > 0 ||
+            group2.length > 0 && group3.length > 0) {
+          egr = 1.0;
+        } else {
+          if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
+            egr = 0.5;
+          }
+        }
+      }
+      if (group4 != '') {
+        if (difficulty[group4]! >= 4) {
+          egr = egr * 10 + 5;
+          egr /= 10;
+        } else {
+          if (difficulty[group4]! >= 3) {
+            egr = egr * 10 + 3;
+            egr /= 10;
+          }
         }
       }
     }
