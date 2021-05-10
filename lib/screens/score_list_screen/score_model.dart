@@ -298,7 +298,7 @@ class ScoreModel extends ChangeNotifier {
   //技検索
   void search(String text, String event) {
     if (text.isEmpty) {
-      searchResult = [];
+      searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
       //検索
@@ -351,6 +351,12 @@ class ScoreModel extends ChangeNotifier {
         });
       }
     }
+    notifyListeners();
+  }
+
+  void deleteSearchBarText(TextEditingController controller) {
+    controller.clear();
+    searchResult.clear();
     notifyListeners();
   }
 

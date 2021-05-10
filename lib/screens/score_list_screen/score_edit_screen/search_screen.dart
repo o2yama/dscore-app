@@ -80,6 +80,10 @@ class SearchScreen extends StatelessWidget {
         cursorColor: Theme.of(context).primaryColor,
         autofocus: true,
         decoration: InputDecoration(
+          suffixIcon: InkWell(
+            child: Icon(Icons.clear),
+            onTap: () => scoreModel.deleteSearchBarText(searchController),
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
