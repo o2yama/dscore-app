@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/score_list_screen/vt_score_list_screen/vt_score_list_screen.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -134,158 +134,138 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   Widget _eventCard(BuildContext context, String event, String eventEng) {
-    final introModel = Provider.of<IntroModel>(context, listen: false);
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Consumer<TotalScoreListModel>(builder: (context, model, child) {
       Future(() async {
-        if (introModel.currentUser != null) await model.getVTScores();
+        if (scoreModel.currentUser != null) await model.getFavoriteScores();
+        model.setTotalScore();
       });
-      return model.vtScore == null
-          ? SizedBox(
-              height: 100,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 15.0, top: 10.0),
-                              child: Text(
-                                '$event',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 15.0),
-                              child: Text(
-                                '$eventEng',
-                                style: TextStyle(
-                                    fontSize: 15.0, color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : SizedBox(
-              height: 100,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: () async {
-                    scoreModel.selectEvent(event);
-                    if (event == '跳馬') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VTScoreSelectScreen(event)),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ScoreListScreen(event)),
-                      );
-                    }
-                  },
-                  child: Row(
+      return SizedBox(
+        height: 100,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: InkWell(
+            onTap: () async {
+              scoreModel.selectEvent(event);
+              if (event == '跳馬') {
+                await scoreModel.getVTScore();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VTScoreSelectScreen()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScoreListScreen(event)));
+              }
+            },
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Column(
                     children: [
                       Expanded(
                         flex: 2,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                padding: EdgeInsets.only(left: 15.0, top: 10.0),
-                                child: Text(
-                                  '$event',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                padding: EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  '$eventEng',
-                                  style: TextStyle(
-                                      fontSize: 15.0, color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
                         child: Container(
-                          padding: EdgeInsets.only(left: 30.0),
-                          child: event == '跳馬'
-                              ? Text(
-                                  '${model.vtScore!.score}',
-                                  style: Theme.of(context).textTheme.headline5,
-                                )
-                              : Text('5.5'),
+                          padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                          child: Text(
+                            '$event',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
                       ),
                       Expanded(
-                        flex: 3,
                         child: Container(
-                          height: height * 0.07,
-                          width: width * 0.4,
-                          child: _techsList(
-                              event,
-                              context,
-                              '前方ダブル',
-                              'two',
-                              'three',
-                              'four',
-                              'five',
-                              'six',
-                              'seven',
-                              'eight',
-                              'nine',
-                              'finish'),
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            '$eventEng',
+                            style:
+                                TextStyle(fontSize: 15.0, color: Colors.grey),
+                          ),
                         ),
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      )
                     ],
                   ),
                 ),
-              ),
-            );
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 30.0),
+                    child: model.vt != null
+                        ? event == '床'
+                            ? Text(
+                                '${model.favoriteFxScore}',
+                                style: Theme.of(context).textTheme.headline6,
+                              )
+                            : event == 'あん馬'
+                                ? Text(
+                                    '${model.favoritePhScore}',
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  )
+                                : event == '吊り輪'
+                                    ? Text(
+                                        '${model.favoriteSrScore}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6,
+                                      )
+                                    : event == '跳馬'
+                                        ? Text(
+                                            '${model.vt!.score}',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline6,
+                                          )
+                                        : event == '平行棒'
+                                            ? Text(
+                                                '${model.favoritePbScore}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline6,
+                                              )
+                                            : event == '鉄棒'
+                                                ? Text(
+                                                    '${model.favoriteHbScore}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline6,
+                                                  )
+                                                : Text('0.0')
+                        : Text('0.0',
+                            style: Theme.of(context).textTheme.headline6),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    height: height * 0.07,
+                    width: width * 0.4,
+                    child: _techsList(event, context),
+                  ),
+                ),
+                Expanded(
+                  child: Icon(Icons.arrow_forward_ios,
+                      color: Theme.of(context).primaryColor),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
     });
   }
 
   //  6種目の合計
   Widget _totalScore() {
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
     return Column(
       children: [
         Container(
@@ -300,7 +280,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 ),
               ),
               Text(
-                '30.4',
+                '${totalScoreListModel.totalScore}',
                 style: TextStyle(fontSize: 30),
               ),
             ],
@@ -311,56 +291,143 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     );
   }
 
-  Widget _techsList(
-    String event,
-    BuildContext context,
-    String one,
-    String? two,
-    String? three,
-    String? four,
-    String? five,
-    String? six,
-    String? seven,
-    String? eight,
-    String? nine,
-    String? finish,
-  ) {
+  //技のリスト表示
+  //他に描き方が見つからなくて冗長になってしまった
+  //申し訳ない
+  Widget _techsList(String event, BuildContext context) {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
-    List<String> _techs = [
-      '1. $one',
-      '2. $two',
-      '3. $three',
-      '4. $four',
-      '5. $five',
-      '6. $six',
-      '7. $seven',
-      '8. $eight',
-      '9. $nine',
-      '10. $finish',
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: event == '跳馬'
-          ? Center(child: Text('${totalScoreListModel.vtScore!.techName}'))
-          : ListView(
-              children: _techs
-                  .map(
-                    (tech) => Card(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text('$tech'),
-                        ],
+    if (event == '床') {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: totalScoreListModel.favoriteFx == null
+            ? Container()
+            : ListView(
+                children: totalScoreListModel.favoriteFx!.techs
+                    .map(
+                      (tech) => Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(child: Text('$tech')),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                  .toList(),
-            ),
-    );
+                    )
+                    .toList(),
+              ),
+      );
+    }
+    if (event == 'あん馬') {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: totalScoreListModel.favoritePh == null
+            ? Container()
+            : ListView(
+                children: totalScoreListModel.favoritePh!.techs
+                    .map(
+                      (tech) => Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(child: Text('$tech')),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      );
+    }
+    if (event == '吊り輪') {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: totalScoreListModel.favoriteSr == null
+            ? Container()
+            : ListView(
+                children: totalScoreListModel.favoriteSr!.techs
+                    .map(
+                      (tech) => Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(child: Text('$tech')),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      );
+    }
+    if (event == '跳馬') {
+      return Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: totalScoreListModel.vt == null
+              ? Container()
+              : Center(child: Text('${totalScoreListModel.vt!.techName}')));
+    }
+    if (event == '平行棒') {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: totalScoreListModel.favoritePb == null
+            ? Container()
+            : ListView(
+                children: totalScoreListModel.favoritePb!.techs
+                    .map(
+                      (tech) => Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(child: Text('$tech')),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      );
+    }
+    if (event == '鉄棒') {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: totalScoreListModel.favoriteHb == null
+            ? Container()
+            : ListView(
+                children: totalScoreListModel.favoriteHb!.techs
+                    .map(
+                      (tech) => Card(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(child: Text('$tech')),
+                          ],
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      );
+    } else {
+      return Container();
+    }
   }
 }

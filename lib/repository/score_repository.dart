@@ -15,6 +15,18 @@ class ScoreRepository {
     uuid = Uuid().v4();
   }
 
+  Future<ScoreWithCV> getFavoriteFXScore() async {
+    final scoreList = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .where('isFavorite', isEqualTo: true)
+        .get();
+    final favoriteScore =
+        scoreList.docs.map((doc) => ScoreWithCV(doc)).toList()[0];
+    return favoriteScore;
+  }
+
   Future<List<ScoreWithCV>> getFXScores() async {
     final scores = await _db
         .collection('users')

@@ -4,16 +4,20 @@ import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
+import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
 class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
 
   final ScoreRepository scoreRepository;
+  CurrentUser? get currentUser => UserRepository.currentUser;
+
   List<ScoreWithCV>? fxScoreList;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
@@ -291,7 +295,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //床の技検索
+  //技検索
   void search(String text, String event) {
     if (text.isEmpty) {
       searchResult = [];
@@ -372,5 +376,13 @@ class ScoreModel extends ChangeNotifier {
 
   Future<void> setVTScore() async {
     await scoreRepository.setVTScore(vtTechName, totalScore);
+  }
+
+  Future<void> getVTScore() async {
+    final VTScore? vtScore = await scoreRepository.getVTScore();
+    if (vtScore != null) {
+      vtTechName = vtScore.techName;
+      totalScore = vtTech[vtScore.techName]!;
+    }
   }
 }
