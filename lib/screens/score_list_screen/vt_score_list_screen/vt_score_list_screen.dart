@@ -183,18 +183,19 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   Widget _dScoreDisplay() {
+    final width = MediaQuery.of(context).size.width;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
       children: [
         Container(
-          width: 200,
+          width: width * 0.5,
           margin: EdgeInsets.only(left: 40),
           child: Text(
             '${scoreModel.vtTechName}',
-            style: TextStyle(fontSize: 20.0),
+            style: TextStyle(fontSize: 14.0),
           ),
         ),
-        SizedBox(width: MediaQuery.of(context).size.width * 0.1),
+        SizedBox(width: width * 0.1),
         Container(
           margin: EdgeInsets.only(right: 16),
           child: Text(
