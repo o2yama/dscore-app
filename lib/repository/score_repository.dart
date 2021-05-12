@@ -15,54 +15,110 @@ class ScoreRepository {
     uuid = Uuid().v4();
   }
 
-  Future<List<ScoreWithCV>> getFXScores() async {
+  Future<ScoreWithCV?> getFavoriteFXScore() async {
+    final scoreList = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .where('isFavorite', isEqualTo: true)
+        .get();
+    ScoreWithCV? favoriteScore;
+    if (scoreList.size > 0) {
+      favoriteScore = scoreList.docs.map((doc) => ScoreWithCV(doc)).toList()[0];
+    }
+    return favoriteScore;
+  }
+
+  Future<List<ScoreWithCV>?> getFXScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
         .get();
-    List<ScoreWithCV> scoreList =
+    List<ScoreWithCV>? scoreList =
         scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
 
-  Future<List<Score>> getPHScores() async {
+  //閲覧したり更新したりするdata
+  Future<ScoreWithCV> getFXSCore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .get();
+    final fxScore = ScoreWithCV(doc);
+    return fxScore;
+  }
+
+  Future<void> setFXScore(num total, List<String> techs, num cv) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+      'cv': cv,
+    });
+  }
+
+  Future<void> updateFXScore(
+      String scoreId, num total, List<String> techs, num cv) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+      'cv': cv,
+    });
+  }
+
+  Future<List<Score>?> getPHScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
         .get();
-    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
-  Future<List<Score>> getSRScores() async {
+  Future<List<Score>?> getSRScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
         .get();
-    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
-  Future<List<Score>> getPBScores() async {
+  Future<List<Score>?> getPBScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
         .get();
-    List<Score> scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
-  Future<List<ScoreWithCV>> getHBScores() async {
+  Future<List<ScoreWithCV>?> getHBScores() async {
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
         .get();
-    List<ScoreWithCV> scoreList =
+    List<ScoreWithCV>? scoreList =
         scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
@@ -73,7 +129,10 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('vt')
         .get();
-    VTScore score = scores.docs.map((doc) => VTScore(doc)).toList()[0];
+    VTScore? score;
+    if (scores.size > 0) {
+      score = scores.docs.map((doc) => VTScore(doc)).toList()[0];
+    }
     return score;
   }
 

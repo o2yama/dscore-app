@@ -157,20 +157,14 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           IconButton(
               icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
-                // if (widget.event == '跳馬') {
-                //   scoreModel.selectEvent(widget.event);
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) =>
-                //             VTScoreSelectScreen(widget.event)),
-                //   );
-                // } else {
                 scoreModel.selectEvent(widget.event);
+                scoreModel.resetScore();
+                scoreModel.startEdit();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ScoreEditScreen(widget.event)),
+                      builder: (context) =>
+                          ScoreEditScreen(widget.event, type.CREATE)),
                 );
               }),
           SizedBox(width: width * 0.1),
@@ -256,12 +250,16 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     final height = MediaQuery.of(context).size.height - 50;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
-      onTap: () {
-        scoreModel.selectEvent(widget.event);
+      onTap: () async {
+        if (widget.event == '床') {
+          await scoreModel.getFXScore(scoreId, widget.event);
+        }
+        scoreModel.startEdit();
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ScoreEditScreen(widget.event)),
+              builder: (context) =>
+                  ScoreEditScreen(widget.event, type.EDIT, scoreId: scoreId)),
         );
       },
       child: Row(
@@ -329,7 +327,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('$tech'),
+                    Flexible(child: Text('$tech')),
                   ],
                 ),
               ),

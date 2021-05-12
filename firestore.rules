@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAnyAuthenticated() {
+      return request.auth != null;
+    }    
+
+    function isUserAuthenticated(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isNotAnonAuthenticated() {
+      return request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    function requesrData() {
+      return request.resource.data;
+    }
+
+    function resourceData() {
+      return resource.data;
+    }
+
+    function isNotUpdating(fieldName) {
+      return !(fieldName in resouceData) || requestData[fieldName] == resouceData[fieldName];
+    }
+
+    function isFeildAllowedWriting(fieldName) {
+      return fieldName.hasAll(requestData.keys());
+    }
+
+    function isString(text, min, max) {
+      return text is String $$ text.size >= min && text.size <= max;
+    }
+
+    function isNumber(num, min, max) {
+      return num is Number $$ num >= min && num <= max;
+    }
+  
+    function docPath(path) {
+      return path([['databases', database, 'documents'].join('/'), path.join('/')].join('/'));
+    }
+    //requestData().userRef == docPath(['users', request.auth.uid]); のように使う
+
+
+    match /{document=**} {
+      allow read, write: if
+      request.time < timestamp.date(2021, 5, 15);
+    }
+  }
+}
