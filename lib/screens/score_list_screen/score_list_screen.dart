@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/screens/score_list_screen/score_edit_screen/score_edit_screen.dart';
+import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -161,8 +161,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          ScoreEditScreen(widget.event, type.CREATE)),
+                      builder: (context) => ScoreEditScreen(widget.event)),
                 );
               }),
           SizedBox(width: width * 0.1),
@@ -257,7 +256,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ScoreEditScreen(widget.event, type.EDIT, scoreId: scoreId)),
+                  ScoreEditScreen(widget.event, scoreId: scoreId)),
         );
       },
       child: Row(
@@ -303,9 +302,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               size: 30,
               color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
             ),
-            onPressed: () {
-              model.onFavoriteButtonTapped(isFavorite);
-            });
+            onPressed: () {});
       },
     );
   }
