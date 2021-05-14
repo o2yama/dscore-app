@@ -92,6 +92,45 @@ class ScoreRepository {
     return scoreList;
   }
 
+  Future<Score> getPHScore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('ph')
+        .doc(scoreId)
+        .get();
+    final phScore = Score(doc);
+    return phScore;
+  }
+
+  Future<void> setPHScore(num total, List<String> techs) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('ph')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+    });
+  }
+
+  Future<void> updatePHScore(
+      String scoreId, num total, List<String> techs) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('ph')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+    });
+  }
+
   Future<List<Score>?> getSRScores() async {
     final scores = await _db
         .collection('users')
@@ -100,6 +139,45 @@ class ScoreRepository {
         .get();
     List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
+  }
+
+  Future<Score> getSRScore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('sr')
+        .doc(scoreId)
+        .get();
+    final srScore = Score(doc);
+    return srScore;
+  }
+
+  Future<void> setSRScore(num total, List<String> techs) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('sr')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+    });
+  }
+
+  Future<void> updateSRScore(
+      String scoreId, num total, List<String> techs) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('sr')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+    });
   }
 
   Future<List<Score>?> getPBScores() async {
@@ -112,6 +190,45 @@ class ScoreRepository {
     return scoreList;
   }
 
+  Future<Score> getPBScore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('pb')
+        .doc(scoreId)
+        .get();
+    final pbScore = Score(doc);
+    return pbScore;
+  }
+
+  Future<void> setPBScore(num total, List<String> techs) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('pb')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+    });
+  }
+
+  Future<void> updatePBScore(
+      String scoreId, num total, List<String> techs) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('pb')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+    });
+  }
+
   Future<List<ScoreWithCV>?> getHBScores() async {
     final scores = await _db
         .collection('users')
@@ -121,6 +238,47 @@ class ScoreRepository {
     List<ScoreWithCV>? scoreList =
         scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
+  }
+
+  Future<ScoreWithCV> getHBSCore(String scoreId) async {
+    final doc = await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('hb')
+        .doc(scoreId)
+        .get();
+    final hbScore = ScoreWithCV(doc);
+    return hbScore;
+  }
+
+  Future<void> setHBScore(num total, List<String> techs, num cv) async {
+    getUuid();
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('hb')
+        .doc(uuid)
+        .set({
+      'scoreId': uuid,
+      'total': total,
+      'components': techs,
+      'isFavorite': false,
+      'cv': cv,
+    });
+  }
+
+  Future<void> updateHBScore(
+      String scoreId, num total, List<String> techs, num cv) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('hb')
+        .doc(scoreId)
+        .update({
+      'total': total,
+      'components': techs,
+      'cv': cv,
+    });
   }
 
   Future<VTScore?> getVTScore() async {

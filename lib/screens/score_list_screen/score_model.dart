@@ -149,7 +149,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateFXSCore(String scoreId) async {
+  Future<void> updateFXScore(String scoreId) async {
     isLoading = true;
     notifyListeners();
     scoreRepository.updateFXScore(scoreId, totalScore, decidedTechList, cv);
@@ -157,9 +157,122 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getPHScore(String scoreId, String event) async {
+    isLoading = true;
+    notifyListeners();
+    selectEvent(event);
+    Score phScore = await scoreRepository.getPHScore(scoreId);
+    decidedTechList = phScore.techs;
+    calculateScore(event);
+    print(decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> setPHScore() async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.setPHScore(totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updatePHScore(String scoreId) async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.updatePHScore(scoreId, totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getSRScore(String scoreId, String event) async {
+    isLoading = true;
+    notifyListeners();
+    selectEvent(event);
+    Score srScore = await scoreRepository.getSRScore(scoreId);
+    decidedTechList = srScore.techs;
+    calculateScore(event);
+    print(decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> setSRScore() async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.setSRScore(totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateSRScore(String scoreId) async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.updateSRScore(scoreId, totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getPBScore(String scoreId, String event) async {
+    isLoading = true;
+    notifyListeners();
+    selectEvent(event);
+    Score pbScore = await scoreRepository.getPBScore(scoreId);
+    decidedTechList = pbScore.techs;
+    calculateScore(event);
+    print(decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> setPBScore() async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.setPBScore(totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updatePBScore(String scoreId) async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.updatePBScore(scoreId, totalScore, decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
   void onCVSelected(value) {
     cv = value;
     isEdited = true;
+    notifyListeners();
+  }
+
+  Future<void> getHBScore(String scoreId, String event) async {
+    isLoading = true;
+    notifyListeners();
+    selectEvent(event);
+    ScoreWithCV hbScore = await scoreRepository.getHBSCore(scoreId);
+    decidedTechList = hbScore.techs;
+    cv = hbScore.cv;
+    calculateScore(event);
+    print(decidedTechList);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> setHBScore() async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.setHBScore(totalScore, decidedTechList, cv);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> updateHBScore(String scoreId) async {
+    isLoading = true;
+    notifyListeners();
+    scoreRepository.updateHBScore(scoreId, totalScore, decidedTechList, cv);
+    isLoading = false;
     notifyListeners();
   }
 

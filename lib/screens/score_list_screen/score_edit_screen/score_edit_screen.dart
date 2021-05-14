@@ -207,7 +207,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     widget.type == type.CREATE
         ? scoreModel.setFXScore()
-        : scoreModel.updateFXSCore(widget.scoreId!);
+        : scoreModel.updateFXScore(widget.scoreId!);
     return showDialog(
         context: context,
         builder: (BuildContext context) {
