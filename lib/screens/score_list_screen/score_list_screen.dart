@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class ScoreListScreen extends StatefulWidget {
@@ -180,8 +182,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.fxScoreList!
-                  .map((score) => _scoreTile(context, score.scoreId,
-                      score.techs, score.total, score.isFavorite))
+                  .map((score) => _scoreTile(context, score.techs, score.total,
+                      score.isFavorite, score.scoreId))
                   .toList(),
             );
     }
@@ -193,8 +195,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.phScoreList!
-                  .map((score) => _scoreTile(context, score.scoreId,
-                      score.techs, score.total, score.isFavorite))
+                  .map((score) => _scoreTile(context, score.techs, score.total,
+                      score.isFavorite, score.scoreId))
                   .toList(),
             );
     }
@@ -206,8 +208,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.srScoreList!
-                  .map((score) => _scoreTile(context, score.scoreId,
-                      score.techs, score.total, score.isFavorite))
+                  .map((score) => _scoreTile(context, score.techs, score.total,
+                      score.isFavorite, score.scoreId))
                   .toList(),
             );
     }
@@ -219,8 +221,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.pbScoreList!
-                  .map((score) => _scoreTile(context, score.scoreId,
-                      score.techs, score.total, score.isFavorite))
+                  .map((score) => _scoreTile(context, score.techs, score.total,
+                      score.isFavorite, score.scoreId))
                   .toList(),
             );
     }
@@ -232,8 +234,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           ? Container()
           : ListView(
               children: scoreModel.hbScoreList!
-                  .map((score) => _scoreTile(context, score.scoreId,
-                      score.techs, score.total, score.isFavorite))
+                  .map((score) => _scoreTile(context, score.techs, score.total,
+                      score.isFavorite, score.scoreId))
                   .toList(),
             );
     } else {
@@ -241,8 +243,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     }
   }
 
-  Widget _scoreTile(BuildContext context, String scoreId, List<String> techs,
-      num total, bool isFavorite) {
+  Widget _scoreTile(BuildContext context, List<String> techs, num total,
+      bool isFavorite, String scoreId) {
     final width = MediaQuery.of(context).size.width - 50;
     final height = MediaQuery.of(context).size.height - 50;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
@@ -261,7 +263,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       },
       child: Row(
         children: [
-          Expanded(child: _favoriteButton(context, isFavorite)),
+          Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
           Expanded(
             flex: 8,
             child: Card(
@@ -293,7 +295,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _favoriteButton(BuildContext context, bool isFavorite) {
+  Widget _favoriteButton(
+      BuildContext context, bool isFavorite, String scoreId) {
     return Consumer<ScoreModel>(
       builder: (context, model, child) {
         return IconButton(
@@ -302,7 +305,10 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               size: 30,
               color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
             ),
-            onPressed: () {});
+            onPressed: () async {
+              await model.onFavoriteButtonTapped(
+                  widget.event, isFavorite, scoreId);
+            });
       },
     );
   }
