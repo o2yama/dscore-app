@@ -163,4 +163,13 @@ class ScoreRepository {
       });
     }
   }
+
+  Future<void> favoriteUpdate(String scoreId, bool isFavorite) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .update({'isFavorite': isFavorite});
+  }
 }
