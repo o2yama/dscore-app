@@ -1,22 +1,19 @@
 import 'dart:io';
+
 import 'package:dscore_app/data/score_datas.dart';
-import 'package:dscore_app/screens/score_list_screen/score_edit_screen/search_screen.dart';
+import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../../ad_state.dart';
 
-enum type {
-  EDIT,
-  CREATE,
-}
+import '../../ad_state.dart';
 
 class ScoreEditScreen extends StatefulWidget {
-  ScoreEditScreen(this.event, this.type, {this.scoreId});
+  ScoreEditScreen(this.event, {this.scoreId});
   final String event;
-  final type;
   final String? scoreId;
 
   @override
@@ -125,7 +122,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         ),
         TextButton(
           child: Text(
-            widget.type == type.CREATE ? '保存' : '更新',
+            widget.scoreId == null ? '保存' : '更新',
             style: TextStyle(
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
@@ -156,10 +153,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                             },
                             child: Text('キャンセル'),
                           ),
-                        ),
-                        VerticalDivider(
-                          width: 2,
-                          color: Colors.black54,
                         ),
                         Expanded(
                           child: TextButton(
@@ -205,9 +198,10 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   //保存ボタン押された時の処理
   Future<void> onStoreButtonPressed(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    widget.type == type.CREATE
-        ? scoreModel.setFXScore()
-        : scoreModel.updateFXScore(widget.scoreId!);
+
+    widget.scoreId == null
+        ? scoreModel.setScore(widget.event)
+        : scoreModel.updateScore(widget.event, widget.scoreId!);
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -217,7 +211,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   actions: [
                     TextButton(
                       onPressed: () async {
-                        await scoreModel.getSRScores();
+                        await scoreModel.getScores(widget.event);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -403,7 +397,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               ],
             )
           : RefreshIndicator(
-              onRefresh: () async => await scoreModel.onRefresh(widget.event),
+              onRefresh: () async => await scoreModel.getScores(widget.event),
               child: ListView(
                 children: scoreModel.decidedTechList
                     .map((tech) => _techTile(context, tech,
@@ -419,62 +413,76 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     return Column(
       children: [
         Card(
-          child: ListTile(
-            title: Row(
-              children: [
-                Text('$order'),
-                SizedBox(width: 8),
-                Flexible(
-                    child: Text('$techName', style: TextStyle(fontSize: 14.0))),
-              ],
-            ),
-            trailing: Container(
-              width: 110,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
+          child: Slidable(
+            actionExtentRatio: 0.2,
+            actionPane: SlidableScrollActionPane(),
+            secondaryActions: [
+              IconSlideAction(
+                caption: '削除',
+                color: Colors.red,
+                icon: Icons.remove,
+                onTap: () {
+                  scoreModel.deleteTech(order - 1, widget.event);
+                },
+              ),
+            ],
+            child: ListTile(
+              title: Row(
                 children: [
-                  Column(
-                    children: [
-                      SizedBox(height: 8),
-                      Expanded(
-                        child: Text('難度', style: TextStyle(fontSize: 10)),
-                      ),
-                      Expanded(
-                        child: Text(
-                            '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 24),
-                  Column(
-                    children: [
-                      SizedBox(height: 8),
-                      Expanded(
-                        child: Text('グループ', style: TextStyle(fontSize: 10)),
-                      ),
-                      Expanded(
-                        child:
-                            Text('${groupDisplay[scoreModel.group[techName]]}'),
-                      ),
-                    ],
-                  ),
+                  Text('$order'),
+                  SizedBox(width: 8),
+                  Flexible(
+                      child:
+                          Text('$techName', style: TextStyle(fontSize: 14.0))),
                 ],
               ),
+              trailing: Container(
+                width: 110,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(height: 8),
+                        Expanded(
+                          child: Text('難度', style: TextStyle(fontSize: 10)),
+                        ),
+                        Expanded(
+                          child: Text(
+                              '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 24),
+                    Column(
+                      children: [
+                        SizedBox(height: 8),
+                        Expanded(
+                          child: Text('グループ', style: TextStyle(fontSize: 10)),
+                        ),
+                        Expanded(
+                          child: Text(
+                              '${groupDisplay[scoreModel.group[techName]]}'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              onTap: () {
+                searchController.clear();
+                scoreModel.searchResult.clear();
+                scoreModel.selectEvent(widget.event);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          SearchScreen(widget.event, order: order),
+                      fullscreenDialog: true,
+                    ));
+              },
             ),
-            onTap: () {
-              //todo:技の変更処理
-              searchController.clear();
-              scoreModel.searchResult.clear();
-              scoreModel.selectEvent(widget.event);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        SearchScreen(widget.event, order: order),
-                    fullscreenDialog: true,
-                  ));
-            },
           ),
         ),
         scoreModel.decidedTechList.length == order &&
@@ -491,8 +499,9 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  SearchScreen(widget.event)));
+                            builder: (context) => SearchScreen(widget.event),
+                            fullscreenDialog: true,
+                          ));
                     },
                   ),
                   SizedBox(height: 200),
