@@ -3,7 +3,7 @@ import 'package:dscore_app/data/score_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../score_model.dart';
+import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
 
@@ -80,6 +80,10 @@ class SearchScreen extends StatelessWidget {
         cursorColor: Theme.of(context).primaryColor,
         autofocus: true,
         decoration: InputDecoration(
+          suffixIcon: InkWell(
+            child: Icon(Icons.clear),
+            onTap: () => scoreModel.deleteSearchBarText(searchController),
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
@@ -158,7 +162,7 @@ class SearchScreen extends StatelessWidget {
           ),
         ),
         onTap: () async {
-          onResultTileTapped(context, techName, order);
+          await onResultTileTapped(context, techName, order);
           Navigator.pop(context);
         },
       ),
@@ -173,7 +177,7 @@ class SearchScreen extends StatelessWidget {
       scoreModel.calculateScore(event);
     } catch (e) {
       print(e);
-      return showDialog(
+      await showDialog(
         context: context,
         builder: (context) => Platform.isIOS
             ? CupertinoAlertDialog(
