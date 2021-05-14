@@ -152,10 +152,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                             child: Text('キャンセル'),
                           ),
                         ),
-                        VerticalDivider(
-                          width: 2,
-                          color: Colors.black54,
-                        ),
                         Expanded(
                           child: TextButton(
                             onPressed: () {

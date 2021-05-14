@@ -175,7 +175,6 @@ class ScoreModel extends ChangeNotifier {
       await scoreRepository.setFXScore(totalScore, decidedTechList, cv);
     }
     if (event == 'あん馬') {
-      //todo: ここにスコアをセットする処理
       difficulty = phDifficulty;
       group = phGroup;
     }
@@ -208,7 +207,6 @@ class ScoreModel extends ChangeNotifier {
           scoreId, totalScore, decidedTechList, cv);
     }
     if (event == 'あん馬') {
-      //todo: ここにスコアをupdateする処理
       difficulty = phDifficulty;
       group = phGroup;
     }
@@ -356,57 +354,53 @@ class ScoreModel extends ChangeNotifier {
       searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
-      //検索
+      List<String> inputCharacters = [];
+      text.characters.forEach((char) {
+        inputCharacters.add(char);
+      });
       if (event == '床') {
-        final List<String> items = fxGroup.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
+        searchResult = searchLogic(fxGroup, inputCharacters.toList());
       }
       if (event == 'あん馬') {
-        final List<String> items = phGroup.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
+        searchResult = searchLogic(phGroup, inputCharacters.toList());
       }
       if (event == '吊り輪') {
-        final List<String> items = srGroup.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
-      }
-      if (event == '跳馬') {
-        final List<String> items = vtTech.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
+        searchResult = searchLogic(srGroup, inputCharacters.toList());
       }
       if (event == '平行棒') {
-        final List<String> items = pbGroup.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
+        searchResult = searchLogic(pbGroup, inputCharacters.toList());
       }
       if (event == '鉄棒') {
-        final List<String> items = hbGroup.keys
-            .where((techName) => techName.toLowerCase().contains(text))
-            .toList();
-        items.forEach((element) {
-          searchResult.add(element);
-        });
+        searchResult = searchLogic(hbGroup, inputCharacters.toList());
       }
     }
     notifyListeners();
+  }
+
+  List<String> searchLogic(Map<String, int> group, List<String> characters) {
+    List<String> items = [];
+    List<String> removeItems = [];
+    for (int i = 0; i < characters.length; i++) {
+      //0番目の文字を含むものをitemsに追加
+      //1番目以降の文字を含んでいないものをremoveListに追加
+      if (i == 0) {
+        final List<String> resultContainingFirstChar = group.keys
+            .where((techName) => techName.toLowerCase().contains(characters[0]))
+            .toList();
+        items = resultContainingFirstChar;
+      } else {
+        items.forEach((techName) {
+          if (!techName.toLowerCase().contains(characters[i])) {
+            removeItems.add(techName);
+          }
+        });
+      }
+    }
+    //removeListの要素をitemsから削除
+    removeItems.forEach((removeTechName) {
+      items.remove(removeTechName);
+    });
+    return items;
   }
 
   void deleteSearchBarText(TextEditingController controller) {
