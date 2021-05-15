@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../ad_state.dart';
+import '../../utilities.dart';
 import '../intro/intro_model.dart';
 import '../intro/intro_screen.dart';
 
@@ -68,7 +69,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                         child: Column(
                           children: [
                             // 広告
-                            ad(context),
+                            _ad(context),
                             RefreshIndicator(
                               onRefresh: () async {
                                 await totalScoreListModel.getFavoriteScores();
@@ -109,7 +110,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   //広告
-  ad(BuildContext context) {
+  _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -298,7 +299,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    height: height * 0.07,
+                    height: 200,
                     width: width * 0.4,
                     child: _techsList(event, context),
                   ),
@@ -334,7 +335,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
               ),
               Text(
                 '${totalScoreListModel.totalScore}',
-                style: TextStyle(fontSize: 30),
+                style: TextStyle(fontSize: Utilities().isMobile() ? 30 : 50),
               ),
             ],
           ),
@@ -350,133 +351,152 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     if (event == '床') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: totalScoreListModel.favoriteFx == null
-            ? Container()
-            : ListView(
-                children: totalScoreListModel.favoriteFx!.techs
-                    .map(
-                      (tech) => Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(child: Text('$tech')),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-      );
-    }
-    if (event == 'あん馬') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: totalScoreListModel.favoritePh == null
-            ? Container()
-            : ListView(
-                children: totalScoreListModel.favoritePh!.techs
-                    .map(
-                      (tech) => Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(child: Text('$tech')),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-      );
-    }
-    if (event == '吊り輪') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: totalScoreListModel.favoriteSr == null
-            ? Container()
-            : ListView(
-                children: totalScoreListModel.favoriteSr!.techs
-                    .map(
-                      (tech) => Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(child: Text('$tech')),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-      );
-    }
-    if (event == '跳馬') {
-      return Container(
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: totalScoreListModel.vt == null
+          child: totalScoreListModel.favoriteFx == null
               ? Container()
-              : Center(child: Text('${totalScoreListModel.vt!.techName}')));
+              : ListView(
+                  children: totalScoreListModel.favoriteFx!.techs
+                      .map(
+                        (tech) => Card(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(child: Text('$tech')),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+      );
+    }
+    if (event == 'あん馬') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: totalScoreListModel.favoritePh == null
+              ? Container()
+              : ListView(
+                  children: totalScoreListModel.favoritePh!.techs
+                      .map(
+                        (tech) => Card(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(child: Text('$tech')),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+      );
+    }
+    if (event == '吊り輪') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: totalScoreListModel.favoriteSr == null
+              ? Container()
+              : ListView(
+                  children: totalScoreListModel.favoriteSr!.techs
+                      .map(
+                        (tech) => Card(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(child: Text('$tech')),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+        ),
+      );
+    }
+    if (event == '跳馬') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+            decoration: BoxDecoration(
+              border:
+                  Border.all(color: Theme.of(context).primaryColor, width: 1),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: totalScoreListModel.vt == null
+                ? Container()
+                : Center(child: Text('${totalScoreListModel.vt!.techName}'))),
+      );
     }
     if (event == '平行棒') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: totalScoreListModel.favoritePb == null
-            ? Container()
-            : ListView(
-                children: totalScoreListModel.favoritePb!.techs
-                    .map(
-                      (tech) => Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(child: Text('$tech')),
-                          ],
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: totalScoreListModel.favoritePb == null
+              ? Container()
+              : ListView(
+                  children: totalScoreListModel.favoritePb!.techs
+                      .map(
+                        (tech) => Card(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(child: Text('$tech')),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
+                      )
+                      .toList(),
+                ),
+        ),
       );
     }
     if (event == '鉄棒') {
-      return Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: totalScoreListModel.favoriteHb == null
-            ? Container()
-            : ListView(
-                children: totalScoreListModel.favoriteHb!.techs
-                    .map(
-                      (tech) => Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(child: Text('$tech')),
-                          ],
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).primaryColor, width: 1),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: totalScoreListModel.favoriteHb == null
+              ? Container()
+              : ListView(
+                  children: totalScoreListModel.favoriteHb!.techs
+                      .map(
+                        (tech) => Card(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(child: Text('$tech')),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
+                      )
+                      .toList(),
+                ),
+        ),
       );
     } else {
       return Container();

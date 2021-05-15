@@ -7,7 +7,6 @@ class IntroModel extends ChangeNotifier {
   IntroModel({required this.userRepository});
   final UserRepository userRepository;
   bool isIntroWatched = false;
-  int currentIndex = 0;
   bool isLoading = false;
 
   CurrentUser? get currentUser => UserRepository.currentUser;

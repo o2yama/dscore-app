@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -114,62 +115,71 @@ class SearchScreen extends StatelessWidget {
     return Consumer<ScoreModel>(builder: (context, model, child) {
       return ListView(
         children: scoreModel.searchResult
-            .map((score) => resultTile(context, score))
+            .map((score) => resultTile(
+                context, score, scoreModel.searchResult.indexOf(score)))
             .toList(),
       );
     });
   }
 
-  Widget resultTile(BuildContext context, String techName) {
+  Widget resultTile(BuildContext context, String techName, int index) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Card(
-      child: ListTile(
-        title: Text(
-          '$techName',
-          style: TextStyle(fontSize: 14.0),
-        ),
-        trailing: Container(
-          width: 110,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Column(
+    return Column(
+      children: [
+        Card(
+          child: ListTile(
+            title: Text(
+              '$techName',
+              style: TextStyle(fontSize: Utilities().isMobile() ? 14 : 18.0),
+            ),
+            trailing: Container(
+              width: 110,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  SizedBox(height: 8),
-                  Expanded(
-                    child: Text('難度', style: TextStyle(fontSize: 10)),
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: Text('難度', style: TextStyle(fontSize: 10)),
+                      ),
+                      Expanded(
+                        child: Text(
+                            '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Text(
-                        '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                  SizedBox(width: 24),
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: Text('グループ', style: TextStyle(fontSize: 10)),
+                      ),
+                      Expanded(
+                        child:
+                            Text('${groupDisplay[scoreModel.group[techName]]}'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(width: 24),
-              Column(
-                children: [
-                  SizedBox(height: 8),
-                  Expanded(
-                    child: Text('グループ', style: TextStyle(fontSize: 10)),
-                  ),
-                  Expanded(
-                    child: Text('${groupDisplay[scoreModel.group[techName]]}'),
-                  ),
-                ],
-              ),
-            ],
+            ),
+            onTap: () async {
+              await _onResultTileTapped(context, techName, order);
+              Navigator.pop(context);
+            },
           ),
         ),
-        onTap: () async {
-          await onResultTileTapped(context, techName, order);
-          Navigator.pop(context);
-        },
-      ),
+        scoreModel.searchResult.length - 1 == index
+            ? SizedBox(height: 300)
+            : Container(),
+      ],
     );
   }
 
-  Future<void> onResultTileTapped(
+  Future<void> _onResultTileTapped(
       BuildContext context, String techName, int? order) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {

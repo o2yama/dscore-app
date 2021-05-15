@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../ad_state.dart';
+import '../../utilities.dart';
 
 class ScoreEditScreen extends StatefulWidget {
   ScoreEditScreen(this.event, {this.scoreId});
@@ -424,8 +425,12 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   Text('$order'),
                   SizedBox(width: 8),
                   Flexible(
-                      child:
-                          Text('$techName', style: TextStyle(fontSize: 14.0))),
+                    child: Text(
+                      '$techName',
+                      style: TextStyle(
+                          fontSize: Utilities().isMobile() ? 14.0 : 18.0),
+                    ),
+                  ),
                 ],
               ),
               trailing: Container(
