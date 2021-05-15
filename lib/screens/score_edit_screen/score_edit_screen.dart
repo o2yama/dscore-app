@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class ScoreEditScreen extends StatefulWidget {
@@ -207,8 +209,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () async {
-                        await scoreModel.getScores(widget.event);
+                      onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -223,8 +224,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () async {
-                        await scoreModel.getSRScores();
+                      onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },

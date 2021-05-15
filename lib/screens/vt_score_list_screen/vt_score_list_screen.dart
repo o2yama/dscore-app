@@ -1,10 +1,12 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class VTScoreSelectScreen extends StatefulWidget {
@@ -147,7 +149,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                     title: Text('保存しました'),
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
@@ -163,7 +165,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                     title: Text('保存しました'),
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },

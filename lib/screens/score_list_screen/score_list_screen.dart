@@ -87,7 +87,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: RefreshIndicator(
                             onRefresh: () async {
-                              await model.getFXScores();
+                              await model.getScores(widget.event);
                             },
                             child: _scoreList(context),
                           ),
@@ -252,6 +252,18 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       onTap: () async {
         if (widget.event == '床') {
           await scoreModel.getFXScore(scoreId, widget.event);
+        }
+        if (widget.event == 'あん馬') {
+          await scoreModel.getPHScore(scoreId, widget.event);
+        }
+        if (widget.event == '吊り輪') {
+          await scoreModel.getSRScore(scoreId, widget.event);
+        }
+        if (widget.event == '平行棒') {
+          await scoreModel.getPBScore(scoreId, widget.event);
+        }
+        if (widget.event == '鉄棒') {
+          await scoreModel.getHBScore(scoreId, widget.event);
         }
         scoreModel.startEdit();
         Navigator.push(
