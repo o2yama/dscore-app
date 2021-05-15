@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -49,7 +49,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         await introModel.checkIsIntroWatched();
         if (introModel.isIntroWatched) {
           await totalScoreListModel.getFavoriteScores();
-          totalScoreListModel.setTotalScore();
         }
       }
     });
@@ -73,7 +72,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                             RefreshIndicator(
                               onRefresh: () async {
                                 await totalScoreListModel.getFavoriteScores();
-                                totalScoreListModel.setTotalScore();
                               },
                               child: Column(
                                 children: [

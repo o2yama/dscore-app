@@ -206,8 +206,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () async {
-                        await scoreModel.getScores(widget.event);
+                      onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -222,8 +221,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () async {
-                        await scoreModel.getSRScores();
+                      onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },

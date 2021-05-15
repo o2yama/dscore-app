@@ -1,4 +1,3 @@
-import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
@@ -34,16 +33,47 @@ class TotalScoreListModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    favoriteFx = await scoreRepository.getFavoriteFXScore();
-    if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-    print(favoriteFx!.total);
-
+    await getFavoriteFXScore();
+    await getFavoritePHScore();
+    await getFavoriteSRScore();
+    await getVTScore();
+    await getFavoritePBScore();
+    await getFavoriteHBScores();
     setTotalScore();
+    print(favoriteFx!.total);
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> getFavoriteFXScore() async {
+    favoriteFx = await scoreRepository.getFavoriteFXScore();
+    if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
+  }
+
+  Future<void> getFavoritePHScore() async {
+    favoritePh = await scoreRepository.getFavoritePHScore();
+    if (favoritePh != null) favoritePhScore = favoritePh!.total;
+  }
+
+  Future<void> getFavoriteSRScore() async {
+    favoriteSr = await scoreRepository.getFavoriteSRScore();
+    if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
+  }
+
+  Future<void> getVTScore() async {
+    vt = await scoreRepository.getVTScore();
+    if (vt != null) vtScore = vt!.score;
+  }
+
+  Future<void> getFavoritePBScore() async {
+    favoritePb = await scoreRepository.getFavoritePBScore();
+    if (favoritePb != null) favoritePbScore = favoritePb!.total;
+  }
+
+  Future<void> getFavoriteHBScores() async {
+    favoriteHb = await scoreRepository.getFavoriteHBScore();
+    if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
   }
 
   void setTotalScore() {

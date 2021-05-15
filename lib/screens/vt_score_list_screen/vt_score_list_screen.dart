@@ -41,7 +41,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                ad(context),
+                _ad(context),
                 Stack(
                   children: [
                     Container(
@@ -83,7 +83,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   //広告
-  Widget ad(BuildContext context) {
+  Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -128,14 +128,14 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
           onPressed: () {
-            onStoreButtonPressed(context);
+            _onStoreButtonPressed(context);
           },
         ),
       ],
     );
   }
 
-  Future<void> onStoreButtonPressed(context) async {
+  Future<void> _onStoreButtonPressed(context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     await scoreModel.setVTScore();
     return showDialog(
@@ -147,7 +147,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                     title: Text('保存しました'),
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
@@ -163,7 +163,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                     title: Text('保存しました'),
                     actions: [
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
