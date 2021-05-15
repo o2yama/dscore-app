@@ -97,13 +97,68 @@ class ScoreModel extends ChangeNotifier {
   }
 
   //お気に入り変更するため
-  Future<List<String>> getScoreIds() async {
-    await getFXScores();
-    List<String> scoreIds = [];
-    fxScoreList!.forEach((fxScore) {
-      scoreIds.add(fxScore.scoreId);
-    });
-    return scoreIds;
+  Future<List<String>> getScoreIds(String event) async {
+    if (event == '床') {
+      await getFXScores();
+      List<String> scoreIds = [];
+      fxScoreList!.forEach((fxScore) {
+        scoreIds.add(fxScore.scoreId);
+      });
+      return scoreIds;
+    }
+    if (event == 'あん馬') {
+      await getPHScores();
+      List<String> scoreIds = [];
+      phScoreList!.forEach((phScore) {
+        scoreIds.add(phScore.scoreId);
+      });
+      return scoreIds;
+    }
+    if (event == '吊り輪') {
+      await getSRScores();
+      List<String> scoreIds = [];
+      srScoreList!.forEach((srScore) {
+        scoreIds.add(srScore.scoreId);
+      });
+      return scoreIds;
+    }
+    if (event == '平行棒') {
+      await getPBScores();
+      List<String> scoreIds = [];
+      pbScoreList!.forEach((pbScore) {
+        scoreIds.add(pbScore.scoreId);
+      });
+      return scoreIds;
+    }
+    if (event == '鉄棒') {
+      await getHBScores();
+      List<String> scoreIds = [];
+      hbScoreList!.forEach((hbScore) {
+        scoreIds.add(hbScore.scoreId);
+      });
+      return scoreIds;
+    } else {
+      return [];
+    }
+  }
+
+  Future<void> favoriteChangeFalse(
+      String event, String scoreId, bool isFavorite) async {
+    if (event == '床') {
+      await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
+    }
+    if (event == 'あん馬') {
+      await scoreRepository.favoritePHUpdate(scoreId, isFavorite);
+    }
+    if (event == '吊り輪') {
+      await scoreRepository.favoriteSRUpdate(scoreId, isFavorite);
+    }
+    if (event == '平行棒') {
+      await scoreRepository.favoritePBUpdate(scoreId, isFavorite);
+    }
+    if (event == '鉄棒') {
+      await scoreRepository.favoriteHBUpdate(scoreId, isFavorite);
+    }
   }
 
   Future<void> onFavoriteButtonTapped(
@@ -114,13 +169,13 @@ class ScoreModel extends ChangeNotifier {
     if (isFavorite) {
       isFavorite = false;
     } else {
-      List<String> scoreIdList = await getScoreIds();
+      List<String> scoreIdList = await getScoreIds(event);
       scoreIdList.forEach((scoreId) {
-        scoreRepository.favoriteUpdate(scoreId, false);
+        favoriteChangeFalse(event, scoreId, false);
       });
       isFavorite = true;
     }
-    await scoreRepository.favoriteUpdate(scoreId, isFavorite);
+    await favoriteChangeFalse(event, scoreId, isFavorite);
 
     if (event == '床') {
       fxScoreList = await scoreRepository.getFXScores();
