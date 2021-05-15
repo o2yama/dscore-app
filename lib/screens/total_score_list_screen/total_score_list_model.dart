@@ -12,6 +12,7 @@ class TotalScoreListModel extends ChangeNotifier {
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;
+  bool isDoneGetScore = false;
 
   ScoreWithCV? favoriteFx;
   Score? favoritePh;
@@ -28,87 +29,51 @@ class TotalScoreListModel extends ChangeNotifier {
   num favoriteHbScore = 0.0;
   num totalScore = 0.0;
 
-  Future<void> getFavoriteScores(String event) async {
-    if (event == '床') {
-      await getFavoriteFXScores();
-    }
-    if (event == 'あん馬') {
-      await getFavoritePHScores();
-    }
-    if (event == '吊り輪') {
-      await getFavoriteSRScores();
-    }
-    if (event == '平行棒') {
-      await getFavoritePBScores();
-    }
-    if (event == '鉄棒') {
-      await getFavoriteHBScores();
-    }
-  }
-
-  Future<void> getFavoriteFXScores() async {
+  Future<void> getFavoriteScores() async {
     isLoading = true;
     notifyListeners();
 
+    await getFavoriteFXScore();
+    await getFavoritePHScore();
+    await getFavoriteSRScore();
+    await getVTScore();
+    await getFavoritePBScore();
+    await getFavoriteHBScores();
+    setTotalScore();
+    print(favoriteFx!.total);
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getFavoriteFXScore() async {
     favoriteFx = await scoreRepository.getFavoriteFXScore();
     if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-
-    isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> getFavoritePHScores() async {
-    isLoading = true;
-    notifyListeners();
-
+  Future<void> getFavoritePHScore() async {
     favoritePh = await scoreRepository.getFavoritePHScore();
     if (favoritePh != null) favoritePhScore = favoritePh!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-
-    isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> getFavoriteSRScores() async {
-    isLoading = true;
-    notifyListeners();
-
+  Future<void> getFavoriteSRScore() async {
     favoriteSr = await scoreRepository.getFavoriteSRScore();
     if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-
-    isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> getFavoritePBScores() async {
-    isLoading = true;
-    notifyListeners();
-
-    favoritePb = await scoreRepository.getFavoritePBScore();
-    if (favoritePb != null) favoritePbScore = favoritePb!.total;
+  Future<void> getVTScore() async {
     vt = await scoreRepository.getVTScore();
     if (vt != null) vtScore = vt!.score;
+  }
 
-    isLoading = false;
-    notifyListeners();
+  Future<void> getFavoritePBScore() async {
+    favoritePb = await scoreRepository.getFavoritePBScore();
+    if (favoritePb != null) favoritePbScore = favoritePb!.total;
   }
 
   Future<void> getFavoriteHBScores() async {
-    isLoading = true;
-    notifyListeners();
-
     favoriteHb = await scoreRepository.getFavoriteHBScore();
     if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-
-    isLoading = false;
-    notifyListeners();
   }
 
   void setTotalScore() {

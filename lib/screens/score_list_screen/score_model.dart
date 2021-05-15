@@ -19,7 +19,6 @@ class ScoreModel extends ChangeNotifier {
   CurrentUser? get currentUser => UserRepository.currentUser;
 
   List<ScoreWithCV>? fxScoreList;
-  // bool isFavorite = false;
   List<Score>? phScoreList;
   List<Score>? srScoreList;
   VTScore? vtScore;

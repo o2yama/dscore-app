@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class ScoreListScreen extends StatefulWidget {
@@ -81,7 +79,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                         ),
                         Container(
                           height: height * 0.1,
-                          child: _eventDisplay(context),
+                          child: _eventNameDisplay(context),
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height * 0.8,
@@ -140,7 +138,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _eventDisplay(BuildContext context) {
+  Widget _eventNameDisplay(BuildContext context) {
     final width = MediaQuery.of(context).size.width - 50;
     final height = MediaQuery.of(context).size.height - 50;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
@@ -294,7 +292,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                     Container(
                       height: height * 0.07,
                       width: width * 0.4,
-                      child: _techsDisplay(context, techs),
+                      child: _techsListView(context, techs),
                     ),
                     SizedBox(width: width * 0.1),
                   ],
@@ -325,7 +323,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     );
   }
 
-  Widget _techsList(BuildContext context, List<String> techs) {
+  //演技の内容が見れるところ
+  Widget _techsListView(BuildContext context, List<String> techs) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
@@ -346,13 +345,5 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
             .toList(),
       ),
     );
-  }
-
-  Widget _techsDisplay(BuildContext context, List<String> scoreList) {
-    return _techsListDisplay(context, scoreList);
-  }
-
-  Widget _techsListDisplay(BuildContext context, List<String> scoreList) {
-    return _techsList(context, scoreList);
   }
 }

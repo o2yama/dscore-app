@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class ScoreEditScreen extends StatefulWidget {
@@ -51,7 +49,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
               child: Column(
                 children: [
                   //広告
-                  ad(context),
+                  _ad(context),
                   //戻るボタン
                   Container(
                     height: height * 0.1,
@@ -82,7 +80,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   //広告
-  Widget ad(BuildContext context) {
+  Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -91,7 +89,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
           );
   }
 
-  //戻るボタンと保存ボタン
   Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +114,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
           onPressed: () {
-            onBackButtonPressed(context);
+            _onBackButtonPressed(context);
           },
         ),
         TextButton(
@@ -127,14 +124,14 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
           onPressed: () {
-            onStoreButtonPressed(context);
+            _onStoreButtonPressed(context);
           },
         ),
       ],
     );
   }
 
-  void onBackButtonPressed(BuildContext context) {
+  void _onBackButtonPressed(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     if (scoreModel.isEdited) {
       showDialog(
@@ -196,7 +193,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   //保存ボタン押された時の処理
-  Future<void> onStoreButtonPressed(BuildContext context) {
+  Future<void> _onStoreButtonPressed(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     widget.scoreId == null
         ? scoreModel.setScore(widget.event)
@@ -238,7 +235,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         });
   }
 
-  //Dスコアの表示
   Widget _totalScore(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
@@ -260,7 +256,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     );
   }
 
-  //スコアの詳細
   Widget _detailsScore(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
@@ -319,7 +314,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             widget.event == '床' || widget.event == '鉄棒'
                 ? Expanded(
                     child: Center(
-                      child: cvSelectMenu(context),
+                      child: _cvSelectMenu(context),
                     ),
                   )
                 : Container(),
@@ -329,7 +324,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     );
   }
 
-  Widget cvSelectMenu(BuildContext context) {
+  Widget _cvSelectMenu(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final cvs = [0.0, 0.1, 0.2, 0.3, 0.4];
     return Row(

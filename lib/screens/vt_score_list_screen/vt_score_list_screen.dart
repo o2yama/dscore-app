@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class VTScoreSelectScreen extends StatefulWidget {
@@ -43,7 +41,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                ad(context),
+                _ad(context),
                 Stack(
                   children: [
                     Container(
@@ -85,7 +83,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
   }
 
   //広告
-  Widget ad(BuildContext context) {
+  Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -130,14 +128,14 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
           onPressed: () {
-            onStoreButtonPressed(context);
+            _onStoreButtonPressed(context);
           },
         ),
       ],
     );
   }
 
-  Future<void> onStoreButtonPressed(context) async {
+  Future<void> _onStoreButtonPressed(context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     await scoreModel.setVTScore();
     return showDialog(

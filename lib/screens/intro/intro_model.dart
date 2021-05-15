@@ -6,7 +6,7 @@ import '../../domain/current_user.dart';
 class IntroModel extends ChangeNotifier {
   IntroModel({required this.userRepository});
   final UserRepository userRepository;
-  bool isIntroWatched = true;
+  bool isIntroWatched = false;
   int currentIndex = 0;
   bool isLoading = false;
 

@@ -29,7 +29,7 @@ class VTTechListView extends StatelessWidget {
                 perspective: 0.001,
                 childDelegate: ListWheelChildListDelegate(
                   children: vtTech.keys
-                      .map((techName) => vtTile(context, techName))
+                      .map((techName) => _vtTile(context, techName))
                       .toList(),
                 ),
                 overAndUnderCenterOpacity: 0.4,
@@ -44,7 +44,7 @@ class VTTechListView extends StatelessWidget {
     );
   }
 
-  Widget vtTile(BuildContext context, String techName) {
+  Widget _vtTile(BuildContext context, String techName) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Padding(
