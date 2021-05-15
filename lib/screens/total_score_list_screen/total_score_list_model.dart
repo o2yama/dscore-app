@@ -13,6 +13,7 @@ class TotalScoreListModel extends ChangeNotifier {
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;
+  bool isDoneGetScore = false;
 
   ScoreWithCV? favoriteFx;
   Score? favoritePh;
@@ -37,6 +38,9 @@ class TotalScoreListModel extends ChangeNotifier {
     if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
     vt = await scoreRepository.getVTScore();
     if (vt != null) vtScore = vt!.score;
+    print(favoriteFx!.total);
+
+    setTotalScore();
 
     isLoading = false;
     notifyListeners();

@@ -42,58 +42,72 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   @override
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
     Future(() async {
-      if (introModel.currentUser == null)
+      if (introModel.currentUser == null) {
         await introModel.checkIsIntroWatched();
+        if (introModel.isIntroWatched) {
+          await totalScoreListModel.getFavoriteScores();
+          totalScoreListModel.setTotalScore();
+        }
+      }
     });
-    return Consumer<IntroModel>(
-      builder: (context, model, child) {
-        return Stack(
-          children: [
-            Scaffold(
-              body: SingleChildScrollView(
-                child: Container(
-                  color: Theme.of(context).backgroundColor,
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          // 広告
-                          ad(context),
-                          //設定ボタンと使い方ボタン
-                          _settingButton(context),
-                          //６種目のカード
-                          _eventCard(context, event[0], eventEng[0]),
-                          _eventCard(context, event[1], eventEng[1]),
-                          _eventCard(context, event[2], eventEng[2]),
-                          _eventCard(context, event[3], eventEng[3]),
-                          _eventCard(context, event[4], eventEng[4]),
-                          _eventCard(context, event[5], eventEng[5]),
-                          //  6種目の合計
-                          _totalScore(),
-                        ],
+    return Consumer<TotalScoreListModel>(
+        builder: (context, totalScoreListModel, child) {
+      return Consumer<IntroModel>(
+        builder: (context, model, child) {
+          return Stack(
+            children: [
+              Scaffold(
+                body: SingleChildScrollView(
+                  child: Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // 広告
+                            ad(context),
+                            RefreshIndicator(
+                              onRefresh: () async {
+                                await totalScoreListModel.getFavoriteScores();
+                                totalScoreListModel.setTotalScore();
+                              },
+                              child: Column(
+                                children: [
+                                  //設定ボタンと使い方ボタン
+                                  _settingButton(context),
+                                  _eventsListView(
+                                    context,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            (!model.isIntroWatched) ? IntroScreen() : Container(),
-            (model.isLoading)
-                ? Container(
-                    color: Colors.grey.withOpacity(0.6),
-                    child: Center(
-                      child: Platform.isIOS
-                          ? CupertinoActivityIndicator()
-                          : CircularProgressIndicator(),
-                    ),
-                  )
-                : Container(),
-          ],
-        );
-      },
-    );
+              (!model.isIntroWatched) ? IntroScreen() : Container(),
+              (model.isLoading || totalScoreListModel.isLoading)
+                  ? Container(
+                      color: Colors.grey.withOpacity(0.6),
+                      child: Center(
+                        child: Platform.isIOS
+                            ? CupertinoActivityIndicator()
+                            : CircularProgressIndicator(),
+                      ),
+                    )
+                  : Container(),
+            ],
+          );
+        },
+      );
+    });
   }
 
   //広告
@@ -107,41 +121,60 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   Widget _settingButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        IconButton(
-          icon: Icon(
-            Icons.color_lens,
-            color: Theme.of(context).primaryColor,
+    final height = MediaQuery.of(context).size.height - 50; //広告の分の50px
+    return Container(
+      height: height * 0.1,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          IconButton(
+            icon: Icon(
+              Icons.color_lens,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ThemeColorScreen()),
+              );
+            },
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ThemeColorScreen()),
-            );
-          },
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.info_outline,
-            color: Theme.of(context).primaryColor,
-          ),
-          onPressed: () {},
-        )
-      ],
+          IconButton(
+            icon: Icon(
+              Icons.info_outline,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () {},
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _eventsListView(BuildContext context) {
+    final height = MediaQuery.of(context).size.height - 50;
+    return Container(
+      height: height * 0.9,
+      child: ListView(
+        children: [
+          _eventCard(context, event[0], eventEng[0]),
+          _eventCard(context, event[1], eventEng[1]),
+          _eventCard(context, event[2], eventEng[2]),
+          _eventCard(context, event[3], eventEng[3]),
+          _eventCard(context, event[4], eventEng[4]),
+          _eventCard(context, event[5], eventEng[5]),
+          _totalScore(),
+          Container(height: 100),
+        ],
+      ),
     );
   }
 
   Widget _eventCard(BuildContext context, String event, String eventEng) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width - 50;
+    final height = MediaQuery.of(context).size.height - 50;
     return Consumer<TotalScoreListModel>(builder: (context, model, child) {
-      Future(() async {
-        if (scoreModel.currentUser != null) await model.getFavoriteScores();
-        model.setTotalScore();
-      });
       return SizedBox(
         height: 100,
         child: Card(
@@ -315,7 +348,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
 
   //技のリスト表示
   //他に描き方が見つからなくて冗長になってしまった
-  //申し訳ない
   Widget _techsList(String event, BuildContext context) {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
