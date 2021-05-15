@@ -175,21 +175,25 @@ class ScoreModel extends ChangeNotifier {
       await scoreRepository.setFXScore(totalScore, decidedTechList, cv);
     }
     if (event == 'あん馬') {
+      await scoreRepository.setPHScore(totalScore, decidedTechList);
       difficulty = phDifficulty;
       group = phGroup;
     }
     if (event == '吊り輪') {
+      await scoreRepository.setSRScore(totalScore, decidedTechList);
       difficulty = srDifficulty;
       group = srGroup;
     }
-    if (event == '跳馬') {
-      difficulty = vtTech;
-    }
+    // if (event == '跳馬') {
+    //   difficulty = vtTech;
+    // }
     if (event == '平行棒') {
+      await scoreRepository.setPBScore(totalScore, decidedTechList);
       difficulty = pbDifficulty;
       group = pbGroup;
     }
     if (event == '鉄棒') {
+      await scoreRepository.setHBScore(totalScore, decidedTechList, cv);
       difficulty = hbDifficulty;
       group = hbGroup;
     }
@@ -207,21 +211,26 @@ class ScoreModel extends ChangeNotifier {
           scoreId, totalScore, decidedTechList, cv);
     }
     if (event == 'あん馬') {
+      await scoreRepository.updatePHScore(scoreId, totalScore, decidedTechList);
       difficulty = phDifficulty;
       group = phGroup;
     }
     if (event == '吊り輪') {
+      await scoreRepository.updateSRScore(scoreId, totalScore, decidedTechList);
       difficulty = srDifficulty;
       group = srGroup;
     }
-    if (event == '跳馬') {
-      difficulty = vtTech;
-    }
+    // if (event == '跳馬') {
+    //   difficulty = vtTech;
+    // }
     if (event == '平行棒') {
+      await scoreRepository.updatePBScore(scoreId, totalScore, decidedTechList);
       difficulty = pbDifficulty;
       group = pbGroup;
     }
     if (event == '鉄棒') {
+      await scoreRepository.updateHBScore(
+          scoreId, totalScore, decidedTechList, cv);
       difficulty = hbDifficulty;
       group = hbGroup;
     }

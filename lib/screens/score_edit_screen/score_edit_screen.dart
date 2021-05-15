@@ -198,10 +198,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   //保存ボタン押された時の処理
   Future<void> onStoreButtonPressed(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-
-    widget.scoreId == null
-        ? scoreModel.setScore(widget.event)
-        : scoreModel.updateScore(widget.event, widget.scoreId!);
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -211,7 +207,10 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   actions: [
                     TextButton(
                       onPressed: () async {
-                        await scoreModel.getScores(widget.event);
+                        widget.scoreId == null
+                            ? scoreModel.setScore(widget.event)
+                            : scoreModel.updateScore(
+                                widget.event, widget.scoreId!);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -227,6 +226,10 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   actions: [
                     TextButton(
                       onPressed: () async {
+                        widget.scoreId == null
+                            ? scoreModel.setScore(widget.event)
+                            : scoreModel.updateScore(
+                                widget.event, widget.scoreId!);
                         await scoreModel.getSRScores();
                         Navigator.pop(context);
                         Navigator.pop(context);

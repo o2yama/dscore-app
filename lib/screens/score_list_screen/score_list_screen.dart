@@ -87,7 +87,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: RefreshIndicator(
                             onRefresh: () async {
-                              await model.getFXScores();
+                              await model.getScores(widget.event);
                             },
                             child: _scoreList(context),
                           ),
