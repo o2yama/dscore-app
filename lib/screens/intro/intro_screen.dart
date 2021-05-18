@@ -9,17 +9,14 @@ class IntroScreen extends StatelessWidget {
   final List<PageViewModel> introViews = [
     PageViewModel(
       title: '使いやすい！',
-      image: Image.asset('images/events_list.PNG'),
       body: '最高のアプリだ！',
     ),
     PageViewModel(
       title: '使いやすい！',
-      image: Image.asset('images/scores.PNG'),
       body: '最高のアプリだ！',
     ),
     PageViewModel(
       title: '使いやすい！',
-      image: Image.asset('images/calc_view.PNG'),
       body: '最高のアプリだ！',
     ),
   ];
