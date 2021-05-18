@@ -33,47 +33,22 @@ class TotalScoreListModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await getFavoriteFXScore();
-    await getFavoritePHScore();
-    await getFavoriteSRScore();
-    await getVTScore();
-    await getFavoritePBScore();
-    await getFavoriteHBScores();
+    favoriteFx = await scoreRepository.getFavoriteFXScore();
+    if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
+    favoritePh = await scoreRepository.getFavoritePHScore();
+    if (favoritePh != null) favoritePhScore = favoritePh!.total;
+    favoriteSr = await scoreRepository.getFavoriteSRScore();
+    if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
+    vt = await scoreRepository.getVTScore();
+    if (vt != null) vtScore = vt!.score;
+    favoritePb = await scoreRepository.getFavoritePBScore();
+    if (favoritePb != null) favoritePbScore = favoritePb!.total;
+    favoriteHb = await scoreRepository.getFavoriteHBScore();
+    if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
     setTotalScore();
-    print(favoriteFx!.total);
 
     isLoading = false;
     notifyListeners();
-  }
-
-  Future<void> getFavoriteFXScore() async {
-    favoriteFx = await scoreRepository.getFavoriteFXScore();
-    if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
-  }
-
-  Future<void> getFavoritePHScore() async {
-    favoritePh = await scoreRepository.getFavoritePHScore();
-    if (favoritePh != null) favoritePhScore = favoritePh!.total;
-  }
-
-  Future<void> getFavoriteSRScore() async {
-    favoriteSr = await scoreRepository.getFavoriteSRScore();
-    if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
-  }
-
-  Future<void> getVTScore() async {
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-  }
-
-  Future<void> getFavoritePBScore() async {
-    favoritePb = await scoreRepository.getFavoritePBScore();
-    if (favoritePb != null) favoritePbScore = favoritePb!.total;
-  }
-
-  Future<void> getFavoriteHBScores() async {
-    favoriteHb = await scoreRepository.getFavoriteHBScore();
-    if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
   }
 
   void setTotalScore() {
