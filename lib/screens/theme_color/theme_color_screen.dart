@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-
 import '../../ad_state.dart';
 
 class ThemeColorScreen extends StatefulWidget {
@@ -41,8 +40,8 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  ad(context),
-                  backButton(context),
+                  _ad(context),
+                  _backButton(context),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -52,7 +51,7 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
                           child: ListView(
                             children: themes.keys
                                 .map(
-                                  (color) => colorTile(context, color),
+                                  (color) => _colorTile(context, color),
                                 )
                                 .toList(),
                           ),
@@ -69,7 +68,7 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
     );
   }
 
-  ad(BuildContext context) {
+  Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
@@ -78,18 +77,18 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
           );
   }
 
-  Widget backButton(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+  Widget _backButton(BuildContext context) {
     return Container(
       color: Theme.of(context).backgroundColor,
-      width: width,
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Platform.isIOS
+      height: 50,
+      child: InkWell(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Row(
+          children: [
+            SizedBox(width: 8),
+            Platform.isIOS
                 ? Icon(
                     Icons.arrow_back_ios,
                     color: Theme.of(context).primaryColor,
@@ -98,18 +97,19 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
                     Icons.clear,
                     color: Theme.of(context).primaryColor,
                   ),
-          ),
-          SizedBox(width: width * 0.1),
-          Text(
-            'テーマカラー',
-            style: TextStyle(color: Theme.of(context).primaryColor),
-          )
-        ],
+            Text(
+              'テーマカラー',
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Widget colorTile(BuildContext context, String color) {
+  Widget _colorTile(BuildContext context, String color) {
     final themeColorModel =
         Provider.of<ThemeColorModel>(context, listen: false);
     return Padding(
