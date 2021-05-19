@@ -1,11 +1,14 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 
 class ScoreListScreen extends StatefulWidget {
@@ -277,25 +280,39 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           Expanded(
             flex: 8,
             child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: width * 0.1),
-                    Text(
-                      '$total',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                    Expanded(child: Container()),
-                    Container(
-                      height: height * 0.07,
-                      width: width * 0.4,
-                      child: _techsListView(context, techs),
-                    ),
-                    SizedBox(width: width * 0.1),
-                  ],
+              child: Slidable(
+                actionExtentRatio: 0.2,
+                actionPane: SlidableScrollActionPane(),
+                secondaryActions: [
+                  IconSlideAction(
+                    caption: '削除',
+                    color: Colors.red,
+                    icon: Icons.remove,
+                    onTap: () {
+                      scoreModel.deleteTechs(widget.event, scoreId);
+                    },
+                  ),
+                ],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: width * 0.1),
+                      Text(
+                        '$total',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      Expanded(child: Container()),
+                      Container(
+                        height: height * 0.07,
+                        width: width * 0.4,
+                        child: _techsListView(context, techs),
+                      ),
+                      SizedBox(width: width * 0.1),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -195,6 +195,25 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteTechs(String event, String scoreId) async {
+    if (event == '床') {
+      await scoreRepository.deleteFXScore(scoreId);
+    }
+    if (event == 'あん馬') {
+      await scoreRepository.deletePHScore(scoreId);
+    }
+    if (event == '吊り輪') {
+      await scoreRepository.deleteSRScore(scoreId);
+    }
+    if (event == '平行棒') {
+      await scoreRepository.deletePBScore(scoreId);
+    }
+    if (event == '鉄棒') {
+      await scoreRepository.deleteHBScore(scoreId);
+    }
+    notifyListeners();
+  }
+
   ///ScoreEditScreen関連
   bool isEdited = false;
   List<String> decidedTechList = [];

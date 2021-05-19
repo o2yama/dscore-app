@@ -82,6 +82,15 @@ class ScoreRepository {
     });
   }
 
+  Future<void> deleteFXScore(String scoreId) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('fx')
+        .doc(scoreId)
+        .delete();
+  }
+
   Future<Score?> getFavoritePHScore() async {
     final scoreList = await _db
         .collection('users')
@@ -143,6 +152,15 @@ class ScoreRepository {
       'total': total,
       'components': techs,
     });
+  }
+
+  Future<void> deletePHScore(String scoreId) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('ph')
+        .doc(scoreId)
+        .delete();
   }
 
   Future<Score?> getFavoriteSRScore() async {
@@ -208,6 +226,15 @@ class ScoreRepository {
     });
   }
 
+  Future<void> deleteSRScore(String scoreId) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('sr')
+        .doc(scoreId)
+        .delete();
+  }
+
   Future<Score?> getFavoritePBScore() async {
     final scoreList = await _db
         .collection('users')
@@ -269,6 +296,15 @@ class ScoreRepository {
       'total': total,
       'components': techs,
     });
+  }
+
+  Future<void> deletePBScore(String scoreId) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('pb')
+        .doc(scoreId)
+        .delete();
   }
 
   Future<ScoreWithCV?> getFavoriteHBScore() async {
@@ -335,6 +371,15 @@ class ScoreRepository {
       'components': techs,
       'cv': cv,
     });
+  }
+
+  Future<void> deleteHBScore(String scoreId) async {
+    await _db
+        .collection('users')
+        .doc(currentUser!.id)
+        .collection('hb')
+        .doc(scoreId)
+        .delete();
   }
 
   Future<VTScore?> getVTScore() async {
