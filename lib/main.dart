@@ -64,6 +64,7 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeColorModel>(builder: (context, model, child) {
       Future(() async => model.getThemeColor());
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: model.themeColor,
           backgroundColor: Colors.grey[200],
