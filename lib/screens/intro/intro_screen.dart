@@ -1,26 +1,13 @@
 import 'dart:io';
 import 'package:dscore_app/screens/intro/intro_model.dart';
+import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:introduction_screen/introduction_screen.dart';
+import 'package:intro_slider/intro_slider.dart';
+import 'package:intro_slider/slide_object.dart';
 import 'package:provider/provider.dart';
 
 class IntroScreen extends StatelessWidget {
-  final List<PageViewModel> introViews = [
-    PageViewModel(
-      title: '使いやすい！',
-      body: '最高のアプリだ！',
-    ),
-    PageViewModel(
-      title: '使いやすい！',
-      body: '最高のアプリだ！',
-    ),
-    PageViewModel(
-      title: '使いやすい！',
-      body: '最高のアプリだ！',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,71 +16,35 @@ class IntroScreen extends StatelessWidget {
           return SafeArea(
             child: Stack(
               children: [
-                IntroductionScreen(
-                  pages: introViews,
-                  onDone: () async {
-                    try {
-                      await model.signIn();
-                      await model.finishIntro();
-                      // await model.checkIsIntroWatched();
-                    } catch (e) {
-                      print(e);
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('失敗'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('OK'),
-                                )
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  onSkip: () async {
-                    try {
-                      await model.finishIntro();
-                      await model.signIn();
-                      // await model.checkIsIntroWatched();
-                    } catch (e) {
-                      print(e);
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text('失敗'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('OK'),
-                                )
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  showSkipButton: true,
-                  skip: const Text('スキップ'),
-                  next: const Text('次へ'),
-                  done: const Text("アプリへ",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  dotsDecorator: DotsDecorator(
-                    size: const Size.square(10.0),
-                    activeSize: const Size(20.0, 10.0),
-                    activeColor: Theme.of(context).primaryColor,
-                    color: Colors.black26,
-                    spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-                    activeShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
+                IntroSlider(
+                  slides: _sliders(context),
+                  renderNextBtn: Text(
+                    "次へ",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
+                  renderDoneBtn: Text(
+                    "アプリへ",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
+                    ),
+                  ),
+                  renderSkipBtn: Text(
+                    "スッキプ",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
+                    ),
+                  ),
+                  onDonePress: () async {
+                    _resisterUser(context);
+                  },
+                  onSkipPress: () async {
+                    _resisterUser(context);
+                  },
                 ),
                 model.isLoading
                     ? Container(
@@ -111,5 +62,60 @@ class IntroScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _resisterUser(BuildContext context) async {
+    final introModel = Provider.of<IntroModel>(context, listen: false);
+    try {
+      introModel.signIn();
+    } catch (e) {
+      print(e);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('ユーザー登録に失敗しました'),
+              content: Text('時間をおいて、通信環境の良い場所で再度お試しください。'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  List<Slide> _sliders(BuildContext context) {
+    final backgroundColor = Colors.white;
+    return [
+      Slide(
+        backgroundImage: 'images/tutorial_1.png',
+        backgroundBlendMode: BlendMode.screen,
+        backgroundImageFit: BoxFit.contain,
+        backgroundColor: backgroundColor,
+      ),
+      Slide(
+        backgroundImage: 'images/tutorial_2.png',
+        backgroundBlendMode: BlendMode.screen,
+        backgroundImageFit: BoxFit.contain,
+        backgroundColor: backgroundColor,
+      ),
+      Slide(
+        backgroundImage: 'images/tutorial_3.png',
+        backgroundBlendMode: BlendMode.screen,
+        backgroundImageFit: BoxFit.contain,
+        backgroundColor: backgroundColor,
+      ),
+      Slide(
+        backgroundImage: 'images/tutorial_4.png',
+        backgroundBlendMode: BlendMode.screen,
+        backgroundImageFit: BoxFit.contain,
+        backgroundColor: backgroundColor,
+      ),
+    ];
   }
 }

@@ -4,9 +4,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class AdState {
   Future<InitializationStatus> initialization;
   AdState(this.initialization);
+
   String get bannerAdUnitId => Platform.isAndroid
-      ? "ca-app-pub-4715063571730383/7215173011"
-      : "ca-app-pub-4715063571730383/1855035123";
+      ? "ca-app-pub-4715063571730383/2444742814"
+      : "ca-app-pub-4715063571730383/8316016597";
 
   AdListener get adListener => _adListener;
   AdListener _adListener = AdListener(
