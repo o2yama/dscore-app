@@ -35,6 +35,7 @@ class IntroModel extends ChangeNotifier {
     notifyListeners();
 
     await userRepository.signIn();
+    await finishIntro();
 
     isLoading = false;
     notifyListeners();

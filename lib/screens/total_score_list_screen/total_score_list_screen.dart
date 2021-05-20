@@ -3,6 +3,7 @@ import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
+import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            // 広告
                             _ad(context),
                             RefreshIndicator(
                               onRefresh: () async {
@@ -76,11 +76,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                               },
                               child: Column(
                                 children: [
-                                  //設定ボタンと使い方ボタン
-                                  _settingButton(context),
-                                  _eventsListView(
-                                    context,
-                                  )
+                                  _settingButtons(context),
+                                  _eventsListView(context)
                                 ],
                               ),
                             ),
@@ -91,8 +88,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   ),
                 ),
               ),
-              (!model.isIntroWatched) ? IntroScreen() : Container(),
-              (model.isLoading || totalScoreListModel.isLoading)
+              (!introModel.isIntroWatched) ? IntroScreen() : Container(),
+              (introModel.isLoading || totalScoreListModel.isLoading)
                   ? Container(
                       color: Colors.grey.withOpacity(0.6),
                       child: Center(
@@ -109,7 +106,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     });
   }
 
-  //広告
   Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
@@ -119,7 +115,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
           );
   }
 
-  Widget _settingButton(BuildContext context) {
+  Widget _settingButtons(BuildContext context) {
     final height = MediaQuery.of(context).size.height - 50; //広告の分の50px
     return Container(
       height: height * 0.1,
@@ -134,7 +130,10 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ThemeColorScreen()),
+                MaterialPageRoute(
+                  builder: (context) => ThemeColorScreen(),
+                  fullscreenDialog: true,
+                ),
               );
             },
           ),
@@ -143,7 +142,15 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
               Icons.info_outline,
               color: Theme.of(context).primaryColor,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UsageScreen(),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
           )
         ],
       ),
@@ -172,7 +179,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   Widget _eventCard(BuildContext context, String event, String eventEng) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
     return Consumer<TotalScoreListModel>(builder: (context, model, child) {
       return SizedBox(
         height: 100,
@@ -193,7 +199,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ScoreListScreen(event)));
+                      builder: (context) => ScoreListScreen(event),
+                    ));
               }
             },
             child: Row(

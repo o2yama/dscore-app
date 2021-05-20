@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../ad_state.dart';
+import '../../utilities.dart';
 
 class ThemeColorScreen extends StatefulWidget {
   @override
@@ -35,7 +35,7 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
     return Scaffold(
       body: Consumer<ThemeColorModel>(builder: (context, model, child) {
         return Container(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).backgroundColor,
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -80,7 +80,7 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
   Widget _backButton(BuildContext context) {
     return Container(
       color: Theme.of(context).backgroundColor,
-      height: 50,
+      height: Utilities().isMobile() ? 50 : 80,
       child: InkWell(
         onTap: () {
           Navigator.pop(context);
@@ -88,20 +88,19 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
         child: Row(
           children: [
             SizedBox(width: 8),
-            Platform.isIOS
-                ? Icon(
-                    Icons.arrow_back_ios,
-                    color: Theme.of(context).primaryColor,
-                  )
-                : Icon(
-                    Icons.clear,
-                    color: Theme.of(context).primaryColor,
-                  ),
+            Icon(
+              Icons.clear,
+              color: Theme.of(context).primaryColor,
+              size: Utilities().isMobile() ? 20 : 30,
+            ),
+            SizedBox(width: 24),
             Text(
               'テーマカラー',
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold),
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: Utilities().isMobile() ? 16 : 24,
+              ),
             )
           ],
         ),
@@ -119,18 +118,28 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
       ),
       child: InkWell(
         onTap: () async {
-          //todo:modelのtheme変更
           await themeColorModel.setThemeColor(color);
           await themeColorModel.getThemeColor();
         },
         child: Card(
+          shadowColor: Theme.of(context).primaryColor,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
-                Icon(Icons.check_circle_outline_outlined, color: themes[color]),
-                SizedBox(width: 8),
-                Text('$color', style: TextStyle(color: themes[color])),
+                Icon(
+                  Icons.check_circle_outline_outlined,
+                  color: themes[color],
+                  size: Utilities().isMobile() ? 20 : 30,
+                ),
+                SizedBox(width: 16),
+                Text(
+                  '$color',
+                  style: TextStyle(
+                    color: themes[color],
+                    fontSize: Utilities().isMobile() ? 16 : 24,
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/screens/intro/intro_model.dart';
+import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
@@ -21,18 +22,21 @@ class IntroScreen extends StatelessWidget {
                     "次へ",
                     style: TextStyle(
                       color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   renderDoneBtn: Text(
                     "アプリへ",
                     style: TextStyle(
                       color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   renderSkipBtn: Text(
                     "スッキプ",
                     style: TextStyle(
                       color: Colors.blue,
+                      fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   onDonePress: () async {
@@ -63,7 +67,6 @@ class IntroScreen extends StatelessWidget {
   Future<void> _resisterUser(BuildContext context) async {
     final introModel = Provider.of<IntroModel>(context, listen: false);
     try {
-      introModel.finishIntro();
       introModel.signIn();
     } catch (e) {
       print(e);
