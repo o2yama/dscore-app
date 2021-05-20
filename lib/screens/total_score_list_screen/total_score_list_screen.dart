@@ -110,7 +110,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   }
 
   //広告
-  _ad(BuildContext context) {
+  Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
         : Container(
