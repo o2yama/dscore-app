@@ -7,7 +7,7 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class ScoreRepository {
-  CurrentUser? get currentUser => UserRepository.currentUser;
+  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
   String uuid = '';
 
@@ -40,7 +40,6 @@ class ScoreRepository {
     return scoreList;
   }
 
-  //閲覧したり更新したりするdata
   Future<ScoreWithCV> getFXSCore(String scoreId) async {
     final doc = await _db
         .collection('users')

@@ -16,7 +16,7 @@ class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
 
   final ScoreRepository scoreRepository;
-  CurrentUser? get currentUser => UserRepository.currentUser;
+  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
 
   List<ScoreWithCV>? fxScoreList;
   List<Score>? phScoreList;
@@ -31,7 +31,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    fxScoreList = await scoreRepository.getFXScores();
+    if (currentUser != null) {
+      fxScoreList = await scoreRepository.getFXScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -41,7 +43,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    phScoreList = await scoreRepository.getPHScores();
+    if (currentUser != null) {
+      phScoreList = await scoreRepository.getPHScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -51,7 +55,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    srScoreList = await scoreRepository.getSRScores();
+    if (currentUser != null) {
+      srScoreList = await scoreRepository.getSRScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -61,7 +67,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    pbScoreList = await scoreRepository.getPBScores();
+    if (currentUser != null) {
+      pbScoreList = await scoreRepository.getPBScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -71,7 +79,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    hbScoreList = await scoreRepository.getHBScores();
+    if (currentUser != null) {
+      hbScoreList = await scoreRepository.getHBScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -666,10 +676,12 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> getVTScore() async {
-    final VTScore? vtScore = await scoreRepository.getVTScore();
-    if (vtScore != null) {
-      vtTechName = vtScore.techName;
-      totalScore = vtTech[vtScore.techName]!;
+    if (currentUser != null) {
+      final vtScore = await scoreRepository.getVTScore();
+      if (vtScore != null) {
+        vtTechName = vtScore.techName;
+        totalScore = vtTech[vtScore.techName]!;
+      }
     }
   }
 }

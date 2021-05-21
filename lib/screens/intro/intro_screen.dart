@@ -40,10 +40,10 @@ class IntroScreen extends StatelessWidget {
                     ),
                   ),
                   onDonePress: () async {
-                    _resisterUser(context);
+                    _signInAnonymously(context);
                   },
                   onSkipPress: () async {
-                    _resisterUser(context);
+                    _signInAnonymously(context);
                   },
                 ),
                 model.isLoading
@@ -64,10 +64,10 @@ class IntroScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _resisterUser(BuildContext context) async {
+  Future<void> _signInAnonymously(BuildContext context) async {
     final introModel = Provider.of<IntroModel>(context, listen: false);
     try {
-      introModel.signIn();
+      introModel.signInAnonymously();
     } catch (e) {
       print(e);
       showDialog(

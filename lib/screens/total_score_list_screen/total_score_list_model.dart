@@ -10,7 +10,7 @@ class TotalScoreListModel extends ChangeNotifier {
   TotalScoreListModel({required this.scoreRepository});
   ScoreRepository scoreRepository;
 
-  CurrentUser? get currentUser => UserRepository.currentUser;
+  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
   bool isLoading = false;
   bool isDoneGetScore = false;
 
@@ -33,18 +33,20 @@ class TotalScoreListModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    favoriteFx = await scoreRepository.getFavoriteFXScore();
-    if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
-    favoritePh = await scoreRepository.getFavoritePHScore();
-    if (favoritePh != null) favoritePhScore = favoritePh!.total;
-    favoriteSr = await scoreRepository.getFavoriteSRScore();
-    if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
-    vt = await scoreRepository.getVTScore();
-    if (vt != null) vtScore = vt!.score;
-    favoritePb = await scoreRepository.getFavoritePBScore();
-    if (favoritePb != null) favoritePbScore = favoritePb!.total;
-    favoriteHb = await scoreRepository.getFavoriteHBScore();
-    if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
+    if (currentUser != null) {
+      favoriteFx = await scoreRepository.getFavoriteFXScore();
+      if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
+      favoritePh = await scoreRepository.getFavoritePHScore();
+      if (favoritePh != null) favoritePhScore = favoritePh!.total;
+      favoriteSr = await scoreRepository.getFavoriteSRScore();
+      if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
+      vt = await scoreRepository.getVTScore();
+      if (vt != null) vtScore = vt!.score;
+      favoritePb = await scoreRepository.getFavoritePBScore();
+      if (favoritePb != null) favoritePbScore = favoritePb!.total;
+      favoriteHb = await scoreRepository.getFavoriteHBScore();
+      if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
+    }
     setTotalScore();
 
     isLoading = false;
