@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+
 import '../../ad_state.dart';
 import '../../utilities.dart';
 
@@ -91,6 +93,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   Widget _backButton(BuildContext context, String event) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -126,6 +129,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
           ),
           onPressed: () {
             _onStoreButtonPressed(context);
+            scoreModel.getScores(widget.event);
           },
         ),
       ],
