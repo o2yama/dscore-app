@@ -75,7 +75,7 @@ class SearchScreen extends StatelessWidget {
   Widget _searchBar(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(16.0),
       child: TextField(
         controller: searchController,
         cursorColor: Theme.of(context).primaryColor,

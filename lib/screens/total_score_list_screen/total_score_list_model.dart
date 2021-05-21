@@ -10,7 +10,7 @@ class TotalScoreListModel extends ChangeNotifier {
   TotalScoreListModel({required this.scoreRepository});
   ScoreRepository scoreRepository;
 
-  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
+  CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;
   bool isDoneGetScore = false;
 
@@ -48,6 +48,7 @@ class TotalScoreListModel extends ChangeNotifier {
       if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
     }
     setTotalScore();
+    isDoneGetScore = true;
 
     isLoading = false;
     notifyListeners();

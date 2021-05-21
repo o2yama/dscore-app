@@ -7,7 +7,7 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class ScoreRepository {
-  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
+  CurrentUser? get authenticatedUser => UserRepository.currentUser;
   FirebaseFirestore _db = FirebaseFirestore.instance;
   String uuid = '';
 
@@ -18,7 +18,7 @@ class ScoreRepository {
   Future<ScoreWithCV?> getFavoriteFXScore() async {
     final scoreList = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .where('isFavorite', isEqualTo: true)
         .get();
@@ -32,7 +32,7 @@ class ScoreRepository {
   Future<List<ScoreWithCV>?> getFXScores() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .get();
     List<ScoreWithCV>? scoreList =
@@ -43,7 +43,7 @@ class ScoreRepository {
   Future<ScoreWithCV> getFXSCore(String scoreId) async {
     final doc = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .doc(scoreId)
         .get();
@@ -55,7 +55,7 @@ class ScoreRepository {
     getUuid();
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .doc(uuid)
         .set({
@@ -71,7 +71,7 @@ class ScoreRepository {
       String scoreId, num total, List<String> techs, num cv) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .doc(scoreId)
         .update({
@@ -84,7 +84,7 @@ class ScoreRepository {
   Future<Score?> getFavoritePHScore() async {
     final scoreList = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .where('isFavorite', isEqualTo: true)
         .get();
@@ -98,7 +98,7 @@ class ScoreRepository {
   Future<List<Score>?> getPHScores() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .get();
     List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
@@ -108,7 +108,7 @@ class ScoreRepository {
   Future<Score> getPHScore(String scoreId) async {
     final doc = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .doc(scoreId)
         .get();
@@ -120,7 +120,7 @@ class ScoreRepository {
     getUuid();
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .doc(uuid)
         .set({
@@ -135,7 +135,7 @@ class ScoreRepository {
       String scoreId, num total, List<String> techs) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .doc(scoreId)
         .update({
@@ -147,7 +147,7 @@ class ScoreRepository {
   Future<Score?> getFavoriteSRScore() async {
     final scoreList = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .where('isFavorite', isEqualTo: true)
         .get();
@@ -161,7 +161,7 @@ class ScoreRepository {
   Future<List<Score>?> getSRScores() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .get();
     List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
@@ -171,7 +171,7 @@ class ScoreRepository {
   Future<Score> getSRScore(String scoreId) async {
     final doc = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .doc(scoreId)
         .get();
@@ -183,7 +183,7 @@ class ScoreRepository {
     getUuid();
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .doc(uuid)
         .set({
@@ -198,7 +198,7 @@ class ScoreRepository {
       String scoreId, num total, List<String> techs) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .doc(scoreId)
         .update({
@@ -210,7 +210,7 @@ class ScoreRepository {
   Future<Score?> getFavoritePBScore() async {
     final scoreList = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .where('isFavorite', isEqualTo: true)
         .get();
@@ -224,7 +224,7 @@ class ScoreRepository {
   Future<List<Score>?> getPBScores() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .get();
     List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
@@ -234,7 +234,7 @@ class ScoreRepository {
   Future<Score> getPBScore(String scoreId) async {
     final doc = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .doc(scoreId)
         .get();
@@ -246,7 +246,7 @@ class ScoreRepository {
     getUuid();
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .doc(uuid)
         .set({
@@ -261,7 +261,7 @@ class ScoreRepository {
       String scoreId, num total, List<String> techs) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .doc(scoreId)
         .update({
@@ -273,7 +273,7 @@ class ScoreRepository {
   Future<ScoreWithCV?> getFavoriteHBScore() async {
     final scoreList = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .where('isFavorite', isEqualTo: true)
         .get();
@@ -287,7 +287,7 @@ class ScoreRepository {
   Future<List<ScoreWithCV>?> getHBScores() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .get();
     List<ScoreWithCV>? scoreList =
@@ -298,7 +298,7 @@ class ScoreRepository {
   Future<ScoreWithCV> getHBSCore(String scoreId) async {
     final doc = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .doc(scoreId)
         .get();
@@ -310,7 +310,7 @@ class ScoreRepository {
     getUuid();
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .doc(uuid)
         .set({
@@ -326,7 +326,7 @@ class ScoreRepository {
       String scoreId, num total, List<String> techs, num cv) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .doc(scoreId)
         .update({
@@ -339,7 +339,7 @@ class ScoreRepository {
   Future<VTScore?> getVTScore() async {
     final scores = await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('vt')
         .get();
     VTScore? score;
@@ -356,20 +356,20 @@ class ScoreRepository {
     if (vtScore == null) {
       await _db
           .collection('users')
-          .doc(currentUser!.id)
+          .doc(authenticatedUser!.id)
           .collection('vt')
-          .doc(currentUser!.id)
+          .doc(authenticatedUser!.id)
           .set({
-        'scoreId': currentUser!.id,
+        'scoreId': authenticatedUser!.id,
         'score': score,
         'techName': techName,
       });
     } else {
       await _db
           .collection('users')
-          .doc(currentUser!.id)
+          .doc(authenticatedUser!.id)
           .collection('vt')
-          .doc(currentUser!.id)
+          .doc(authenticatedUser!.id)
           .update({
         'score': score,
         'techName': techName,
@@ -380,7 +380,7 @@ class ScoreRepository {
   Future<void> favoriteFXUpdate(String scoreId, bool isFavorite) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('fx')
         .doc(scoreId)
         .update({'isFavorite': isFavorite});
@@ -389,7 +389,7 @@ class ScoreRepository {
   Future<void> favoritePHUpdate(String scoreId, bool isFavorite) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('ph')
         .doc(scoreId)
         .update({'isFavorite': isFavorite});
@@ -398,7 +398,7 @@ class ScoreRepository {
   Future<void> favoriteSRUpdate(String scoreId, bool isFavorite) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('sr')
         .doc(scoreId)
         .update({'isFavorite': isFavorite});
@@ -407,7 +407,7 @@ class ScoreRepository {
   Future<void> favoritePBUpdate(String scoreId, bool isFavorite) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('pb')
         .doc(scoreId)
         .update({'isFavorite': isFavorite});
@@ -416,7 +416,7 @@ class ScoreRepository {
   Future<void> favoriteHBUpdate(String scoreId, bool isFavorite) async {
     await _db
         .collection('users')
-        .doc(currentUser!.id)
+        .doc(authenticatedUser!.id)
         .collection('hb')
         .doc(scoreId)
         .update({'isFavorite': isFavorite});

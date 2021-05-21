@@ -40,10 +40,10 @@ class IntroScreen extends StatelessWidget {
                     ),
                   ),
                   onDonePress: () async {
-                    _signInAnonymously(context);
+                    model.finishIntro();
                   },
                   onSkipPress: () async {
-                    _signInAnonymously(context);
+                    model.finishIntro();
                   },
                 ),
                 model.isLoading
@@ -62,31 +62,6 @@ class IntroScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<void> _signInAnonymously(BuildContext context) async {
-    final introModel = Provider.of<IntroModel>(context, listen: false);
-    try {
-      introModel.signInAnonymously();
-    } catch (e) {
-      print(e);
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('ユーザー登録に失敗しました'),
-              content: Text('時間をおいて、通信環境の良い場所で再度お試しください。'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('OK'),
-                )
-              ],
-            );
-          });
-    }
   }
 
   List<Slide> _sliders(BuildContext context) {

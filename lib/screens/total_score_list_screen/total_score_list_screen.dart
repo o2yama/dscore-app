@@ -47,10 +47,15 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     Future(() async {
-      if (introModel.currentUser == null) {
-        await introModel.checkIsIntroWatched();
+      await introModel.checkIsIntroWatched();
+      if (introModel.currentUser == null &&
+          !(introModel.isDoneGettingUserData)) {
+        await introModel.getCurrentUserData();
+      } else {
         if (introModel.isIntroWatched) {
-          await totalScoreListModel.getFavoriteScores();
+          if (!(totalScoreListModel.isDoneGetScore)) {
+            await totalScoreListModel.getFavoriteScores();
+          }
         }
       }
     });
@@ -88,8 +93,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   ),
                 ),
               ),
-              (!introModel.isIntroWatched) ? IntroScreen() : Container(),
-              (introModel.isLoading || totalScoreListModel.isLoading)
+              (!model.isIntroWatched) ? IntroScreen() : Container(),
+              (model.isLoading || totalScoreListModel.isLoading)
                   ? Container(
                       color: Colors.grey.withOpacity(0.6),
                       child: Center(
@@ -139,7 +144,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
           ),
           IconButton(
             icon: Icon(
-              Icons.info_outline,
+              Icons.settings,
               color: Theme.of(context).primaryColor,
             ),
             onPressed: () {

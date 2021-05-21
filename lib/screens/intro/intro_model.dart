@@ -8,8 +8,9 @@ class IntroModel extends ChangeNotifier {
   final UserRepository userRepository;
   bool isIntroWatched = false;
   bool isLoading = false;
+  bool isDoneGettingUserData = false;
 
-  AuthenticatedUser? get currentUser => UserRepository.authenticatedUser;
+  CurrentUser? get currentUser => UserRepository.currentUser;
 
   Future<void> finishIntro() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -24,28 +25,16 @@ class IntroModel extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
 
-    // if (isIntroWatched) await getUserData();
-
     isLoading = false;
     notifyListeners();
   }
 
-  Future<void> signInAnonymously() async {
+  Future<void> getCurrentUserData() async {
     isLoading = true;
     notifyListeners();
 
-    await userRepository.signInAnonymously();
-    await finishIntro();
-
-    isLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> getAuthenticatedUserData() async {
-    isLoading = true;
-    notifyListeners();
-
-    await userRepository.getAuthenticatedUserData();
+    await userRepository.getCurrentUserData();
+    isDoneGettingUserData = true;
 
     isLoading = false;
     notifyListeners();

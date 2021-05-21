@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,43 +45,55 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
       body: Consumer<ScoreModel>(builder: (context, model, child) {
         final height = MediaQuery.of(context).size.height - 50;
         return SingleChildScrollView(
-          child: SafeArea(
-            child: Container(
-              color: Theme.of(context).backgroundColor,
-              child: Column(
-                children: [
-                  //広告
-                  _ad(context),
-                  //戻るボタン
-                  Container(
-                    height: height * 0.1,
-                    child: _backButton(context, widget.event),
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: Column(
+                    children: [
+                      _ad(context),
+                      Column(
+                        children: [
+                          Container(
+                            height: height * 0.1,
+                            child: _backButton(context, widget.event),
+                          ),
+                          Container(
+                            height: height * 0.1,
+                            child: _totalScore(context),
+                          ),
+                          Container(
+                            height: height * 0.1,
+                            child: _detailsScore(context),
+                          ),
+                          Container(
+                            height: height * 0.7,
+                            child: _techListView(context),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  //Dスコアの表示
-                  Container(
-                    height: height * 0.1,
-                    child: _totalScore(context),
-                  ),
-                  //スコアの詳細
-                  Container(
-                    height: height * 0.1,
-                    child: _detailsScore(context),
-                  ),
-                  //技名の表示
-                  Container(
-                    height: height * 0.7,
-                    child: _techListView(context),
-                  ),
-                ],
+                ),
               ),
-            ),
+              model.isLoading
+                  ? Container(
+                      color: Colors.grey.withOpacity(0.6),
+                      child: Center(
+                        child: Platform.isIOS
+                            ? CupertinoActivityIndicator()
+                            : CircularProgressIndicator(),
+                      ),
+                    )
+                  : Container(),
+            ],
           ),
         );
       }),
     );
   }
 
-  //広告
   Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
@@ -124,8 +137,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             style: TextStyle(
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
-          onPressed: () {
-            _onStoreButtonPressed(context);
+          onPressed: () async {
+            await _onStoreButtonPressed(context);
           },
         ),
       ],
@@ -194,46 +207,57 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   //保存ボタン押された時の処理
-  Future<void> _onStoreButtonPressed(BuildContext context) {
+  Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    widget.scoreId == null
-        ? scoreModel.setScore(widget.event)
-        : scoreModel.updateScore(widget.event, widget.scoreId!);
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text('保存しました'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '0K',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+    if (scoreModel.authenticatedUser == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignUpScreen(),
+            fullscreenDialog: true,
+          ));
+    } else {
+      widget.scoreId == null
+          ? scoreModel.setScore(widget.event)
+          : scoreModel.updateScore(widget.event, widget.scoreId!);
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '0K',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text('保存しました'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '0K',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+                    ],
+                  )
+                : AlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '0K',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-        });
+                    ],
+                  );
+          });
+    }
   }
 
   Widget _totalScore(BuildContext context) {
