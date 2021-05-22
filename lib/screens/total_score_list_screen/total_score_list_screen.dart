@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
+import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
-import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -131,21 +130,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         children: [
           IconButton(
             icon: Icon(
-              Icons.color_lens,
-              color: Theme.of(context).primaryColor,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ThemeColorScreen(),
-                  fullscreenDialog: true,
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
               Icons.settings,
               color: Theme.of(context).primaryColor,
             ),
@@ -153,7 +137,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UsageScreen(),
+                  builder: (context) => SettingsScreen(),
                   fullscreenDialog: true,
                 ),
               );

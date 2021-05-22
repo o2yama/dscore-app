@@ -20,4 +20,6 @@ class LoginModel extends ChangeNotifier {
     password = text;
     notifyListeners();
   }
+
+  Future<void> logOut() async {}
 }
