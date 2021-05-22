@@ -104,6 +104,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   Widget _backButton(BuildContext context, String event) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -137,8 +138,9 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
             style: TextStyle(
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
-          onPressed: () async {
-            await _onStoreButtonPressed(context);
+          onPressed: () {
+            _onStoreButtonPressed(context);
+            scoreModel.getScores(widget.event);
           },
         ),
       ],
