@@ -10,106 +10,84 @@ service cloud.firestore {
       return isAnyAuthenticated() && userId == request.auth.uid;
     }
 
-    // function isNotUpdating(fieldName) {
-    //   return !(fieldName in resource.data) || request.resource.data[fieldName] == resource.data[fieldName];
-    // }
+    function isNotUpdating(fieldName) {
+      return !(fieldName in request.resource.data) 
+        || request.resource.data[fieldName] == resource.data[fieldName];
+    }
 
-  // function isFeildAllowedWriting(fieldName) {
-    //   return fieldName.hasAll(request.resource.data.keys());
-    // }
-
-  // function isString(text, min, max) {
-    //   return text is String $$ text.size >= min && text.size <= max;
-    // }
-
-  // function isNumber(num, min, max) {
-    //   return num is Number $$ num >= min && num <= max;
-    // }
+    function isValidUser(user) {
+      return user.size() == 1 && 'id' in user && user.id is string
+    }
 
     function isValidScoreWithCV(score) {
-      return score.size == 5 
-        && 'components' in score
-        && 'cv ' in score
-        && score.cv is number 
-        && 'isFavorite' in score 
-        && score.isFavorite is bool 
-        && 'scoreId' in score 
-        && score.scoreId is string 
-        && 'total' in score 
-        && score.total is number;
+      return score.size() == 5 
+        && 'components' in score && score.components is list
+        && 'cv ' in score && score.cv is number 
+        && 'isFavorite' in score  && score.isFavorite is bool
+        && 'scoreId' in score && score.scoreId is string 
+        && 'total' in score && score.total is number;
     }
 
     function isValidScore(score) {
-      return score.size == 4 
-        && 'components' in score 
-        && 'isFavorite' in score 
-        && score.isFavorite is bool 
-        && 'scoreId' in score 
-        && score.scoreId is string 
-        && 'total' in score 
-        && score.total is number;
+      return score.size() == 4 
+        && 'components' in score && score.components is list
+        && 'isFavorite' in score && score.isFavorite is bool 
+        && 'scoreId' in score && score.scoreId is string 
+        && 'total' in score && score.total is number;
     }
 
     function isValidVTScore(vtScore) {
-      return vtScore.size == 3 
-        && 'score' in vtScore 
-        && vtScore.score is number 
-        && 'scoreId' in vtScore 
-        && vtScore.scoreId is string 
-        && 'techName' in vtScore 
-        && vtScore.techName is string;
+      return vtScore.size() == 3 
+        && 'score' in vtScore && vtScore.score is number 
+        && 'scoreId' in vtScore && vtScore.scoreId is string 
+        && 'techName' in vtScore && vtScore.techName is string;
     }
 
-  // function docPath(path) {
-    //   return path([['databases', database, 'documents'].join('/'), path.join('/')].join('/'));
-    // }
-    //requestData().userRef == docPath(['users', request.auth.uid]); のように使う
-
     match /users/{userId} {
-      allow read: if isAnyAuthenticated();
-      allow create: if isAnyAuthenticated();
+      allow read: if isUserAuthenticated(userId);
+      allow create: if isAnyAuthenticated() && isValidUser(request.resource.data);
       allow update: if isUserAuthenticated(userId);
       allow delete: if isUserAuthenticated(userId);
 
       match /fx/{fxSscoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidScoreWithCV(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId);
       }
 
       match /ph/{phScoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidScore(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId); 
       }
 
       match /sr/{srScoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidScore(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId); 
       }
 
       match /vt/{vtScoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidVTScore(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId); 
       }
 
       match /pb/{pbScoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidScore(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId);  
       }
 
       match /hb/{hbScoreId} {
         allow read: if isUserAuthenticated(userId);
-        allow create: if isUserAuthenticated(userId);
-        allow update: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId) && isValidScoreWithCV(request.resource.data);
+        allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
         allow delete: if isUserAuthenticated(userId);  
       }
 

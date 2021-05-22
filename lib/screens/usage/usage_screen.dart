@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,27 +62,32 @@ class _UsageScreenState extends State<UsageScreen> {
 
   Widget _backButton(BuildContext context) {
     return Container(
-      height: Utilities().isMobile() ? 50 : 80,
+      height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
-        child: Row(
-          children: [
-            Icon(
-              Icons.clear,
-              color: Theme.of(context).primaryColor,
-              size: Utilities().isMobile() ? 20 : 30,
-            ),
-            SizedBox(width: 24),
-            Text(
-              '使い方',
-              style: TextStyle(
+        child: Platform.isIOS
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).primaryColor,
+                    size: Utilities().isMobile() ? 20 : 30,
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    '設定',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: Utilities().isMobile() ? 18 : 21,
+                    ),
+                  )
+                ],
+              )
+            : Icon(
+                Icons.clear,
                 color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: Utilities().isMobile() ? 16 : 24,
+                size: Utilities().isMobile() ? 20 : 30,
               ),
-            )
-          ],
-        ),
       ),
     );
   }

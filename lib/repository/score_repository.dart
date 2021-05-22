@@ -40,7 +40,6 @@ class ScoreRepository {
     return scoreList;
   }
 
-  //閲覧したり更新したりするdata
   Future<ScoreWithCV> getFXSCore(String scoreId) async {
     final doc = await _db
         .collection('users')

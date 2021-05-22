@@ -16,7 +16,7 @@ class ScoreModel extends ChangeNotifier {
   ScoreModel({required this.scoreRepository});
 
   final ScoreRepository scoreRepository;
-  CurrentUser? get currentUser => UserRepository.currentUser;
+  CurrentUser? get authenticatedUser => UserRepository.currentUser;
 
   List<ScoreWithCV>? fxScoreList;
   List<Score>? phScoreList;
@@ -31,7 +31,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    fxScoreList = await scoreRepository.getFXScores();
+    if (authenticatedUser != null) {
+      fxScoreList = await scoreRepository.getFXScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -41,7 +43,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    phScoreList = await scoreRepository.getPHScores();
+    if (authenticatedUser != null) {
+      phScoreList = await scoreRepository.getPHScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -51,7 +55,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    srScoreList = await scoreRepository.getSRScores();
+    if (authenticatedUser != null) {
+      srScoreList = await scoreRepository.getSRScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -61,7 +67,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    pbScoreList = await scoreRepository.getPBScores();
+    if (authenticatedUser != null) {
+      pbScoreList = await scoreRepository.getPBScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -71,7 +79,9 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    hbScoreList = await scoreRepository.getHBScores();
+    if (authenticatedUser != null) {
+      hbScoreList = await scoreRepository.getHBScores();
+    }
 
     isLoading = false;
     notifyListeners();
@@ -141,7 +151,7 @@ class ScoreModel extends ChangeNotifier {
     }
   }
 
-  Future<void> favoriteChangeFalse(
+  Future<void> changeFavoriteFalse(
       String event, String scoreId, bool isFavorite) async {
     if (event == '床') {
       await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
@@ -170,11 +180,11 @@ class ScoreModel extends ChangeNotifier {
     } else {
       List<String> scoreIdList = await getScoreIds(event);
       scoreIdList.forEach((scoreId) {
-        favoriteChangeFalse(event, scoreId, false);
+        changeFavoriteFalse(event, scoreId, false);
       });
       isFavorite = true;
     }
-    await favoriteChangeFalse(event, scoreId, isFavorite);
+    await changeFavoriteFalse(event, scoreId, isFavorite);
 
     if (event == '床') {
       fxScoreList = await scoreRepository.getFXScores();
@@ -308,9 +318,6 @@ class ScoreModel extends ChangeNotifier {
       difficulty = srDifficulty;
       group = srGroup;
     }
-    // if (event == '跳馬') {
-    //   difficulty = vtTech;
-    // }
     if (event == '平行棒') {
       await scoreRepository.setPBScore(totalScore, decidedTechList);
       difficulty = pbDifficulty;
@@ -344,9 +351,6 @@ class ScoreModel extends ChangeNotifier {
       difficulty = srDifficulty;
       group = srGroup;
     }
-    // if (event == '跳馬') {
-    //   difficulty = vtTech;
-    // }
     if (event == '平行棒') {
       await scoreRepository.updatePBScore(scoreId, totalScore, decidedTechList);
       difficulty = pbDifficulty;
@@ -447,12 +451,6 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onCVSelected(value) {
-    cv = value;
-    isEdited = true;
-    notifyListeners();
-  }
-
   Future<void> getHBScore(String scoreId, String event) async {
     isLoading = true;
     notifyListeners();
@@ -479,6 +477,12 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
     scoreRepository.updateHBScore(scoreId, totalScore, decidedTechList, cv);
     isLoading = false;
+    notifyListeners();
+  }
+
+  void onCVSelected(value) {
+    cv = value;
+    isEdited = true;
     notifyListeners();
   }
 
@@ -690,10 +694,12 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> getVTScore() async {
-    final VTScore? vtScore = await scoreRepository.getVTScore();
-    if (vtScore != null) {
-      vtTechName = vtScore.techName;
-      totalScore = vtTech[vtScore.techName]!;
+    if (authenticatedUser != null) {
+      final vtScore = await scoreRepository.getVTScore();
+      if (vtScore != null) {
+        vtTechName = vtScore.techName;
+        totalScore = vtTech[vtScore.techName]!;
+      }
     }
   }
 }

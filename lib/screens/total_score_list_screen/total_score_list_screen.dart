@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
+import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
-import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,12 +46,19 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     Future(() async {
-      if (introModel.currentUser == null) {
-        await introModel.checkIsIntroWatched();
+      await introModel.checkIsIntroWatched();
+      if (introModel.currentUser == null &&
+          !(introModel.isDoneGettingUserData)) {
+        await introModel.getCurrentUserData();
+      } else {
         if (introModel.isIntroWatched) {
-          await totalScoreListModel.getFavoriteScores();
+          if (!(totalScoreListModel.isDoneGetScore)) {
+            await totalScoreListModel.getFavoriteScores();
+          }
         }
       }
+      introModel.changeLoaded();
+      totalScoreListModel.changeLoaded();
     });
     return Consumer<TotalScoreListModel>(
         builder: (context, totalScoreListModel, child) {
@@ -88,8 +94,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   ),
                 ),
               ),
-              (!introModel.isIntroWatched) ? IntroScreen() : Container(),
-              (introModel.isLoading || totalScoreListModel.isLoading)
+              (!model.isIntroWatched) ? IntroScreen() : Container(),
+              (model.isLoading || totalScoreListModel.isLoading)
                   ? Container(
                       color: Colors.grey.withOpacity(0.6),
                       child: Center(
@@ -124,29 +130,14 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         children: [
           IconButton(
             icon: Icon(
-              Icons.color_lens,
+              Icons.settings,
               color: Theme.of(context).primaryColor,
             ),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ThemeColorScreen(),
-                  fullscreenDialog: true,
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.info_outline,
-              color: Theme.of(context).primaryColor,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UsageScreen(),
+                  builder: (context) => SettingsScreen(),
                   fullscreenDialog: true,
                 ),
               );
