@@ -6,8 +6,8 @@ class LoginModel extends ChangeNotifier {
   final UserRepository userRepository;
   LoginModel({required this.userRepository});
 
-  CurrentUser? get authenticatedUser => UserRepository.currentUser;
-
+  CurrentUser? get currentUser => UserRepository.currentUser;
+  bool isLoading = false;
   String email = '';
   String password = '';
 
@@ -21,5 +21,25 @@ class LoginModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logOut() async {}
+  Future<void> logIn(String email, String password) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await userRepository.logInWithEmailAndPassword(email, password);
+      await userRepository.getCurrentUserData();
+    } catch (e) {
+      print(e);
+      isLoading = false;
+      notifyListeners();
+      throw e;
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> signOut() async {
+    userRepository.signOut();
+  }
 }

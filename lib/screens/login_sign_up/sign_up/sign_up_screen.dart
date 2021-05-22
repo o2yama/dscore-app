@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
 import 'package:dscore_app/utilities.dart';
 import 'package:dscore_app/validator.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,62 +15,67 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 class SignUpScreen extends StatelessWidget {
+  void _showValidMessage(BuildContext context, String message) {
+    Fluttertoast.showToast(
+        msg: "$message",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.pinkAccent,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: SafeArea(
-          child: Consumer<SignUpModel>(builder: (context, model, child) {
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 16),
-                          _backButton(context),
-                          SizedBox(height: 24),
-                          _description(context),
-                          SizedBox(height: 24),
-                          _emailController(context),
-                          SizedBox(height: 24),
-                          _passwordController(context),
-                          SizedBox(height: 50),
-                          TextButton(
-                            onPressed: () async {
-                              await _onResisterButtonPressed(context);
-                            },
-                            child: Text(
-                              '登録',
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: Utilities().isMobile() ? 18 : 24,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 300),
-                        ],
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          child: SafeArea(
+            child: Consumer<SignUpModel>(builder: (context, model, child) {
+              return Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 16),
+                            _backButton(context),
+                            SizedBox(height: 24),
+                            _description(context),
+                            SizedBox(height: 24),
+                            _emailController(context),
+                            SizedBox(height: 24),
+                            _passwordController(context),
+                            SizedBox(height: 50),
+                            _resisterButton(context),
+                            SizedBox(height: 30),
+                            _toLoginScreenButton(context),
+                            SizedBox(height: 300),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? CupertinoActivityIndicator()
-                              : CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-              ],
-            );
-          }),
+                  model.isLoading
+                      ? Container(
+                          color: Colors.grey.withOpacity(0.6),
+                          child: Center(
+                            child: Platform.isIOS
+                                ? CupertinoActivityIndicator()
+                                : CircularProgressIndicator(),
+                          ),
+                        )
+                      : Container(),
+                ],
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -85,7 +92,10 @@ class SignUpScreen extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => TotalScoreListScreen()),
+                (_) => false);
           },
         ),
       ],
@@ -168,6 +178,24 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
+  Widget _resisterButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        await _onResisterButtonPressed(context);
+      },
+      child: Text(
+        '登録',
+        style: TextStyle(
+          color: Theme.of(context).primaryColor,
+          fontSize: Utilities().isMobile() ? 18 : 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      style:
+          ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),
+    );
+  }
+
   Future<void> _onResisterButtonPressed(BuildContext context) async {
     final signInModel = Provider.of<SignUpModel>(context, listen: false);
     if (!(Validator().validEmail(signInModel.email))) {
@@ -178,7 +206,7 @@ class SignUpScreen extends StatelessWidget {
       } else {
         try {
           await signInModel.signInWithEmailAndPassword();
-          await showDialog(
+          showDialog(
             context: context,
             builder: (context) => Platform.isIOS
                 ? CupertinoAlertDialog(
@@ -187,8 +215,11 @@ class SignUpScreen extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TotalScoreListScreen()),
+                              (_) => false);
                         },
                         child: Text('OK'),
                       )
@@ -200,7 +231,11 @@ class SignUpScreen extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TotalScoreListScreen()),
+                              (_) => false);
                         },
                         child: Text('OK'),
                       )
@@ -212,8 +247,14 @@ class SignUpScreen extends StatelessWidget {
             context: context,
             builder: (context) => Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('登録に失敗しました'),
-                    content: Text('メールアドレスとパスワードをご確認ください。'),
+                    title: Text('登録に失敗しました。'),
+                    content: Column(
+                      children: [
+                        SizedBox(height: 8),
+                        Text('すでに同じメールアドレスが登録されている可能性があります。'),
+                        Text('メールアドレスとパスワードをご確認ください。'),
+                      ],
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -241,14 +282,18 @@ class SignUpScreen extends StatelessWidget {
     }
   }
 
-  void _showValidMessage(BuildContext context, String message) {
-    Fluttertoast.showToast(
-        msg: "$message",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.pinkAccent,
-        textColor: Colors.white,
-        fontSize: 16.0);
+  Widget _toLoginScreenButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (_) => false);
+      },
+      child: Text(
+        'ユーザー登録済みの方はこちら',
+        style: TextStyle(color: Colors.blue),
+      ),
+    );
   }
 }

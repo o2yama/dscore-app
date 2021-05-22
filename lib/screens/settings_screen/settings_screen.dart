@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:dscore_app/screens/edit_info_screen/edit_mail_screen.dart';
 import 'package:dscore_app/screens/edit_info_screen/edit_password_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
+import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
+import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -93,6 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _settingsListView(BuildContext context) {
+    final loginModel = Provider.of<LoginModel>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
     return Container(
       height: Utilities().isMobile() ? height - 144 : height - 164,
@@ -102,7 +105,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingTile(context, '使い方', UsageScreen(), Icons.info),
           _settingTile(context, 'メール変更', EditMailScreen(), Icons.mail),
           _settingTile(context, 'パスワード変更', EditPasswordScreen(), Icons.vpn_key),
-          _settingTile(context, 'ログアウト', Container(), Icons.logout),
+          loginModel.currentUser == null
+              ? _settingTile(context, 'ログイン', LoginScreen(), Icons.login)
+              : _settingTile(context, 'ログアウト', Container(), Icons.logout),
         ],
       ),
     );
@@ -111,6 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _settingTile(
       BuildContext context, String setting, Widget screen, IconData icon) {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () {
         if (setting == 'ログアウト') {
@@ -131,8 +137,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           TextButton(
                             child: Text('OK'),
                             onPressed: () async {
-                              //todo: ログアウト
-                              await loginModel.logOut();
+                              scoreModel.resetScores();
+                              await loginModel.signOut();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                  (_) => false);
                             },
                           ),
                         ],
@@ -140,7 +151,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     : AlertDialog();
               });
         } else {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+          if (setting == 'ログイン') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => screen,
+                  fullscreenDialog: true,
+                ));
+          } else {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+          }
         }
       },
       child: Container(
