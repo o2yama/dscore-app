@@ -34,6 +34,8 @@ class UserRepository {
     }
   }
 
+  Future<void> loginWithEmailAndPassword(String email, String password) async {}
+
   Future<bool> getIsExistUser(User user) async {
     final query =
         await _db.collection("users").where("id", isEqualTo: user.uid).get();

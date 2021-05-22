@@ -58,6 +58,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
           }
         }
       }
+      introModel.changeLoaded();
+      totalScoreListModel.changeLoaded();
     });
     return Consumer<TotalScoreListModel>(
         builder: (context, totalScoreListModel, child) {

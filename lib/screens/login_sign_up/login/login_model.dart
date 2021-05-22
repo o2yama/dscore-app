@@ -7,4 +7,17 @@ class LoginModel extends ChangeNotifier {
   LoginModel({required this.userRepository});
 
   CurrentUser? get authenticatedUser => UserRepository.currentUser;
+
+  String email = '';
+  String password = '';
+
+  void onEmailEdited(String text) {
+    email = text;
+    notifyListeners();
+  }
+
+  void onPasswordEdited(String text) {
+    password = text;
+    notifyListeners();
+  }
 }

@@ -49,7 +49,9 @@ class TotalScoreListModel extends ChangeNotifier {
     }
     setTotalScore();
     isDoneGetScore = true;
+  }
 
+  void changeLoaded() {
     isLoading = false;
     notifyListeners();
   }

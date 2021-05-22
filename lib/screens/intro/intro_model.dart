@@ -24,9 +24,6 @@ class IntroModel extends ChangeNotifier {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> getCurrentUserData() async {
@@ -35,7 +32,9 @@ class IntroModel extends ChangeNotifier {
 
     await userRepository.getCurrentUserData();
     isDoneGettingUserData = true;
+  }
 
+  void changeLoaded() {
     isLoading = false;
     notifyListeners();
   }
