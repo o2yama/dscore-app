@@ -27,6 +27,7 @@ class ScoreModel extends ChangeNotifier {
 
   bool isLoading = false;
 
+  ///scoreListScreen関連
   Future<void> getFXScores() async {
     isLoading = true;
     notifyListeners();
@@ -226,6 +227,17 @@ class ScoreModel extends ChangeNotifier {
       await scoreRepository.deleteHBScore(scoreId);
       await getHBScores();
     }
+    notifyListeners();
+  }
+
+  //ログアウト時
+  void resetScores() {
+    fxScoreList = null;
+    phScoreList = null;
+    srScoreList = null;
+    vtScore = null;
+    pbScoreList = null;
+    hbScoreList = null;
     notifyListeners();
   }
 

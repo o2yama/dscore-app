@@ -11,22 +11,6 @@ class SignUpModel extends ChangeNotifier {
   String email = '';
   String password = '';
 
-  Future<void> signInWithEmailAndPassword() async {
-    isLoading = true;
-    notifyListeners();
-
-    try {
-      await userRepository.signInWithEmailAndPassWord(email, password);
-    } catch (e) {
-      print(e);
-      isLoading = false;
-      notifyListeners();
-    }
-
-    isLoading = false;
-    notifyListeners();
-  }
-
   void onEmailEdited(String text) {
     email = text;
     notifyListeners();
@@ -34,6 +18,23 @@ class SignUpModel extends ChangeNotifier {
 
   void onPasswordEdited(String text) {
     password = text;
+    notifyListeners();
+  }
+
+  Future<void> signInWithEmailAndPassword() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await userRepository.signUpWithEmailAndPassWord(email, password);
+      await userRepository.getCurrentUserData();
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      throw e;
+    }
+
+    isLoading = false;
     notifyListeners();
   }
 }

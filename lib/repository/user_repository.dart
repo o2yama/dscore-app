@@ -7,34 +7,30 @@ class UserRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static CurrentUser? currentUser;
 
-  Future<void> signInWithEmailAndPassWord(String email, String password) async {
-    final User? user = (await _auth.createUserWithEmailAndPassword(
-            email: email, password: password))
-        .user;
-    if (user != null) {
-      final bool isUserExistInDB = await getIsExistUser(user);
-      if (!isUserExistInDB) {
+  Future<void> signUpWithEmailAndPassWord(String email, String password) async {
+    try {
+      final User? user = (await _auth.createUserWithEmailAndPassword(
+              email: email, password: password))
+          .user;
+      if (user != null) {
         await _db.collection("users").doc(user.uid).set({
           "email": user.email,
           "id": user.uid,
         });
-        final firebaseUser = await _db
-            .collection('users')
-            .where('id', isEqualTo: user.uid)
-            .get();
-        currentUser =
-            firebaseUser.docs.map((doc) => CurrentUser(doc)).toList()[0];
-      } else {
-        //同じidの人がすでにいた時
-        throw '同じユーザーがすでに登録されています。';
       }
-    } else {
-      //userがnullだった時
-      throw '通信環境の良いところで再度お試しください。';
+    } catch (e) {
+      throw e;
     }
   }
 
-  Future<void> loginWithEmailAndPassword(String email, String password) async {}
+  Future<void> logInWithEmailAndPassword(String email, String password) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      print('authによるエラー');
+      throw e;
+    }
+  }
 
   Future<bool> getIsExistUser(User user) async {
     final query =
@@ -43,18 +39,6 @@ class UserRepository {
       return true;
     }
     return false;
-  }
-
-  Future<bool> getIsExistSameEmailUser(User user) async {
-    final query = await _db
-        .collection("users")
-        .where("email", isEqualTo: currentUser!.email)
-        .get();
-    if (query.size == 0) {
-      return false;
-    } else {
-      return true;
-    }
   }
 
   Future<void> getCurrentUserData() async {
@@ -66,7 +50,13 @@ class UserRepository {
         currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
       }
     } else {
+      print('ユーザーデータ取得のエラー');
       return;
     }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    currentUser = null;
   }
 }
