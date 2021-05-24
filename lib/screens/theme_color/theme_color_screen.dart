@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -80,28 +81,36 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
   Widget _backButton(BuildContext context) {
     return Container(
       color: Theme.of(context).backgroundColor,
-      height: Utilities().isMobile() ? 50 : 80,
+      height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
-        onTap: () {
-          Navigator.pop(context);
-        },
+        onTap: () => Navigator.pop(context),
         child: Row(
           children: [
             SizedBox(width: 8),
-            Icon(
-              Icons.clear,
-              color: Theme.of(context).primaryColor,
-              size: Utilities().isMobile() ? 20 : 30,
-            ),
-            SizedBox(width: 24),
-            Text(
-              'テーマカラー',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: Utilities().isMobile() ? 16 : 24,
-              ),
-            )
+            Platform.isIOS
+                ? Row(
+                    children: [
+                      Icon(
+                        Icons.arrow_back_ios,
+                        color: Theme.of(context).primaryColor,
+                        size: Utilities().isMobile() ? 20 : 30,
+                      ),
+                      SizedBox(width: 24),
+                      Text(
+                        'テーマカラー',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: Utilities().isMobile() ? 18 : 24,
+                        ),
+                      ),
+                    ],
+                  )
+                : Icon(
+                    Icons.clear,
+                    color: Theme.of(context).primaryColor,
+                    size: Utilities().isMobile() ? 20 : 30,
+                  ),
           ],
         ),
       ),
