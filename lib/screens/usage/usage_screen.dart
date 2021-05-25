@@ -37,7 +37,7 @@ class _UsageScreenState extends State<UsageScreen> {
         child: Container(
           color: Theme.of(context).backgroundColor,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               children: [
                 _ad(context),
@@ -75,10 +75,11 @@ class _UsageScreenState extends State<UsageScreen> {
                   ),
                   SizedBox(width: 16),
                   Text(
-                    '設定',
+                    '使い方',
                     style: TextStyle(
                       color: Theme.of(context).primaryColor,
-                      fontSize: Utilities().isMobile() ? 18 : 21,
+                      fontSize: Utilities().isMobile() ? 18 : 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   )
                 ],
