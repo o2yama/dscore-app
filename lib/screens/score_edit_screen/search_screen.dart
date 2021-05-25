@@ -53,7 +53,6 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  //戻るボタン
   Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -71,7 +70,6 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  //検索バー
   Widget _searchBar(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
@@ -109,7 +107,6 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  //検索結果
   Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {

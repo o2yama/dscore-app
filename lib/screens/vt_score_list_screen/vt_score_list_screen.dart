@@ -82,7 +82,6 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
     );
   }
 
-  //広告
   Widget _ad(BuildContext context) {
     return banner == null
         ? Container(height: 50)
@@ -92,7 +91,6 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
           );
   }
 
-  //戻るボタン
   Widget _backButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -109,7 +107,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     Text(
-                      'スコア一覧',
+                      '6種目一覧',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                       ),
