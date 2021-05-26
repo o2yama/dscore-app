@@ -42,16 +42,22 @@ class UserRepository {
   }
 
   Future<void> getCurrentUserData() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final query =
-          await _db.collection('users').where('id', isEqualTo: user.uid).get();
-      if (query.size == 1) {
-        currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        final query = await _db
+            .collection('users')
+            .where('id', isEqualTo: user.uid)
+            .get();
+        if (query.size == 1) {
+          currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
+        }
+      } else {
+        print('ユーザーデータ取得のエラー');
+        return;
       }
-    } else {
-      print('ユーザーデータ取得のエラー');
-      return;
+    } catch (e) {
+      throw (e);
     }
   }
 

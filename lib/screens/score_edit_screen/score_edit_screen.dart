@@ -104,7 +104,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   }
 
   Widget _backButton(BuildContext context, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -140,7 +139,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
           ),
           onPressed: () {
             _onStoreButtonPressed(context);
-            scoreModel.getScores(widget.event);
           },
         ),
       ],
@@ -211,55 +209,45 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   //保存ボタン押された時の処理
   Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    if (scoreModel.authenticatedUser == null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SignUpScreen(),
-            fullscreenDialog: true,
-          ));
-    } else {
-      widget.scoreId == null
-          ? scoreModel.setScore(widget.event)
-          : scoreModel.updateScore(widget.event, widget.scoreId!);
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '0K',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                        ),
+    widget.scoreId == null
+        ? await scoreModel.setScore(widget.event)
+        : await scoreModel.updateScore(widget.event, widget.scoreId!);
+    await scoreModel.getScores(widget.event);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: Text('保存しました'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '0K',
+                        style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
-                    ],
-                  )
-                : AlertDialog(
-                    title: Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '0K',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                        ),
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text('保存しました'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        '0K',
+                        style: TextStyle(color: Theme.of(context).primaryColor),
                       ),
-                    ],
-                  );
-          });
-    }
+                    ),
+                  ],
+                );
+        });
   }
 
   Widget _totalScore(BuildContext context) {
@@ -401,15 +389,24 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                           color: Theme.of(context).primaryColor),
                     ),
                     onTap: () {
-                      searchController.clear();
-                      scoreModel.searchResult.clear();
-                      scoreModel.selectEvent(widget.event);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchScreen(widget.event),
-                            fullscreenDialog: true,
-                          ));
+                      if (scoreModel.authenticatedUser == null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpScreen(),
+                              fullscreenDialog: true,
+                            ));
+                      } else {
+                        searchController.clear();
+                        scoreModel.searchResult.clear();
+                        scoreModel.selectEvent(widget.event);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchScreen(widget.event),
+                              fullscreenDialog: true,
+                            ));
+                      }
                     },
                   ),
                 ),

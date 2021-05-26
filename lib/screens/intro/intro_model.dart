@@ -30,8 +30,12 @@ class IntroModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await userRepository.getCurrentUserData();
-    isDoneGettingUserData = true;
+    try {
+      await userRepository.getCurrentUserData();
+      isDoneGettingUserData = true;
+    } catch (e) {
+      print(e);
+    }
   }
 
   void changeLoaded() {

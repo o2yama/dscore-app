@@ -51,7 +51,7 @@ class ScoreRepository {
     return fxScore;
   }
 
-  Future<void> setFXScore(num total, List<String> techs, num cv) async {
+  Future<void> setFXScore(num total, List<String> techList, num cv) async {
     getUuid();
     await _db
         .collection('users')
@@ -61,7 +61,7 @@ class ScoreRepository {
         .set({
       'scoreId': uuid,
       'total': total,
-      'components': techs,
+      'components': techList,
       'isFavorite': false,
       'cv': cv,
     });

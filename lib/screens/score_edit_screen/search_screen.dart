@@ -64,7 +64,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  //戻るボタン
   Widget _backButton(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,7 +81,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  //検索バー
   Widget _searchBar(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
@@ -187,7 +185,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  //検索結果
   Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
