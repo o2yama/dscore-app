@@ -667,12 +667,81 @@ class ScoreModel extends ChangeNotifier {
   }
 
   bool selected = false;
-  List<String> techFXItem = ['前方', '後方', 'ダブル'];
+  List<String> techFXItem = [
+    '前方',
+    '後方',
+    'ダブル',
+    "抱え込み",
+    "屈伸",
+    "伸身",
+    "1回",
+    "2回",
+    "3回"
+  ];
+  List<String> techPHItem = [
+    'セアー',
+    '旋回',
+    '前移動',
+    '後ろ移動',
+    '開脚',
+    "フロップ",
+    'コンバイン',
+    'ロス',
+    '降り'
+  ];
+  List<String> techSRItem = [
+    '車輪',
+    '十字',
+    '上水平',
+    '中水平',
+    'ヤマワキ',
+    'ジョナサン',
+    'サルト',
+    'ルドルフ'
+  ];
+  List<String> techPBItem = [
+    'ツイスト',
+    'ディアミノフ',
+    'ホンマ',
+    'ヒーリー',
+    '車輪',
+    'モイ',
+    'ティッペルト',
+    '屈伸ダブル'
+  ];
+  List<String> techHBItem = [
+    '車輪',
+    'シート',
+    'エンドー',
+    'コスミック',
+    'コバチ',
+    'コールマン',
+    'トカチェフ',
+    'サルト'
+  ];
 
-  void techChoice(String event, String techFXItem) {
-    if (event == '床') {
-      searchController.text = searchController.text + techFXItem;
-    }
+  void techFXChoice(String event, String techFXItem) {
+    searchController.text = searchController.text + techFXItem;
+    notifyListeners();
+  }
+
+  void techPHChoice(String event, String techPHItem) {
+    searchController.text = searchController.text + techPHItem;
+    notifyListeners();
+  }
+
+  void techSRChoice(String event, String techSRItem) {
+    searchController.text = searchController.text + techSRItem;
+    notifyListeners();
+  }
+
+  void techPBChoice(String event, String techPBItem) {
+    searchController.text = searchController.text + techPBItem;
+    notifyListeners();
+  }
+
+  void techHBChoice(String event, String techHBItem) {
+    searchController.text = searchController.text + techHBItem;
     notifyListeners();
   }
 
