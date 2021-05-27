@@ -666,82 +666,33 @@ class ScoreModel extends ChangeNotifier {
     return items;
   }
 
-  bool selected = false;
-  List<String> techFXItem = [
-    '前方',
-    '後方',
-    'ダブル',
-    "抱え込み",
-    "屈伸",
-    "伸身",
-    "1回",
-    "2回",
-    "3回"
-  ];
-  List<String> techPHItem = [
-    'セアー',
-    '旋回',
-    '前移動',
-    '後ろ移動',
-    '開脚',
-    "フロップ",
-    'コンバイン',
-    'ロス',
-    '降り'
-  ];
-  List<String> techSRItem = [
-    '車輪',
-    '十字',
-    '上水平',
-    '中水平',
-    'ヤマワキ',
-    'ジョナサン',
-    'サルト',
-    'ルドルフ'
-  ];
-  List<String> techPBItem = [
-    'ツイスト',
-    'ディアミノフ',
-    'ホンマ',
-    'ヒーリー',
-    '車輪',
-    'モイ',
-    'ティッペルト',
-    '屈伸ダブル'
-  ];
-  List<String> techHBItem = [
-    '車輪',
-    'シート',
-    'エンドー',
-    'コスミック',
-    'コバチ',
-    'コールマン',
-    'トカチェフ',
-    'サルト'
-  ];
-
-  void techFXChoice(String event, String techFXItem) {
-    searchController.text = searchController.text + techFXItem;
+  void techFXSelected(String event, String fxSearchText) {
+    searchController.text = searchController.text + fxSearchText;
+    search(searchController.text, event);
     notifyListeners();
   }
 
-  void techPHChoice(String event, String techPHItem) {
-    searchController.text = searchController.text + techPHItem;
+  void techPHSelected(String event, String phSearchText) {
+    searchController.text = searchController.text + phSearchText;
+    search(searchController.text, event);
     notifyListeners();
   }
 
-  void techSRChoice(String event, String techSRItem) {
-    searchController.text = searchController.text + techSRItem;
+  void techSRSelected(String event, String srSearchText) {
+    searchController.text = searchController.text + srSearchText;
+    search(searchController.text, event);
     notifyListeners();
   }
 
-  void techPBChoice(String event, String techPBItem) {
-    searchController.text = searchController.text + techPBItem;
+  void techPBSelected(String event, String pbSearchText) {
+    searchController.text = searchController.text + pbSearchText;
+    search(searchController.text, event);
     notifyListeners();
   }
 
-  void techHBChoice(String event, String techHBItem) {
-    searchController.text = searchController.text + techHBItem;
+  void techHBSelected(String event, String hbSearchText) {
+    searchController.text = searchController.text + hbSearchText;
+    search(searchController.text, event);
     notifyListeners();
   }
 

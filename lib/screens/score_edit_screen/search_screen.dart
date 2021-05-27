@@ -1,6 +1,11 @@
 import 'dart:io';
 
+import 'package:dscore_app/data/fx.dart';
+import 'package:dscore_app/data/hb.dart';
+import 'package:dscore_app/data/pb.dart';
+import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +124,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _searchChip(BuildContext context, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
         padding: const EdgeInsets.only(left: 15.0, right: 15.0),
         child: Container(
@@ -243,152 +247,149 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _fxChips(String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Wrap(
       children: [
-        _techFXChips(scoreModel.techFXItem[0], event),
-        _techFXChips(scoreModel.techFXItem[1], event),
-        _techFXChips(scoreModel.techFXItem[2], event),
-        _techFXChips(scoreModel.techFXItem[3], event),
-        _techFXChips(scoreModel.techFXItem[4], event),
-        _techFXChips(scoreModel.techFXItem[5], event),
-        _techFXChips(scoreModel.techFXItem[6], event),
-        _techFXChips(scoreModel.techFXItem[7], event),
-        _techFXChips(scoreModel.techFXItem[8], event),
+        _techFXChips(fxSearchText[0], event),
+        _techFXChips(fxSearchText[1], event),
+        _techFXChips(fxSearchText[2], event),
+        _techFXChips(fxSearchText[3], event),
+        _techFXChips(fxSearchText[4], event),
+        _techFXChips(fxSearchText[5], event),
+        _techFXChips(fxSearchText[6], event),
+        _techFXChips(fxSearchText[7], event),
+        _techFXChips(fxSearchText[8], event),
+        _techFXChips(fxSearchText[9], event),
       ],
     );
   }
 
   Widget _phChips(String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Wrap(
       children: [
-        _techPHChips(scoreModel.techPHItem[0], event),
-        _techPHChips(scoreModel.techPHItem[1], event),
-        _techPHChips(scoreModel.techPHItem[2], event),
-        _techPHChips(scoreModel.techPHItem[3], event),
-        _techPHChips(scoreModel.techPHItem[4], event),
-        _techPHChips(scoreModel.techPHItem[5], event),
-        _techPHChips(scoreModel.techPHItem[6], event),
-        _techPHChips(scoreModel.techPHItem[7], event),
-        _techPHChips(scoreModel.techPHItem[8], event),
+        _techPHChips(phSearchText[0], event),
+        _techPHChips(phSearchText[1], event),
+        _techPHChips(phSearchText[2], event),
+        _techPHChips(phSearchText[3], event),
+        _techPHChips(phSearchText[4], event),
+        _techPHChips(phSearchText[5], event),
+        _techPHChips(phSearchText[6], event),
+        _techPHChips(phSearchText[7], event),
+        _techPHChips(phSearchText[8], event),
       ],
     );
   }
 
   Widget _srChips(String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Wrap(
       children: [
-        _techSRChips(scoreModel.techSRItem[0], event),
-        _techSRChips(scoreModel.techSRItem[1], event),
-        _techSRChips(scoreModel.techSRItem[2], event),
-        _techSRChips(scoreModel.techSRItem[3], event),
-        _techSRChips(scoreModel.techSRItem[4], event),
-        _techSRChips(scoreModel.techSRItem[5], event),
-        _techSRChips(scoreModel.techSRItem[6], event),
-        _techSRChips(scoreModel.techSRItem[7], event),
+        _techSRChips(srSearchText[0], event),
+        _techSRChips(srSearchText[1], event),
+        _techSRChips(srSearchText[2], event),
+        _techSRChips(srSearchText[3], event),
+        _techSRChips(srSearchText[4], event),
+        _techSRChips(srSearchText[5], event),
+        _techSRChips(srSearchText[6], event),
+        _techSRChips(srSearchText[7], event),
       ],
     );
   }
 
   Widget _pbChips(String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Wrap(
       children: [
-        _techPBChips(scoreModel.techPBItem[0], event),
-        _techPBChips(scoreModel.techPBItem[1], event),
-        _techPBChips(scoreModel.techPBItem[2], event),
-        _techPBChips(scoreModel.techPBItem[3], event),
-        _techPBChips(scoreModel.techPBItem[4], event),
-        _techPBChips(scoreModel.techPBItem[5], event),
-        _techPBChips(scoreModel.techPBItem[6], event),
-        _techPBChips(scoreModel.techPBItem[7], event),
+        _techPBChips(pbSearchText[0], event),
+        _techPBChips(pbSearchText[1], event),
+        _techPBChips(pbSearchText[2], event),
+        _techPBChips(pbSearchText[3], event),
+        _techPBChips(pbSearchText[4], event),
+        _techPBChips(pbSearchText[5], event),
+        _techPBChips(pbSearchText[6], event),
+        _techPBChips(pbSearchText[7], event),
       ],
     );
   }
 
   Widget _hbChips(String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Wrap(
       children: [
-        _techHBChips(scoreModel.techHBItem[0], event),
-        _techHBChips(scoreModel.techHBItem[1], event),
-        _techHBChips(scoreModel.techHBItem[2], event),
-        _techHBChips(scoreModel.techHBItem[3], event),
-        _techHBChips(scoreModel.techHBItem[4], event),
-        _techHBChips(scoreModel.techHBItem[5], event),
-        _techHBChips(scoreModel.techHBItem[6], event),
-        _techHBChips(scoreModel.techHBItem[7], event),
+        _techHBChips(hbSearchText[0], event),
+        _techHBChips(hbSearchText[1], event),
+        _techHBChips(hbSearchText[2], event),
+        _techHBChips(hbSearchText[3], event),
+        _techHBChips(hbSearchText[4], event),
+        _techHBChips(hbSearchText[5], event),
+        _techHBChips(hbSearchText[6], event),
+        _techHBChips(hbSearchText[7], event),
       ],
     );
   }
 
-  Widget _techFXChips(String techFXItem, String event) {
+  Widget _techFXChips(String fxSearchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$techFXItem'),
-        selected: scoreModel.selected,
+        label: Text('$fxSearchText'),
+        selected: false,
         onSelected: (selected) {
-          scoreModel.techFXChoice(event, techFXItem);
+          scoreModel.techFXSelected(event, fxSearchText);
+          // scoreModel.search(text, widget.event);
         },
       ),
     );
   }
 
-  Widget _techPHChips(String techPHItem, String event) {
+  Widget _techPHChips(String phSearchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$techPHItem'),
-        selected: scoreModel.selected,
+        label: Text('$phSearchText'),
+        selected: false,
         onSelected: (selected) {
-          scoreModel.techPHChoice(event, techPHItem);
+          scoreModel.techPHSelected(event, phSearchText);
         },
       ),
     );
   }
 
-  Widget _techSRChips(String techSRItem, String event) {
+  Widget _techSRChips(String srSearchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$techSRItem'),
-        selected: scoreModel.selected,
+        label: Text('$srSearchText'),
+        selected: false,
         onSelected: (selected) {
-          scoreModel.techPHChoice(event, techSRItem);
+          scoreModel.techSRSelected(event, srSearchText);
         },
       ),
     );
   }
 
-  Widget _techPBChips(String techPBItem, String event) {
+  Widget _techPBChips(String pbSearchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$techPBItem'),
-        selected: scoreModel.selected,
+        label: Text('$pbSearchText'),
+        selected: false,
         onSelected: (selected) {
-          scoreModel.techPHChoice(event, techPBItem);
+          scoreModel.techPBSelected(event, pbSearchText);
         },
       ),
     );
   }
 
-  Widget _techHBChips(String techHBItem, String event) {
+  Widget _techHBChips(String hbSearchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$techHBItem'),
-        selected: scoreModel.selected,
+        label: Text('$hbSearchText'),
+        selected: false,
         onSelected: (selected) {
-          scoreModel.techPHChoice(event, techHBItem);
+          scoreModel.techHBSelected(event, hbSearchText);
         },
       ),
     );
