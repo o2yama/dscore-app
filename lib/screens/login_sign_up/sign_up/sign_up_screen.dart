@@ -20,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
         msg: "$message",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 2,
         backgroundColor: Colors.pinkAccent,
         textColor: Colors.white,
         fontSize: 16.0);
@@ -205,7 +205,7 @@ class SignUpScreen extends StatelessWidget {
         _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
       } else {
         try {
-          await signInModel.signInWithEmailAndPassword();
+          await signInModel.signUpWithEmailAndPassword();
           showDialog(
             context: context,
             builder: (context) => Platform.isIOS
@@ -215,6 +215,7 @@ class SignUpScreen extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
+                          signInModel.sendEmailVerification();
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(

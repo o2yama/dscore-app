@@ -78,7 +78,9 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                             _ad(context),
                             RefreshIndicator(
                               onRefresh: () async {
+                                await introModel.getCurrentUserData();
                                 await totalScoreListModel.getFavoriteScores();
+                                totalScoreListModel.changeLoaded();
                               },
                               child: Column(
                                 children: [
