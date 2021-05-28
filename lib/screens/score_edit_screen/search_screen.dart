@@ -52,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     Container(
                       height: height * 0.1,
-                      child: _searchChip(context, widget.event),
+                      child: _searchChips(context, widget.event),
                     ),
                     //検索結果
                     Container(
@@ -123,21 +123,39 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _searchChip(BuildContext context, String event) {
+  Widget _searchChips(BuildContext context, String event) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    if (event == '床') {
+      scoreModel.searchText = fxSearchText;
+    }
+    if (event == 'あん馬') {
+      scoreModel.searchText = phSearchText;
+    }
+    if (event == '吊り輪') {
+      scoreModel.searchText = srSearchText;
+    }
+    if (event == '平行棒') {
+      scoreModel.searchText = pbSearchText;
+    }
+    if (event == '鉄棒') {
+      scoreModel.searchText = hbSearchText;
+    }
     return Padding(
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-        child: Container(
-            child: event == '床'
-                ? _fxChips(event)
-                : event == 'あん馬'
-                    ? _phChips(event)
-                    : event == '吊り輪'
-                        ? _srChips(event)
-                        : event == '平行棒'
-                            ? _pbChips(event)
-                            : event == '鉄棒'
-                                ? _hbChips(event)
-                                : Container()));
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+      child: Wrap(
+        children: [
+          _techChip(scoreModel.searchText[0], event),
+          _techChip(scoreModel.searchText[1], event),
+          _techChip(scoreModel.searchText[2], event),
+          _techChip(scoreModel.searchText[3], event),
+          _techChip(scoreModel.searchText[4], event),
+          _techChip(scoreModel.searchText[5], event),
+          _techChip(scoreModel.searchText[6], event),
+          _techChip(scoreModel.searchText[7], event),
+          _techChip(scoreModel.searchText[8], event),
+        ],
+      ),
+    );
   }
 
   Widget _searchResults(BuildContext context, String event) {
@@ -246,150 +264,15 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  Widget _fxChips(String event) {
-    return Wrap(
-      children: [
-        _techFXChips(fxSearchText[0], event),
-        _techFXChips(fxSearchText[1], event),
-        _techFXChips(fxSearchText[2], event),
-        _techFXChips(fxSearchText[3], event),
-        _techFXChips(fxSearchText[4], event),
-        _techFXChips(fxSearchText[5], event),
-        _techFXChips(fxSearchText[6], event),
-        _techFXChips(fxSearchText[7], event),
-        _techFXChips(fxSearchText[8], event),
-        _techFXChips(fxSearchText[9], event),
-      ],
-    );
-  }
-
-  Widget _phChips(String event) {
-    return Wrap(
-      children: [
-        _techPHChips(phSearchText[0], event),
-        _techPHChips(phSearchText[1], event),
-        _techPHChips(phSearchText[2], event),
-        _techPHChips(phSearchText[3], event),
-        _techPHChips(phSearchText[4], event),
-        _techPHChips(phSearchText[5], event),
-        _techPHChips(phSearchText[6], event),
-        _techPHChips(phSearchText[7], event),
-        _techPHChips(phSearchText[8], event),
-      ],
-    );
-  }
-
-  Widget _srChips(String event) {
-    return Wrap(
-      children: [
-        _techSRChips(srSearchText[0], event),
-        _techSRChips(srSearchText[1], event),
-        _techSRChips(srSearchText[2], event),
-        _techSRChips(srSearchText[3], event),
-        _techSRChips(srSearchText[4], event),
-        _techSRChips(srSearchText[5], event),
-        _techSRChips(srSearchText[6], event),
-        _techSRChips(srSearchText[7], event),
-      ],
-    );
-  }
-
-  Widget _pbChips(String event) {
-    return Wrap(
-      children: [
-        _techPBChips(pbSearchText[0], event),
-        _techPBChips(pbSearchText[1], event),
-        _techPBChips(pbSearchText[2], event),
-        _techPBChips(pbSearchText[3], event),
-        _techPBChips(pbSearchText[4], event),
-        _techPBChips(pbSearchText[5], event),
-        _techPBChips(pbSearchText[6], event),
-        _techPBChips(pbSearchText[7], event),
-      ],
-    );
-  }
-
-  Widget _hbChips(String event) {
-    return Wrap(
-      children: [
-        _techHBChips(hbSearchText[0], event),
-        _techHBChips(hbSearchText[1], event),
-        _techHBChips(hbSearchText[2], event),
-        _techHBChips(hbSearchText[3], event),
-        _techHBChips(hbSearchText[4], event),
-        _techHBChips(hbSearchText[5], event),
-        _techHBChips(hbSearchText[6], event),
-        _techHBChips(hbSearchText[7], event),
-      ],
-    );
-  }
-
-  Widget _techFXChips(String fxSearchText, String event) {
+  Widget _techChip(String searchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: ChoiceChip(
-        label: Text('$fxSearchText'),
+        label: Text('$searchText'),
         selected: false,
         onSelected: (selected) {
-          scoreModel.techFXSelected(event, fxSearchText);
-          // scoreModel.search(text, widget.event);
-        },
-      ),
-    );
-  }
-
-  Widget _techPHChips(String phSearchText, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
-      child: ChoiceChip(
-        label: Text('$phSearchText'),
-        selected: false,
-        onSelected: (selected) {
-          scoreModel.techPHSelected(event, phSearchText);
-        },
-      ),
-    );
-  }
-
-  Widget _techSRChips(String srSearchText, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
-      child: ChoiceChip(
-        label: Text('$srSearchText'),
-        selected: false,
-        onSelected: (selected) {
-          scoreModel.techSRSelected(event, srSearchText);
-        },
-      ),
-    );
-  }
-
-  Widget _techPBChips(String pbSearchText, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
-      child: ChoiceChip(
-        label: Text('$pbSearchText'),
-        selected: false,
-        onSelected: (selected) {
-          scoreModel.techPBSelected(event, pbSearchText);
-        },
-      ),
-    );
-  }
-
-  Widget _techHBChips(String hbSearchText, String event) {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
-      child: ChoiceChip(
-        label: Text('$hbSearchText'),
-        selected: false,
-        onSelected: (selected) {
-          scoreModel.techHBSelected(event, hbSearchText);
+          scoreModel.techSelected(event, searchText);
         },
       ),
     );

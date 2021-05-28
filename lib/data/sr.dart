@@ -245,6 +245,7 @@ Map<String, int> srDifficulty = {
 };
 
 List<String> srSearchText = [
+  '倒立',
   '車輪',
   '十字',
   '上水平',

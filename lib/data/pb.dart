@@ -367,6 +367,7 @@ Map<String, int> pbDifficulty = {
 };
 
 List<String> pbSearchText = [
+  '倒立',
   'ツイスト',
   'ディアミドフ',
   'ホンマ',

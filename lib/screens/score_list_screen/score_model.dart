@@ -666,32 +666,10 @@ class ScoreModel extends ChangeNotifier {
     return items;
   }
 
-  void techFXSelected(String event, String fxSearchText) {
-    searchController.text = searchController.text + fxSearchText;
-    search(searchController.text, event);
-    notifyListeners();
-  }
+  List<String> searchText = [];
 
-  void techPHSelected(String event, String phSearchText) {
-    searchController.text = searchController.text + phSearchText;
-    search(searchController.text, event);
-    notifyListeners();
-  }
-
-  void techSRSelected(String event, String srSearchText) {
-    searchController.text = searchController.text + srSearchText;
-    search(searchController.text, event);
-    notifyListeners();
-  }
-
-  void techPBSelected(String event, String pbSearchText) {
-    searchController.text = searchController.text + pbSearchText;
-    search(searchController.text, event);
-    notifyListeners();
-  }
-
-  void techHBSelected(String event, String hbSearchText) {
-    searchController.text = searchController.text + hbSearchText;
+  void techSelected(String event, String searchText) {
+    searchController.text = searchController.text + searchText;
     search(searchController.text, event);
     notifyListeners();
   }
