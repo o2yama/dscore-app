@@ -48,14 +48,14 @@ class EditEmailScreen extends StatelessWidget {
                             _backButton(context),
                             SizedBox(height: 30),
                             _prevEmailDisplay(context),
-                            SizedBox(height: 50),
-                            _newEmailController(context),
-                            SizedBox(height: 50),
-                            _confirmationNewEmailController(context),
-                            SizedBox(height: 50),
-                            _passwordController(context),
-                            SizedBox(height: 100),
-                            _changeButton(context),
+                            // SizedBox(height: 50),
+                            // _newEmailController(context),
+                            // SizedBox(height: 50),
+                            // _confirmationNewEmailController(context),
+                            // SizedBox(height: 50),
+                            // _passwordController(context),
+                            // SizedBox(height: 100),
+                            // _changeButton(context),
                             SizedBox(height: 300),
                           ],
                         ),
@@ -99,7 +99,7 @@ class EditEmailScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 24),
                       Text(
-                        'メールアドレス変更',
+                        'メールアドレス',
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
@@ -120,7 +120,7 @@ class EditEmailScreen extends StatelessWidget {
     return editEmailModel.currentUser != null
         ? Column(
             children: [
-              Text('現在のメールアドレス'),
+              Text('メールアドレス'),
               SizedBox(height: 16),
               Text(
                 '${editEmailModel.currentUser!.email}',

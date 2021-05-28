@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
-import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -112,12 +111,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _settingTile(context, 'テーマカラー', ThemeColorScreen(), Icons.color_lens),
           _settingTile(context, '使い方', UsageScreen(), Icons.info),
           loginModel.currentUser != null
-              ? _settingTile(context, 'メール変更', EditEmailScreen(), Icons.mail)
+              ? _settingTile(context, 'メールアドレス', EditEmailScreen(), Icons.mail)
               : Container(),
-          loginModel.currentUser != null
-              ? _settingTile(
-                  context, 'パスワード変更', EditPasswordScreen(), Icons.vpn_key)
-              : Container(),
+          // loginModel.currentUser != null
+          //     ? _settingTile(
+          //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
+          //     : Container(),
           loginModel.currentUser == null
               ? _settingTile(context, 'ログイン', LoginScreen(), Icons.login)
               : _settingTile(context, 'ログアウト', Container(), Icons.logout),

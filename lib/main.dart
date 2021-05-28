@@ -1,6 +1,7 @@
 import 'package:dscore_app/ad_state.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_model.dart';
+import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_model.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
@@ -53,6 +54,10 @@ List<SingleChildWidget> viewModels = [
   ),
   ChangeNotifierProvider<EditEmailModel>(
     create: (context) => EditEmailModel(
+        userRepository: Provider.of<UserRepository>(context, listen: false)),
+  ),
+  ChangeNotifierProvider<EditPasswordModel>(
+    create: (context) => EditPasswordModel(
         userRepository: Provider.of<UserRepository>(context, listen: false)),
   ),
 ];

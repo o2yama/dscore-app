@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,8 @@ import '../../../utilities.dart';
 import '../edit_email/edit_email_model.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+TextEditingController emailController = TextEditingController();
 
 class EditPasswordScreen extends StatelessWidget {
   @override
@@ -86,6 +89,37 @@ class EditPasswordScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _emailController(BuildContext context) {
+    final editPasswordModel =
+        Provider.of<EditPasswordModel>(context, listen: false);
+    return TextField(
+      controller: emailController,
+      cursorColor: Theme.of(context).primaryColor,
+      autofocus: true,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+        prefixIcon: Icon(Icons.mail),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+          borderSide: BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        hintText: 'メールアドレス',
+      ),
+      onChanged: (text) {
+        editPasswordModel.onEmailFieldChanged(text);
+      },
     );
   }
 }
