@@ -1,18 +1,30 @@
 import 'dart:io';
+
+import 'package:dscore_app/data/fx.dart';
+import 'package:dscore_app/data/hb.dart';
+import 'package:dscore_app/data/pb.dart';
+import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   SearchScreen(this.event, {this.order});
   final String event;
   final int? order;
 
+  @override
+  _SearchScreenState createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -31,17 +43,21 @@ class SearchScreen extends StatelessWidget {
                     //戻るボタン
                     Container(
                       height: height * 0.1,
-                      child: _backButton(context, event),
+                      child: _backButton(context, widget.event),
                     ),
                     //検索バー
                     Container(
                       height: height * 0.1,
                       child: _searchBar(context),
                     ),
+                    Container(
+                      height: height * 0.1,
+                      child: _searchChips(context, widget.event),
+                    ),
                     //検索結果
                     Container(
-                      height: height * 0.75,
-                      child: _searchResults(context, event),
+                      height: height * 0.7,
+                      child: _searchResults(context, widget.event),
                     ),
                   ],
                 ),
@@ -73,7 +89,7 @@ class SearchScreen extends StatelessWidget {
   Widget _searchBar(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
       child: TextField(
         controller: searchController,
         cursorColor: Theme.of(context).primaryColor,
@@ -101,8 +117,43 @@ class SearchScreen extends StatelessWidget {
           hintText: '検索',
         ),
         onChanged: (text) {
-          scoreModel.search(text, event);
+          scoreModel.search(text, widget.event);
         },
+      ),
+    );
+  }
+
+  Widget _searchChips(BuildContext context, String event) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    if (event == '床') {
+      scoreModel.searchText = fxSearchText;
+    }
+    if (event == 'あん馬') {
+      scoreModel.searchText = phSearchText;
+    }
+    if (event == '吊り輪') {
+      scoreModel.searchText = srSearchText;
+    }
+    if (event == '平行棒') {
+      scoreModel.searchText = pbSearchText;
+    }
+    if (event == '鉄棒') {
+      scoreModel.searchText = hbSearchText;
+    }
+    return Padding(
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+      child: Wrap(
+        children: [
+          _techChip(scoreModel.searchText[0], event),
+          _techChip(scoreModel.searchText[1], event),
+          _techChip(scoreModel.searchText[2], event),
+          _techChip(scoreModel.searchText[3], event),
+          _techChip(scoreModel.searchText[4], event),
+          _techChip(scoreModel.searchText[5], event),
+          _techChip(scoreModel.searchText[6], event),
+          _techChip(scoreModel.searchText[7], event),
+          _techChip(scoreModel.searchText[8], event),
+        ],
       ),
     );
   }
@@ -164,7 +215,7 @@ class SearchScreen extends StatelessWidget {
               ),
             ),
             onTap: () async {
-              await _onResultTileTapped(context, techName, order);
+              await _onResultTileTapped(context, techName, widget.order);
               Navigator.pop(context);
             },
           ),
@@ -181,7 +232,7 @@ class SearchScreen extends StatelessWidget {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {
       scoreModel.onTechSelected(techName, order);
-      scoreModel.calculateScore(event);
+      scoreModel.calculateScore(widget.event);
     } catch (e) {
       print(e);
       await showDialog(
@@ -211,5 +262,19 @@ class SearchScreen extends StatelessWidget {
               ),
       );
     }
+  }
+
+  Widget _techChip(String searchText, String event) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return Padding(
+      padding: const EdgeInsets.only(right: 10.0),
+      child: ChoiceChip(
+        label: Text('$searchText'),
+        selected: false,
+        onSelected: (selected) {
+          scoreModel.techSelected(event, searchText);
+        },
+      ),
+    );
   }
 }

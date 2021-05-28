@@ -10,6 +10,7 @@ import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
+import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 
 class ScoreModel extends ChangeNotifier {
@@ -663,6 +664,14 @@ class ScoreModel extends ChangeNotifier {
       items.remove(removeTechName);
     });
     return items;
+  }
+
+  List<String> searchText = [];
+
+  void techSelected(String event, String searchText) {
+    searchController.text = searchController.text + searchText;
+    search(searchController.text, event);
+    notifyListeners();
   }
 
   void deleteSearchBarText(TextEditingController controller) {
