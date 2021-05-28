@@ -25,6 +25,7 @@ dependencies:
   flutter_native_splash: ^1.1.8+4
   intro_slider: ^2.4.3
   fluttertoast: ^8.0.7
+  url_launcher: ^6.0.4
 
 dev_dependencies:
   flutter_test:

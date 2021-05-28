@@ -35,17 +35,32 @@ class TotalScoreListModel extends ChangeNotifier {
 
     if (currentUser != null) {
       favoriteFx = await scoreRepository.getFavoriteFXScore();
-      if (favoriteFx != null) favoriteFxScore = favoriteFx!.total;
+      favoriteFx != null
+          ? favoriteFxScore = favoriteFx!.total
+          : favoriteFxScore = 0.0;
+
       favoritePh = await scoreRepository.getFavoritePHScore();
-      if (favoritePh != null) favoritePhScore = favoritePh!.total;
+      favoritePh != null
+          ? favoritePhScore = favoritePh!.total
+          : favoritePhScore = 0.0;
+
       favoriteSr = await scoreRepository.getFavoriteSRScore();
-      if (favoriteSr != null) favoriteSrScore = favoriteSr!.total;
+      favoriteSr != null
+          ? favoriteSrScore = favoriteSr!.total
+          : favoriteSrScore = 0.0;
+
       vt = await scoreRepository.getVTScore();
-      if (vt != null) vtScore = vt!.score;
+      vt != null ? vtScore = vt!.score : vtScore = 0.0;
+
       favoritePb = await scoreRepository.getFavoritePBScore();
-      if (favoritePb != null) favoritePbScore = favoritePb!.total;
+      favoritePb != null
+          ? favoritePbScore = favoritePb!.total
+          : favoritePbScore = 0.0;
+
       favoriteHb = await scoreRepository.getFavoriteHBScore();
-      if (favoriteHb != null) favoriteHbScore = favoriteHb!.total;
+      favoriteHb != null
+          ? favoriteHbScore = favoriteHb!.total
+          : favoriteHbScore = 0.0;
     }
     setTotalScore();
     isDoneGetScore = true;
