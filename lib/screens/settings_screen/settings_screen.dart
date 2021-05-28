@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../ad_state.dart';
 import '../../utilities.dart';
 
@@ -108,30 +109,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
       height: height * 0.6,
       child: ListView(
         children: [
-          _settingTile(context, 'テーマカラー', ThemeColorScreen(), Icons.color_lens),
-          _settingTile(context, '使い方', UsageScreen(), Icons.info),
+          _settingTile(context, 'テーマカラー', Icons.color_lens,
+              screen: ThemeColorScreen()),
+          _settingTile(context, '使い方', Icons.info, screen: UsageScreen()),
+          _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip),
           loginModel.currentUser != null
-              ? _settingTile(context, 'メールアドレス', EditEmailScreen(), Icons.mail)
+              ? _settingTile(context, 'メールアドレス', Icons.mail,
+                  screen: EditEmailScreen())
               : Container(),
+          _settingTile(context, 'お問い合わせ', Icons.send),
           // loginModel.currentUser != null
           //     ? _settingTile(
           //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
           //     : Container(),
           loginModel.currentUser == null
-              ? _settingTile(context, 'ログイン', LoginScreen(), Icons.login)
-              : _settingTile(context, 'ログアウト', Container(), Icons.logout),
+              ? _settingTile(context, 'ログイン', Icons.login,
+                  screen: LoginScreen())
+              : _settingTile(context, 'ログアウト', Icons.logout),
         ],
       ),
     );
   }
 
-  Widget _settingTile(
-      BuildContext context, String setting, Widget screen, IconData icon) {
+  Widget _settingTile(BuildContext context, String title, IconData icon,
+      {Widget? screen}) {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () {
-        if (setting == 'ログアウト') {
+        if (title == 'ログアウト') {
           showDialog(
               context: context,
               builder: (context) {
@@ -163,15 +169,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     : AlertDialog();
               });
         } else {
-          if (setting == 'ログイン') {
+          if (title == 'ログイン') {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => screen,
+                  builder: (_) => screen!,
                   fullscreenDialog: true,
                 ));
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+            if (title == 'プライバシー・ポリシー') {
+              launch(
+                'https://dscore-app-a72cf.firebaseapp.com/',
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+            } else {
+              if (title == 'お問い合わせ') {
+                launch(
+                  'https://docs.google.com/forms/d/1HjKY8j_RqIJ1qRgqfxbIwqsNmAhclGNUdf6CofqQKIQ/edit',
+                  forceSafariVC: true,
+                  forceWebView: true,
+                );
+              } else {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => screen!));
+              }
+            }
           }
         }
       },
@@ -189,7 +212,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SizedBox(width: 24),
                 Text(
-                  '$setting',
+                  '$title',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ],
