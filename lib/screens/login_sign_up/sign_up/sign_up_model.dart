@@ -21,7 +21,7 @@ class SignUpModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signInWithEmailAndPassword() async {
+  Future<void> signUpWithEmailAndPassword() async {
     isLoading = true;
     notifyListeners();
 
@@ -36,5 +36,9 @@ class SignUpModel extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> sendEmailVerification() async {
+    userRepository.sendEmailVerification();
   }
 }

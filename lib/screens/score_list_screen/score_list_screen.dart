@@ -68,12 +68,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        banner == null
-                            ? Container(height: 50)
-                            : Container(
-                                height: 50,
-                                child: AdWidget(ad: banner!),
-                              ),
+                        _ad(context),
                         Container(
                           height: height * 0.1,
                           child: _backButton(context, widget.event),
@@ -110,6 +105,15 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
         },
       ),
     );
+  }
+
+  Widget _ad(BuildContext context) {
+    return banner == null
+        ? Container(height: 50)
+        : Container(
+            height: 50,
+            child: AdWidget(ad: banner!),
+          );
   }
 
   Widget _backButton(BuildContext context, String event) {

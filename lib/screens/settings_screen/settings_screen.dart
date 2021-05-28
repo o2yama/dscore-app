@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:dscore_app/screens/edit_info_screen/edit_mail_screen.dart';
-import 'package:dscore_app/screens/edit_info_screen/edit_password_screen.dart';
+import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
+import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -40,16 +40,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 _ad(context),
-                _backButton(context),
-                SizedBox(height: 24),
-                _settingsListView(context),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      _backButton(context),
+                      SizedBox(height: 24),
+                      _settingsListView(context),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -98,13 +106,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
     return Container(
-      height: Utilities().isMobile() ? height - 144 : height - 164,
+      height: height * 0.6,
       child: ListView(
         children: [
           _settingTile(context, 'テーマカラー', ThemeColorScreen(), Icons.color_lens),
           _settingTile(context, '使い方', UsageScreen(), Icons.info),
-          _settingTile(context, 'メール変更', EditMailScreen(), Icons.mail),
-          _settingTile(context, 'パスワード変更', EditPasswordScreen(), Icons.vpn_key),
+          loginModel.currentUser != null
+              ? _settingTile(context, 'メール変更', EditEmailScreen(), Icons.mail)
+              : Container(),
+          loginModel.currentUser != null
+              ? _settingTile(
+                  context, 'パスワード変更', EditPasswordScreen(), Icons.vpn_key)
+              : Container(),
           loginModel.currentUser == null
               ? _settingTile(context, 'ログイン', LoginScreen(), Icons.login)
               : _settingTile(context, 'ログアウト', Container(), Icons.logout),
