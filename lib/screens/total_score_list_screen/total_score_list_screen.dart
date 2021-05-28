@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
@@ -79,7 +78,9 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                             _ad(context),
                             RefreshIndicator(
                               onRefresh: () async {
+                                await introModel.getCurrentUserData();
                                 await totalScoreListModel.getFavoriteScores();
+                                totalScoreListModel.changeLoaded();
                               },
                               child: Column(
                                 children: [

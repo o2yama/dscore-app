@@ -23,6 +23,18 @@ class UserRepository {
     }
   }
 
+  Future<void> sendEmailVerification() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        await user.sendEmailVerification();
+      }
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
   Future<void> logInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
@@ -64,5 +76,40 @@ class UserRepository {
   Future<void> signOut() async {
     await _auth.signOut();
     currentUser = null;
+  }
+
+  Future<bool> reAuthenticate(String password) async {
+    try {
+      final user = _auth.currentUser;
+      final credential =
+          EmailAuthProvider.credential(email: user!.email!, password: password);
+      await user.reauthenticateWithCredential(credential);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<void> updateEmail(String newEmail) async {
+    try {
+      final user = _auth.currentUser!;
+      await user.updateEmail(newEmail);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
+  }
+
+  Future<void> updateEmailInDB() async {
+    try {
+      final user = _auth.currentUser!;
+      await _db.collection('user').doc('${user.uid}').update({
+        'email': user.email,
+      });
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 }
