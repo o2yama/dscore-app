@@ -5,9 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
 
 class ScoreListScreen extends StatefulWidget {
   ScoreListScreen(this.event);
@@ -18,8 +16,6 @@ class ScoreListScreen extends StatefulWidget {
 }
 
 class _ScoreListScreenState extends State<ScoreListScreen> {
-  BannerAd? banner;
-
   @override
   void initState() {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
@@ -28,24 +24,9 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(
         builder: (context, model, child) {
           Future(() async {
@@ -53,36 +34,32 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               await model.getScores(widget.event);
             }
           });
-          final height = MediaQuery.of(context).size.height - 50;
+          final height = MediaQuery.of(context).size.height;
           return SafeArea(
             child: Stack(
               children: [
                 SingleChildScrollView(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ad(context),
-                        Container(
-                          height: height * 0.1,
-                          child: _backButton(context, widget.event),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: height * 0.1,
+                        child: _backButton(context, widget.event),
+                      ),
+                      Container(
+                        height: height * 0.1,
+                        child: _eventNameDisplay(context),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await model.getScores(widget.event);
+                          },
+                          child: _scoreList(context),
                         ),
-                        Container(
-                          height: height * 0.1,
-                          child: _eventNameDisplay(context),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              await model.getScores(widget.event);
-                            },
-                            child: _scoreList(context),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 model.isLoading
@@ -100,15 +77,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
         },
       ),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context, String event) {
@@ -139,8 +107,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _eventNameDisplay(BuildContext context) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
       height: height * 0.1,
@@ -216,8 +184,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   Widget _scoreTile(BuildContext context, List<String> techs, num total,
       bool isFavorite, String scoreId) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () async {

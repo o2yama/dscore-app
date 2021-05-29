@@ -6,75 +6,43 @@ import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
 import '../../utilities.dart';
 
-class ScoreEditScreen extends StatefulWidget {
+class ScoreEditScreen extends StatelessWidget {
   ScoreEditScreen(this.event, {this.scoreId});
   final String event;
   final String? scoreId;
 
   @override
-  _ScoreEditScreenState createState() => _ScoreEditScreenState();
-}
-
-class _ScoreEditScreenState extends State<ScoreEditScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(builder: (context, model, child) {
-        final height = MediaQuery.of(context).size.height - 50;
+        final height = MediaQuery.of(context).size.height;
         return SingleChildScrollView(
           child: Stack(
             children: [
               SafeArea(
-                child: Container(
-                  color: Theme.of(context).backgroundColor,
-                  child: Column(
-                    children: [
-                      _ad(context),
-                      Column(
-                        children: [
-                          Container(
-                            height: height * 0.1,
-                            child: _backButton(context, widget.event),
-                          ),
-                          Container(
-                            height: height * 0.1,
-                            child: _totalScore(context),
-                          ),
-                          Container(
-                            height: height * 0.1,
-                            child: _detailsScore(context),
-                          ),
-                          Container(
-                            height: height * 0.7,
-                            child: _techListView(context),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: height * 0.1,
+                      child: _backButton(context, event),
+                    ),
+                    Container(
+                      height: height * 0.1,
+                      child: _totalScore(context),
+                    ),
+                    Container(
+                      height: height * 0.1,
+                      child: _detailsScore(context),
+                    ),
+                    Container(
+                      height: height * 0.7,
+                      child: _techListView(context),
+                    ),
+                  ],
                 ),
               ),
               model.isLoading
@@ -92,15 +60,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         );
       }),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context, String event) {
@@ -133,7 +92,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
         ),
         TextButton(
           child: Text(
-            widget.scoreId == null ? '保存' : '更新',
+            scoreId == null ? '保存' : '更新',
             style: TextStyle(
                 color: Theme.of(context).primaryColor, fontSize: 15.0),
           ),
@@ -209,10 +168,10 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
   //保存ボタン押された時の処理
   Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    widget.scoreId == null
-        ? await scoreModel.setScore(widget.event)
-        : await scoreModel.updateScore(widget.event, widget.scoreId!);
-    showDialog(
+    scoreId == null
+        ? await scoreModel.setScore(event)
+        : await scoreModel.updateScore(event, scoreId!);
+    await showDialog(
         context: context,
         builder: (BuildContext context) {
           return Platform.isIOS
@@ -221,7 +180,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   actions: [
                     TextButton(
                       onPressed: () async {
-                        await scoreModel.getScores(widget.event);
+                        await scoreModel.getScores(event);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -237,7 +196,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   actions: [
                     TextButton(
                       onPressed: () async {
-                        await scoreModel.getScores(widget.event);
+                        await scoreModel.getScores(event);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -294,7 +253,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 ),
               ),
             ),
-            widget.event == '床' || widget.event == '鉄棒'
+            event == '床' || event == '鉄棒'
                 ? Expanded(
                     child: Center(
                       child: Text(
@@ -327,7 +286,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 ),
               ),
             ),
-            widget.event == '床' || widget.event == '鉄棒'
+            event == '床' || event == '鉄棒'
                 ? Expanded(
                     child: Center(
                       child: _cvSelectMenu(context),
@@ -361,7 +320,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       child: Text('$cv'),
                       onPressed: () {
                         scoreModel.onCVSelected(cv);
-                        scoreModel.calculateScore(widget.event);
+                        scoreModel.calculateScore(event);
                         Navigator.pop(context);
                       },
                     ),
@@ -400,11 +359,11 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                       } else {
                         searchController.clear();
                         scoreModel.searchResult.clear();
-                        scoreModel.selectEvent(widget.event);
+                        scoreModel.selectEvent(event);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SearchScreen(widget.event),
+                              builder: (context) => SearchScreen(event),
                               fullscreenDialog: true,
                             ));
                       }
@@ -426,82 +385,97 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
-        Card(
-          child: Slidable(
-            actionExtentRatio: 0.2,
-            actionPane: SlidableScrollActionPane(),
-            secondaryActions: [
-              IconSlideAction(
-                caption: '削除',
-                color: Colors.red,
-                icon: Icons.remove,
-                onTap: () {
-                  scoreModel.deleteTech(order - 1, widget.event);
-                },
-              ),
-            ],
-            child: ListTile(
-              title: Row(
-                children: [
-                  Text('$order'),
-                  SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      '$techName',
-                      style: TextStyle(
-                          fontSize: Utilities().isMobile() ? 14.0 : 18.0),
-                    ),
+        Row(
+          children: [
+            SizedBox(width: 16),
+            Text(
+              '$order',
+              textAlign: TextAlign.center,
+            ),
+            Expanded(
+              child: Slidable(
+                actionExtentRatio: 0.2,
+                actionPane: SlidableScrollActionPane(),
+                secondaryActions: [
+                  IconSlideAction(
+                    caption: '削除',
+                    color: Colors.red,
+                    icon: Icons.remove,
+                    onTap: () {
+                      scoreModel.deleteTech(order - 1, event);
+                    },
                   ),
                 ],
-              ),
-              trailing: Container(
-                width: 110,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Column(
+                child: Card(
+                  child: ListTile(
+                    title: Row(
                       children: [
-                        SizedBox(height: 8),
-                        Expanded(
-                          child: Text('難度', style: TextStyle(fontSize: 10)),
-                        ),
-                        Expanded(
+                        SizedBox(width: 8),
+                        Flexible(
                           child: Text(
-                              '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                            '$techName',
+                            style: TextStyle(
+                              fontSize: Utilities().isMobile() ? 15.0 : 18.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Railway',
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(width: 24),
-                    Column(
-                      children: [
-                        SizedBox(height: 8),
-                        Expanded(
-                          child: Text('グループ', style: TextStyle(fontSize: 10)),
-                        ),
-                        Expanded(
-                          child: Text(
-                              '${groupDisplay[scoreModel.group[techName]]}'),
-                        ),
-                      ],
+                    trailing: Container(
+                      width: 110,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Column(
+                            children: [
+                              SizedBox(height: 8),
+                              Expanded(
+                                child:
+                                    Text('難度', style: TextStyle(fontSize: 10)),
+                              ),
+                              Expanded(
+                                child: Text(
+                                    '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 24),
+                          Column(
+                            children: [
+                              SizedBox(height: 8),
+                              Expanded(
+                                child: Text('グループ',
+                                    style: TextStyle(fontSize: 10)),
+                              ),
+                              Expanded(
+                                child: Text(
+                                    '${groupDisplay[scoreModel.group[techName]]}'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                    onTap: () {
+                      searchController.clear();
+                      scoreModel.searchResult.clear();
+                      scoreModel.selectEvent(event);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SearchScreen(event, order: order),
+                            fullscreenDialog: true,
+                          ));
+                    },
+                  ),
                 ),
               ),
-              onTap: () {
-                searchController.clear();
-                scoreModel.searchResult.clear();
-                scoreModel.selectEvent(widget.event);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          SearchScreen(widget.event, order: order),
-                      fullscreenDialog: true,
-                    ));
-              },
             ),
-          ),
+          ],
         ),
         scoreModel.decidedTechList.length == order &&
                 scoreModel.decidedTechList.length < 10
@@ -513,11 +487,11 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                     onPressed: () {
                       searchController.clear();
                       scoreModel.searchResult.clear();
-                      scoreModel.selectEvent(widget.event);
+                      scoreModel.selectEvent(event);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SearchScreen(widget.event),
+                            builder: (context) => SearchScreen(event),
                             fullscreenDialog: true,
                           ));
                     },

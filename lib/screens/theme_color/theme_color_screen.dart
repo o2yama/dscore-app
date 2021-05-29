@@ -34,34 +34,32 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ThemeColorModel>(builder: (context, model, child) {
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _ad(context),
-                  _backButton(context),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.75,
-                          child: ListView(
-                            children: themes.keys
-                                .map(
-                                  (color) => _colorTile(context, color),
-                                )
-                                .toList(),
-                          ),
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _ad(context),
+                _backButton(context),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.75,
+                        child: ListView(
+                          children: themes.keys
+                              .map(
+                                (color) => _colorTile(context, color),
+                              )
+                              .toList(),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );

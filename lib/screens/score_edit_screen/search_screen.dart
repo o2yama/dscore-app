@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dscore_app/data/fx.dart';
 import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/data/pb.dart';
@@ -10,7 +9,6 @@ import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
@@ -30,9 +28,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: Container(
           color: Theme.of(context).backgroundColor,
           child: SafeArea(
@@ -144,15 +140,15 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.only(left: 15.0, right: 15.0),
       child: Wrap(
         children: [
-          _techChip(scoreModel.searchText[0], event),
-          _techChip(scoreModel.searchText[1], event),
-          _techChip(scoreModel.searchText[2], event),
-          _techChip(scoreModel.searchText[3], event),
-          _techChip(scoreModel.searchText[4], event),
-          _techChip(scoreModel.searchText[5], event),
-          _techChip(scoreModel.searchText[6], event),
-          _techChip(scoreModel.searchText[7], event),
-          _techChip(scoreModel.searchText[8], event),
+          _techChip(context, scoreModel.searchText[0], event),
+          _techChip(context, scoreModel.searchText[1], event),
+          _techChip(context, scoreModel.searchText[2], event),
+          _techChip(context, scoreModel.searchText[3], event),
+          _techChip(context, scoreModel.searchText[4], event),
+          _techChip(context, scoreModel.searchText[5], event),
+          _techChip(context, scoreModel.searchText[6], event),
+          _techChip(context, scoreModel.searchText[7], event),
+          _techChip(context, scoreModel.searchText[8], event),
         ],
       ),
     );
@@ -264,7 +260,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  Widget _techChip(String searchText, String event) {
+  Widget _techChip(BuildContext context, String searchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
@@ -272,6 +268,7 @@ class _SearchScreenState extends State<SearchScreen> {
         label: Text('$searchText'),
         selected: false,
         onSelected: (selected) {
+          FocusScope.of(context).requestFocus(FocusNode());
           scoreModel.techSelected(event, searchText);
         },
       ),
