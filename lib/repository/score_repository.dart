@@ -29,14 +29,14 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<ScoreWithCV>?> getFXScores() async {
+  Future<List<ScoreWithCV>> getFXScores() async {
+    List<ScoreWithCV> scoreList = [];
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
         .get();
-    List<ScoreWithCV>? scoreList =
-        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
+    scoreList = scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
 
@@ -104,13 +104,14 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getPHScores() async {
+  Future<List<Score>> getPHScores() async {
+    List<Score> scoreList = [];
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
@@ -176,13 +177,14 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getSRScores() async {
+  Future<List<Score>> getSRScores() async {
+    List<Score> scoreList = [];
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
@@ -248,13 +250,14 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getPBScores() async {
+  Future<List<Score>> getPBScores() async {
+    List<Score> scoreList = [];
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    scoreList = scores.docs.map((doc) => Score(doc)).toList();
     return scoreList;
   }
 
@@ -320,14 +323,14 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<ScoreWithCV>?> getHBScores() async {
+  Future<List<ScoreWithCV>> getHBScores() async {
+    List<ScoreWithCV> scoreList = [];
     final scores = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
         .get();
-    List<ScoreWithCV>? scoreList =
-        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
+    scoreList = scores.docs.map((doc) => ScoreWithCV(doc)).toList();
     return scoreList;
   }
 

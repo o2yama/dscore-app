@@ -212,7 +212,6 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
     widget.scoreId == null
         ? await scoreModel.setScore(widget.event)
         : await scoreModel.updateScore(widget.event, widget.scoreId!);
-    await scoreModel.getScores(widget.event);
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -221,7 +220,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await scoreModel.getScores(widget.event);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -236,7 +236,8 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                   title: Text('保存しました'),
                   actions: [
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await scoreModel.getScores(widget.event);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -389,7 +390,7 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                           color: Theme.of(context).primaryColor),
                     ),
                     onTap: () {
-                      if (scoreModel.authenticatedUser == null) {
+                      if (scoreModel.currentUser == null) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -412,14 +413,11 @@ class _ScoreEditScreenState extends State<ScoreEditScreen> {
                 ),
               ],
             )
-          : RefreshIndicator(
-              onRefresh: () async => await scoreModel.getScores(widget.event),
-              child: ListView(
-                children: scoreModel.decidedTechList
-                    .map((tech) => _techTile(context, tech,
-                        scoreModel.decidedTechList.indexOf(tech) + 1))
-                    .toList(),
-              ),
+          : ListView(
+              children: scoreModel.decidedTechList
+                  .map((tech) => _techTile(context, tech,
+                      scoreModel.decidedTechList.indexOf(tech) + 1))
+                  .toList(),
             ),
     );
   }
