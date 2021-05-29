@@ -29,14 +29,20 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<ScoreWithCV>?> getFXScores() async {
-    final scores = await _db
+  Future<List<ScoreWithCV>> getFXScores() async {
+    List<ScoreWithCV> scoreList = [];
+    final query = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
         .get();
-    List<ScoreWithCV>? scoreList =
-        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
+    final scores = query.docs.map((doc) => ScoreWithCV(doc)).toList();
+    final favoriteScore = scores.where((score) => score.isFavorite).toList();
+    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    scoreList = favoriteScore;
+    otherScores.forEach((score) {
+      scoreList.add(score);
+    });
     return scoreList;
   }
 
@@ -51,7 +57,8 @@ class ScoreRepository {
     return fxScore;
   }
 
-  Future<void> setFXScore(num total, List<String> techList, num cv) async {
+  Future<void> setFXScore(
+      num total, List<String> techList, num cv, bool isFavorite) async {
     getUuid();
     await _db
         .collection('users')
@@ -62,7 +69,7 @@ class ScoreRepository {
       'scoreId': uuid,
       'total': total,
       'components': techList,
-      'isFavorite': false,
+      'isFavorite': isFavorite,
       'cv': cv,
     });
   }
@@ -104,13 +111,20 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getPHScores() async {
-    final scores = await _db
+  Future<List<Score>> getPHScores() async {
+    List<Score> scoreList = [];
+    final query = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    final scores = query.docs.map((doc) => Score(doc)).toList();
+    final favoriteScore = scores.where((score) => score.isFavorite).toList();
+    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    scoreList = favoriteScore;
+    otherScores.forEach((score) {
+      scoreList.add(score);
+    });
     return scoreList;
   }
 
@@ -125,7 +139,8 @@ class ScoreRepository {
     return phScore;
   }
 
-  Future<void> setPHScore(num total, List<String> techs) async {
+  Future<void> setPHScore(
+      num total, List<String> techs, bool isFavorite) async {
     getUuid();
     await _db
         .collection('users')
@@ -136,7 +151,7 @@ class ScoreRepository {
       'scoreId': uuid,
       'total': total,
       'components': techs,
-      'isFavorite': false,
+      'isFavorite': isFavorite,
     });
   }
 
@@ -176,13 +191,20 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getSRScores() async {
-    final scores = await _db
+  Future<List<Score>> getSRScores() async {
+    List<Score> scoreList = [];
+    final query = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    final scores = query.docs.map((doc) => Score(doc)).toList();
+    final favoriteScore = scores.where((score) => score.isFavorite).toList();
+    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    scoreList = favoriteScore;
+    otherScores.forEach((score) {
+      scoreList.add(score);
+    });
     return scoreList;
   }
 
@@ -197,7 +219,8 @@ class ScoreRepository {
     return srScore;
   }
 
-  Future<void> setSRScore(num total, List<String> techs) async {
+  Future<void> setSRScore(
+      num total, List<String> techs, bool isFavorite) async {
     getUuid();
     await _db
         .collection('users')
@@ -208,7 +231,7 @@ class ScoreRepository {
       'scoreId': uuid,
       'total': total,
       'components': techs,
-      'isFavorite': false,
+      'isFavorite': isFavorite,
     });
   }
 
@@ -248,13 +271,20 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<Score>?> getPBScores() async {
-    final scores = await _db
+  Future<List<Score>> getPBScores() async {
+    List<Score> scoreList = [];
+    final query = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
         .get();
-    List<Score>? scoreList = scores.docs.map((doc) => Score(doc)).toList();
+    final scores = query.docs.map((doc) => Score(doc)).toList();
+    final favoriteScore = scores.where((score) => score.isFavorite).toList();
+    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    scoreList = favoriteScore;
+    otherScores.forEach((score) {
+      scoreList.add(score);
+    });
     return scoreList;
   }
 
@@ -269,7 +299,8 @@ class ScoreRepository {
     return pbScore;
   }
 
-  Future<void> setPBScore(num total, List<String> techs) async {
+  Future<void> setPBScore(
+      num total, List<String> techs, bool isFavorite) async {
     getUuid();
     await _db
         .collection('users')
@@ -280,7 +311,7 @@ class ScoreRepository {
       'scoreId': uuid,
       'total': total,
       'components': techs,
-      'isFavorite': false,
+      'isFavorite': isFavorite,
     });
   }
 
@@ -320,14 +351,20 @@ class ScoreRepository {
     return favoriteScore;
   }
 
-  Future<List<ScoreWithCV>?> getHBScores() async {
-    final scores = await _db
+  Future<List<ScoreWithCV>> getHBScores() async {
+    List<ScoreWithCV> scoreList = [];
+    final query = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
         .get();
-    List<ScoreWithCV>? scoreList =
-        scores.docs.map((doc) => ScoreWithCV(doc)).toList();
+    final scores = query.docs.map((doc) => ScoreWithCV(doc)).toList();
+    final favoriteScore = scores.where((score) => score.isFavorite).toList();
+    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    scoreList = favoriteScore;
+    otherScores.forEach((score) {
+      scoreList.add(score);
+    });
     return scoreList;
   }
 
@@ -342,7 +379,8 @@ class ScoreRepository {
     return hbScore;
   }
 
-  Future<void> setHBScore(num total, List<String> techs, num cv) async {
+  Future<void> setHBScore(
+      num total, List<String> techs, num cv, bool isFavorite) async {
     getUuid();
     await _db
         .collection('users')
@@ -353,7 +391,7 @@ class ScoreRepository {
       'scoreId': uuid,
       'total': total,
       'components': techs,
-      'isFavorite': false,
+      'isFavorite': isFavorite,
       'cv': cv,
     });
   }

@@ -3,34 +3,10 @@ import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
+import '../../utilities.dart';
 
-class VTScoreSelectScreen extends StatefulWidget {
-  @override
-  _VTScoreSelectScreenState createState() => _VTScoreSelectScreenState();
-}
-
-class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
+class VTScoreSelectScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,41 +15,37 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
         return Container(
           color: Theme.of(context).backgroundColor,
           child: SafeArea(
-            child: Column(
+            child: Stack(
               children: [
-                _ad(context),
-                Stack(
-                  children: [
-                    Container(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: height * 0.1,
-                            child: _backButton(context),
-                          ),
-                          Container(
-                            height: height * 0.2,
-                            child: _dScoreDisplay(),
-                          ),
-                          Container(
-                            height: height * 0.5,
-                            child: VTTechListView(),
-                          ),
-                        ],
+                Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: height * 0.1,
+                        child: _backButton(context),
                       ),
-                    ),
-                    model.isLoading
-                        ? Container(
-                            color: Colors.grey.withOpacity(0.6),
-                            child: Center(
-                              child: Platform.isIOS
-                                  ? CupertinoActivityIndicator()
-                                  : CircularProgressIndicator(),
-                            ),
-                          )
-                        : Container(),
-                  ],
+                      Container(
+                        height: height * 0.2,
+                        child: _dScoreDisplay(context),
+                      ),
+                      SizedBox(height: 50),
+                      Container(
+                        height: height * 0.5,
+                        child: VTTechListView(),
+                      ),
+                    ],
+                  ),
                 ),
+                model.isLoading
+                    ? Container(
+                        color: Colors.grey.withOpacity(0.6),
+                        child: Center(
+                          child: Platform.isIOS
+                              ? CupertinoActivityIndicator()
+                              : CircularProgressIndicator(),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -82,23 +54,12 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
     );
   }
 
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
-  }
-
   Widget _backButton(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           child: Platform.isIOS
               ? Row(
                   children: [
@@ -177,7 +138,7 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
         });
   }
 
-  Widget _dScoreDisplay() {
+  Widget _dScoreDisplay(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Row(
@@ -187,7 +148,9 @@ class _VTScoreSelectScreenState extends State<VTScoreSelectScreen> {
           margin: EdgeInsets.only(left: 40),
           child: Text(
             '${scoreModel.vtTechName}',
-            style: TextStyle(fontSize: 14.0),
+            style: TextStyle(
+              fontSize: Utilities().isMobile() ? 18.0 : 20,
+            ),
           ),
         ),
         SizedBox(width: width * 0.1),
