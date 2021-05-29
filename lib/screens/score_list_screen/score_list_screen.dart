@@ -189,21 +189,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () async {
-        if (widget.event == '床') {
-          await scoreModel.getFXScore(scoreId, widget.event);
-        }
-        if (widget.event == 'あん馬') {
-          await scoreModel.getPHScore(scoreId, widget.event);
-        }
-        if (widget.event == '吊り輪') {
-          await scoreModel.getSRScore(scoreId, widget.event);
-        }
-        if (widget.event == '平行棒') {
-          await scoreModel.getPBScore(scoreId, widget.event);
-        }
-        if (widget.event == '鉄棒') {
-          await scoreModel.getHBScore(scoreId, widget.event);
-        }
+        await scoreModel.getScore(scoreId, widget.event);
         scoreModel.startEdit();
         Navigator.push(
           context,
@@ -212,25 +198,25 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   ScoreEditScreen(widget.event, scoreId: scoreId)),
         );
       },
-      child: Row(
-        children: [
-          Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
-          Expanded(
-            flex: 8,
-            child: Card(
-              child: Slidable(
-                actionExtentRatio: 0.2,
-                actionPane: SlidableScrollActionPane(),
-                secondaryActions: [
-                  IconSlideAction(
-                    caption: '削除',
-                    color: Colors.red,
-                    icon: Icons.remove,
-                    onTap: () {
-                      scoreModel.deletePerformance(widget.event, scoreId);
-                    },
-                  ),
-                ],
+      child: Slidable(
+        actionExtentRatio: 0.2,
+        actionPane: SlidableScrollActionPane(),
+        secondaryActions: [
+          IconSlideAction(
+            caption: '削除',
+            color: Colors.red,
+            icon: Icons.remove,
+            onTap: () async {
+              await _onDeleteButtonPressed(context, scoreId);
+            },
+          ),
+        ],
+        child: Row(
+          children: [
+            Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
+            Expanded(
+              flex: 8,
+              child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -243,20 +229,58 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                         style: Theme.of(context).textTheme.headline5,
                       ),
                       Expanded(child: Container()),
-                      Container(
-                        height: height * 0.07,
-                        width: width * 0.4,
-                        child: _techsListView(context, techs),
-                      ),
-                      SizedBox(width: width * 0.1),
+                      _techsListView(context, techs),
+                      SizedBox(width: width * 0.05),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Future<void> _onDeleteButtonPressed(
+      BuildContext context, String scoreId) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    await showDialog(
+      context: context,
+      builder: (context) => Platform.isIOS
+          ? CupertinoAlertDialog(
+              title: Text('この演技を削除してもよろしいですか？'),
+              content: Text('削除した演技は元には戻りません。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('キャンセル'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    scoreModel.deletePerformance(widget.event, scoreId);
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            )
+          : AlertDialog(
+              title: Text('この演技を削除してもよろしいですか？'),
+              content: Text('削除した演技は元には戻りません。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('キャンセル'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    scoreModel.deletePerformance(widget.event, scoreId);
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            ),
     );
   }
 
@@ -281,6 +305,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   //演技の内容が見れるところ
   Widget _techsListView(BuildContext context, List<String> techs) {
     return Container(
+      height: 80,
+      width: MediaQuery.of(context).size.width * 0.4,
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(5),

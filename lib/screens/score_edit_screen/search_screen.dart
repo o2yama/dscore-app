@@ -174,7 +174,10 @@ class _SearchScreenState extends State<SearchScreen> {
           child: ListTile(
             title: Text(
               '$techName',
-              style: TextStyle(fontSize: Utilities().isMobile() ? 14 : 18.0),
+              style: TextStyle(
+                fontSize: Utilities().isMobile() ? 14.0 : 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             trailing: Container(
               width: 110,
