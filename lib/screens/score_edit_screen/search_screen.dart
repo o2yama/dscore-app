@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/data/fx.dart';
 import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/data/pb.dart';
@@ -9,6 +10,7 @@ import 'package:dscore_app/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
@@ -47,12 +49,12 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: _searchBar(context),
                     ),
                     Container(
-                      height: height * 0.1,
+                      height: height * 0.16,
                       child: _searchChips(context, widget.event),
                     ),
                     //検索結果
                     Container(
-                      height: height * 0.7,
+                      height: height * 0.64,
                       child: _searchResults(context, widget.event),
                     ),
                   ],
