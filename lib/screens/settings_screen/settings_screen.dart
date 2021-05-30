@@ -106,7 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
     return Container(
-      height: height * 0.6,
+      height: height * 0.8,
       child: ListView(
         children: [
           _settingTile(context, 'テーマカラー', Icons.color_lens,

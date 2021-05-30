@@ -33,19 +33,23 @@ class _UsageScreenState extends State<UsageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: Container(
-          color: Theme.of(context).backgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                _ad(context),
-                _backButton(context),
-                _usageImages(),
-              ],
+        child: Column(
+          children: [
+            _ad(context),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    _backButton(context),
+                    _usageImages(),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

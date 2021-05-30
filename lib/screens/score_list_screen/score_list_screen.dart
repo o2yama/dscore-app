@@ -5,9 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
 
 class ScoreListScreen extends StatefulWidget {
   ScoreListScreen(this.event);
@@ -18,76 +16,50 @@ class ScoreListScreen extends StatefulWidget {
 }
 
 class _ScoreListScreenState extends State<ScoreListScreen> {
-  BannerAd? banner;
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
+  void initState() {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    scoreModel.isFinishedGettingScores = false;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(
         builder: (context, model, child) {
           Future(() async {
-            if (widget.event == '床') {
-              if (model.fxScoreList == null) await model.getFXScores();
-            }
-            if (widget.event == 'あん馬') {
-              if (model.phScoreList == null) await model.getPHScores();
-            }
-            if (widget.event == '吊り輪') {
-              if (model.srScoreList == null) await model.getSRScores();
-            }
-            if (widget.event == '平行棒') {
-              if (model.pbScoreList == null) await model.getPBScores();
-            }
-            if (widget.event == '鉄棒') {
-              if (model.hbScoreList == null) await model.getHBScores();
+            if ((!model.isFinishedGettingScores)) {
+              await model.getScores(widget.event);
             }
           });
-          final height = MediaQuery.of(context).size.height - 50;
+          final height = MediaQuery.of(context).size.height;
           return SafeArea(
             child: Stack(
               children: [
                 SingleChildScrollView(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ad(context),
-                        Container(
-                          height: height * 0.1,
-                          child: _backButton(context, widget.event),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: height * 0.1,
+                        child: _backButton(context, widget.event),
+                      ),
+                      Container(
+                        height: height * 0.1,
+                        child: _eventNameDisplay(context),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await model.getScores(widget.event);
+                          },
+                          child: _scoreList(context),
                         ),
-                        Container(
-                          height: height * 0.1,
-                          child: _eventNameDisplay(context),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              await model.getScores(widget.event);
-                            },
-                            child: _scoreList(context),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 model.isLoading
@@ -105,15 +77,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
         },
       ),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context, String event) {
@@ -144,8 +107,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   }
 
   Widget _eventNameDisplay(BuildContext context) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
       height: height * 0.1,
@@ -177,97 +140,56 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   Widget _scoreList(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    if (widget.event == '床') {
-      Future(() async => scoreModel.fxScoreList == null
-          ? await scoreModel.getFXScores()
-          : false);
-      return scoreModel.fxScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.fxScoreList!
-                  .map((score) => _scoreTile(context, score.techs, score.total,
-                      score.isFavorite, score.scoreId))
-                  .toList(),
-            );
-    }
-    if (widget.event == 'あん馬') {
-      Future(() async => scoreModel.phScoreList == null
-          ? await scoreModel.getPHScores()
-          : false);
-      return scoreModel.phScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.phScoreList!
-                  .map((score) => _scoreTile(context, score.techs, score.total,
-                      score.isFavorite, score.scoreId))
-                  .toList(),
-            );
-    }
-    if (widget.event == '吊り輪') {
-      Future(() async => scoreModel.srScoreList == null
-          ? await scoreModel.getSRScores()
-          : false);
-      return scoreModel.srScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.srScoreList!
-                  .map((score) => _scoreTile(context, score.techs, score.total,
-                      score.isFavorite, score.scoreId))
-                  .toList(),
-            );
-    }
-    if (widget.event == '平行棒') {
-      Future(() async => scoreModel.pbScoreList == null
-          ? await scoreModel.getPBScores()
-          : false);
-      return scoreModel.pbScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.pbScoreList!
-                  .map((score) => _scoreTile(context, score.techs, score.total,
-                      score.isFavorite, score.scoreId))
-                  .toList(),
-            );
-    }
-    if (widget.event == '鉄棒') {
-      Future(() async => scoreModel.hbScoreList == null
-          ? await scoreModel.getHBScores()
-          : false);
-      return scoreModel.hbScoreList == null
-          ? Container()
-          : ListView(
-              children: scoreModel.hbScoreList!
-                  .map((score) => _scoreTile(context, score.techs, score.total,
-                      score.isFavorite, score.scoreId))
-                  .toList(),
-            );
-    } else {
-      return Center(child: Text('データの取得に失敗しました。'));
-    }
+    return widget.event == '床'
+        ? ListView(
+            children: scoreModel.fxScoreList
+                .map((score) => _scoreTile(context, score.techs, score.total,
+                    score.isFavorite, score.scoreId))
+                .toList(),
+          )
+        : widget.event == 'あん馬'
+            ? ListView(
+                children: scoreModel.phScoreList
+                    .map((score) => _scoreTile(context, score.techs,
+                        score.total, score.isFavorite, score.scoreId))
+                    .toList(),
+              )
+            : widget.event == '吊り輪'
+                ? ListView(
+                    children: scoreModel.srScoreList
+                        .map((score) => _scoreTile(context, score.techs,
+                            score.total, score.isFavorite, score.scoreId))
+                        .toList(),
+                  )
+                : widget.event == '平行棒'
+                    ? ListView(
+                        children: scoreModel.pbScoreList
+                            .map((score) => _scoreTile(context, score.techs,
+                                score.total, score.isFavorite, score.scoreId))
+                            .toList(),
+                      )
+                    : widget.event == '鉄棒'
+                        ? ListView(
+                            children: scoreModel.hbScoreList
+                                .map((score) => _scoreTile(
+                                    context,
+                                    score.techs,
+                                    score.total,
+                                    score.isFavorite,
+                                    score.scoreId))
+                                .toList(),
+                          )
+                        : ListView();
   }
 
   Widget _scoreTile(BuildContext context, List<String> techs, num total,
       bool isFavorite, String scoreId) {
-    final width = MediaQuery.of(context).size.width - 50;
-    final height = MediaQuery.of(context).size.height - 50;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () async {
-        if (widget.event == '床') {
-          await scoreModel.getFXScore(scoreId, widget.event);
-        }
-        if (widget.event == 'あん馬') {
-          await scoreModel.getPHScore(scoreId, widget.event);
-        }
-        if (widget.event == '吊り輪') {
-          await scoreModel.getSRScore(scoreId, widget.event);
-        }
-        if (widget.event == '平行棒') {
-          await scoreModel.getPBScore(scoreId, widget.event);
-        }
-        if (widget.event == '鉄棒') {
-          await scoreModel.getHBScore(scoreId, widget.event);
-        }
+        await scoreModel.getScore(scoreId, widget.event);
         scoreModel.startEdit();
         Navigator.push(
           context,
@@ -276,25 +198,25 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   ScoreEditScreen(widget.event, scoreId: scoreId)),
         );
       },
-      child: Row(
-        children: [
-          Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
-          Expanded(
-            flex: 8,
-            child: Card(
-              child: Slidable(
-                actionExtentRatio: 0.2,
-                actionPane: SlidableScrollActionPane(),
-                secondaryActions: [
-                  IconSlideAction(
-                    caption: '削除',
-                    color: Colors.red,
-                    icon: Icons.remove,
-                    onTap: () {
-                      scoreModel.deleteTechs(widget.event, scoreId);
-                    },
-                  ),
-                ],
+      child: Slidable(
+        actionExtentRatio: 0.2,
+        actionPane: SlidableScrollActionPane(),
+        secondaryActions: [
+          IconSlideAction(
+            caption: '削除',
+            color: Colors.red,
+            icon: Icons.remove,
+            onTap: () async {
+              await _onDeleteButtonPressed(context, scoreId);
+            },
+          ),
+        ],
+        child: Row(
+          children: [
+            Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
+            Expanded(
+              flex: 8,
+              child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -307,20 +229,58 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                         style: Theme.of(context).textTheme.headline5,
                       ),
                       Expanded(child: Container()),
-                      Container(
-                        height: height * 0.07,
-                        width: width * 0.4,
-                        child: _techsListView(context, techs),
-                      ),
-                      SizedBox(width: width * 0.1),
+                      _techsListView(context, techs),
+                      SizedBox(width: width * 0.05),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  Future<void> _onDeleteButtonPressed(
+      BuildContext context, String scoreId) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    await showDialog(
+      context: context,
+      builder: (context) => Platform.isIOS
+          ? CupertinoAlertDialog(
+              title: Text('この演技を削除してもよろしいですか？'),
+              content: Text('削除した演技は元には戻りません。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('キャンセル'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    scoreModel.deletePerformance(widget.event, scoreId);
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            )
+          : AlertDialog(
+              title: Text('この演技を削除してもよろしいですか？'),
+              content: Text('削除した演技は元には戻りません。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('キャンセル'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    scoreModel.deletePerformance(widget.event, scoreId);
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            ),
     );
   }
 
@@ -345,6 +305,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   //演技の内容が見れるところ
   Widget _techsListView(BuildContext context, List<String> techs) {
     return Container(
+      height: 80,
+      width: MediaQuery.of(context).size.width * 0.4,
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(5),
