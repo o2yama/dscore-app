@@ -187,7 +187,7 @@ class SignUpScreen extends StatelessWidget {
         '登録',
         style: TextStyle(
           color: Theme.of(context).primaryColor,
-          fontSize: Utilities().isMobile() ? 18 : 24,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
