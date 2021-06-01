@@ -138,7 +138,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
       return Container(
-        height: Utilities().isMobile() ? 1000 : 2000,
+        height: MediaQuery.of(context).size.height * 0.8,
         child: ListView(
           children: scoreModel.searchResult
               .map((score) => resultTile(
