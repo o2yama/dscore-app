@@ -133,7 +133,7 @@ Map<String, int> fxDifficulty = {
   "シライ3(伸身リジョンソン)": 8,
 };
 
-List<String> fxSearchText = [
+List<String> fxChipWords = [
   '前方',
   '後方',
   'ダブル',

@@ -123,7 +123,7 @@ Map<String, int> phDifficulty = {
   "Gコンバイン": 7,
 };
 
-List<String> phSearchText = [
+List<String> phChipWords = [
   'セアー',
   '旋回',
   '前移動',

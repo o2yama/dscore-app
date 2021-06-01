@@ -144,7 +144,7 @@ Map<String, int> srDifficulty = {
   "伸身ルドルフ": 6,
 };
 
-List<String> srSearchText = [
+List<String> srChipWords = [
   '倒立',
   '車輪',
   '十字',

@@ -185,7 +185,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   Widget _scoreTile(BuildContext context, List<String> techs, num total,
       bool isFavorite, String scoreId) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () async {

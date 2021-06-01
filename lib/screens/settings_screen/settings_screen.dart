@@ -115,19 +115,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               screen: ThemeColorScreen()),
           _settingTile(context, '使い方', Icons.info, screen: UsageScreen()),
           _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip),
-          loginModel.currentUser != null
-              ? _settingTile(context, 'メールアドレス', Icons.mail,
-                  screen: EditEmailScreen())
-              : Container(),
+          _settingTile(context, '技追加の申請', Icons.playlist_add_rounded),
           _settingTile(context, 'お問い合わせ', Icons.send),
           // loginModel.currentUser != null
           //     ? _settingTile(
           //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
           //     : Container(),
+          loginModel.currentUser != null
+              ? _settingTile(context, 'メールアドレス', Icons.mail,
+                  screen: EditEmailScreen())
+              : Container(),
           loginModel.currentUser == null
               ? _settingTile(context, 'ログイン', Icons.login,
                   screen: LoginScreen())
               : _settingTile(context, 'ログアウト', Icons.logout),
+          Container(height: Utilities().isMobile() ? 200 : 300),
         ],
       ),
     );
@@ -216,8 +218,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   forceWebView: true,
                 );
               } else {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => screen!));
+                if (title == '技追加の申請') {
+                  launch(
+                    'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                    forceSafariVC: true,
+                    forceWebView: true,
+                  );
+                } else {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => screen!));
+                }
               }
             }
           }

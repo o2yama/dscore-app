@@ -149,7 +149,7 @@ Map<String, int> pbDifficulty = {
   "カトウヒロユキ": 7,
 };
 
-List<String> pbSearchText = [
+List<String> pbChipWords = [
   '倒立',
   'ツイスト',
   'ディアミドフ',

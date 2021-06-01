@@ -41,11 +41,11 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
             child: Column(
               children: [
                 _ad(context),
-                _backButton(context),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
+                      _backButton(context),
                       Container(
                         height: MediaQuery.of(context).size.height * 0.75,
                         child: ListView(
@@ -82,35 +82,43 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
-        child: Row(
-          children: [
-            SizedBox(width: 8),
-            Platform.isIOS
-                ? Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_back_ios,
-                        color: Theme.of(context).primaryColor,
-                        size: Utilities().isMobile() ? 20 : 30,
-                      ),
-                      SizedBox(width: 24),
-                      Text(
-                        'テーマカラー',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: Utilities().isMobile() ? 18 : 24,
-                        ),
-                      ),
-                    ],
-                  )
-                : Icon(
+        child: Platform.isIOS
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).primaryColor,
+                    size: Utilities().isMobile() ? 20 : 30,
+                  ),
+                  SizedBox(width: 24),
+                  Text(
+                    'テーマカラー',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Utilities().isMobile() ? 18 : 24,
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Icon(
                     Icons.clear,
                     color: Theme.of(context).primaryColor,
                     size: Utilities().isMobile() ? 20 : 30,
                   ),
-          ],
-        ),
+                  SizedBox(width: 24),
+                  Text(
+                    'テーマカラー',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Utilities().isMobile() ? 18 : 24,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
