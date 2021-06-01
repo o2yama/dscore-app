@@ -168,7 +168,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       )
-                    : AlertDialog();
+                    : AlertDialog(
+                        title: Text('ログアウトしてもよろしいですか？'),
+                        content: Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
+                        actions: [
+                          TextButton(
+                            child: Text('キャンセル'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              scoreModel.resetScores();
+                              await loginModel.signOut();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                  (_) => false);
+                            },
+                          ),
+                        ],
+                      );
               });
         } else {
           if (title == 'ログイン') {

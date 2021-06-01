@@ -88,10 +88,23 @@ class _UsageScreenState extends State<UsageScreen> {
                   )
                 ],
               )
-            : Icon(
-                Icons.clear,
-                color: Theme.of(context).primaryColor,
-                size: Utilities().isMobile() ? 20 : 30,
+            : Row(
+                children: [
+                  Icon(
+                    Icons.clear,
+                    color: Theme.of(context).primaryColor,
+                    size: Utilities().isMobile() ? 20 : 30,
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    '使い方',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: Utilities().isMobile() ? 18 : 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
               ),
       ),
     );
