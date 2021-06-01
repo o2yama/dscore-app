@@ -179,19 +179,26 @@ class ScoreModel extends ChangeNotifier {
   num egr = 0.0;
   num cv = 0.0;
 
+  List<String> searchChipTexts = [];
+  Map<String, num> difficulty = {};
+  Map<String, num> group = {};
+
   //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
     if (event == '床') {
       difficulty = fxDifficulty;
       group = fxGroup;
+      searchChipTexts = fxChipTexts;
     }
     if (event == 'あん馬') {
       difficulty = phDifficulty;
       group = phGroup;
+      searchChipTexts = phSearchText;
     }
     if (event == '吊り輪') {
       difficulty = srDifficulty;
       group = srGroup;
+      searchChipTexts = srSearchText;
     }
     if (event == '跳馬') {
       difficulty = vtTech;
@@ -199,10 +206,12 @@ class ScoreModel extends ChangeNotifier {
     if (event == '平行棒') {
       difficulty = pbDifficulty;
       group = pbGroup;
+      searchChipTexts = pbSearchText;
     }
     if (event == '鉄棒') {
       difficulty = hbDifficulty;
       group = hbGroup;
+      searchChipTexts = hbSearchText;
     }
     notifyListeners();
   }
@@ -441,8 +450,6 @@ class ScoreModel extends ChangeNotifier {
 
   ///SearchScreen関連
   List<String> searchResult = [];
-  Map<String, num> difficulty = {};
-  Map<String, num> group = {};
   String vtTechName = '';
 
   //技検索
@@ -500,9 +507,7 @@ class ScoreModel extends ChangeNotifier {
     return items;
   }
 
-  List<String> searchText = [];
-
-  void techSelected(String event, String searchText) {
+  void onTechChipSelected(String event, String searchText) {
     searchController.text = searchController.text + searchText;
     search(searchController.text, event);
     notifyListeners();
@@ -514,7 +519,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onTechSelected(String techName, int? order) {
+  void onTechTileSelected(String techName, int? order) {
     bool isExist = false;
     if (order != null) {
       decidedTechList[order - 1] = techName;
