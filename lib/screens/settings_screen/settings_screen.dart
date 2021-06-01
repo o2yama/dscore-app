@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../ad_state.dart';
 import '../../utilities.dart';
 
@@ -166,7 +168,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       )
-                    : AlertDialog();
+                    : AlertDialog(
+                        title: Text('ログアウトしてもよろしいですか？'),
+                        content: Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
+                        actions: [
+                          TextButton(
+                            child: Text('キャンセル'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () async {
+                              scoreModel.resetScores();
+                              await loginModel.signOut();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                  (_) => false);
+                            },
+                          ),
+                        ],
+                      );
               });
         } else {
           if (title == 'ログイン') {
