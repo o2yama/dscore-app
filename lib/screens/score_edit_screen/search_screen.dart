@@ -112,7 +112,7 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.only(left: 15.0, right: 15.0),
         child: ListView(
             scrollDirection: Axis.horizontal,
-            children: scoreModel.searchChipTexts
+            children: scoreModel.searchChipWords
                 .map((chipsText) => _techChip(context, chipsText, event))
                 .toList()),
       ),

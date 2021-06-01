@@ -315,7 +315,7 @@ Map<String, int> hbDifficulty = {
   "ミヤチ": 9,
 };
 
-List<String> hbSearchText = [
+List<String> hbChipWords = [
   '車輪',
   'シート',
   'エンドー',

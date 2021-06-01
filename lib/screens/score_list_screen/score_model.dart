@@ -179,7 +179,7 @@ class ScoreModel extends ChangeNotifier {
   num egr = 0.0;
   num cv = 0.0;
 
-  List<String> searchChipTexts = [];
+  List<String> searchChipWords = [];
   Map<String, num> difficulty = {};
   Map<String, num> group = {};
 
@@ -188,17 +188,17 @@ class ScoreModel extends ChangeNotifier {
     if (event == '床') {
       difficulty = fxDifficulty;
       group = fxGroup;
-      searchChipTexts = fxChipTexts;
+      searchChipWords = fxChipWords;
     }
     if (event == 'あん馬') {
       difficulty = phDifficulty;
       group = phGroup;
-      searchChipTexts = phSearchText;
+      searchChipWords = phChipWords;
     }
     if (event == '吊り輪') {
       difficulty = srDifficulty;
       group = srGroup;
-      searchChipTexts = srSearchText;
+      searchChipWords = srChipWords;
     }
     if (event == '跳馬') {
       difficulty = vtTech;
@@ -206,12 +206,12 @@ class ScoreModel extends ChangeNotifier {
     if (event == '平行棒') {
       difficulty = pbDifficulty;
       group = pbGroup;
-      searchChipTexts = pbSearchText;
+      searchChipWords = pbChipWords;
     }
     if (event == '鉄棒') {
       difficulty = hbDifficulty;
       group = hbGroup;
-      searchChipTexts = hbSearchText;
+      searchChipWords = hbChipWords;
     }
     notifyListeners();
   }

@@ -296,7 +296,7 @@ Map<String, int> phDifficulty = {
   "ブスナリ": 6,
 };
 
-List<String> phSearchText = [
+List<String> phChipWords = [
   'セアー',
   '旋回',
   '前移動',
