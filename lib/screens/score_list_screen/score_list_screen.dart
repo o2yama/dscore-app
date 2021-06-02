@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -285,6 +286,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   Widget _favoriteButton(
       BuildContext context, bool isFavorite, String scoreId) {
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
     return Consumer<ScoreModel>(
       builder: (context, model, child) {
         return IconButton(
@@ -296,6 +299,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
             onPressed: () async {
               await model.onFavoriteButtonTapped(
                   widget.event, isFavorite, scoreId);
+              totalScoreListModel.getFavoriteScores();
             });
       },
     );

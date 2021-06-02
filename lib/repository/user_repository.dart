@@ -65,7 +65,7 @@ class UserRepository {
           currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
         }
       } else {
-        print('ユーザーデータ取得のエラー');
+        print('ログインしていない。');
         return;
       }
     } catch (e) {

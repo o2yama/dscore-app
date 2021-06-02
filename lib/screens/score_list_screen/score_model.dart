@@ -221,6 +221,11 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void finishEdit() {
+    isEdited = true;
+    notifyListeners();
+  }
+
   void resetScore() {
     decidedTechList = [];
     totalScore = 0.0;
