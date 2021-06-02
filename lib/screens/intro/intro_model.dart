@@ -12,17 +12,17 @@ class IntroModel extends ChangeNotifier {
 
   CurrentUser? get currentUser => UserRepository.currentUser;
 
-  Future<void> finishIntro() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('intro', true);
-    isIntroWatched = prefs.getBool('intro') ?? false;
-  }
-
   Future<void> checkIsIntroWatched() async {
     isLoading = true;
     notifyListeners();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    isIntroWatched = prefs.getBool('intro') ?? false;
+  }
+
+  Future<void> finishIntro() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('intro', true);
     isIntroWatched = prefs.getBool('intro') ?? false;
   }
 

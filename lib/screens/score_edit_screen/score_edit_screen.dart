@@ -3,6 +3,7 @@ import 'package:dscore_app/data/score_datas.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -114,26 +115,18 @@ class ScoreEditScreen extends StatelessWidget {
                   title: Text('保存せずに戻ってもよろしいですか？'),
                   content: Text('変更した内容は破棄されます。'),
                   actions: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('キャンセル'),
-                          ),
-                        ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: Text('OK'),
-                          ),
-                        ),
-                      ],
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('キャンセル'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
                     )
                   ],
                 )
@@ -141,22 +134,18 @@ class ScoreEditScreen extends StatelessWidget {
                   title: Text('保存せずに戻ってもよろしいですか？'),
                   content: Text('計算した内容は破棄されます。'),
                   actions: [
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('キャンセル'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
                     )
                   ],
                 ));
@@ -168,46 +157,78 @@ class ScoreEditScreen extends StatelessWidget {
   //保存ボタン押された時の処理
   Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    scoreId == null
-        ? await scoreModel.setScore(event)
-        : await scoreModel.updateScore(event, scoreId!);
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: Text('保存しました'),
-                  actions: [
-                    TextButton(
-                      onPressed: () async {
-                        await scoreModel.getScores(event);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '0K',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
+    if (scoreModel.currentUser == null) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('ログインしてください。'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('OK'),
+                      )
+                    ],
+                  )
+                : AlertDialog(
+                    title: Text('ログインしてください。'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('OK'),
+                      )
+                    ],
+                  );
+          });
+    } else {
+      scoreId == null
+          ? await scoreModel.setScore(event)
+          : await scoreModel.updateScore(event, scoreId!);
+      scoreModel.finishEdit();
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Platform.isIOS
+                ? CupertinoAlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          scoreModel.getScores(event);
+                          totalScoreListModel.getFavoriteScores();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text('0K'),
                       ),
-                    ),
-                  ],
-                )
-              : AlertDialog(
-                  title: Text('保存しました'),
-                  actions: [
-                    TextButton(
-                      onPressed: () async {
-                        await scoreModel.getScores(event);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        '0K',
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+                    ],
+                  )
+                : AlertDialog(
+                    title: Text('保存しました'),
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          await scoreModel.getScores(event);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          '0K',
+                          style:
+                              TextStyle(color: Theme.of(context).primaryColor),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-        });
+                    ],
+                  );
+          });
+    }
   }
 
   Widget _totalScore(BuildContext context) {
