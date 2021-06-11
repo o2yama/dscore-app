@@ -21,14 +21,23 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-4715063571730383~9318592177</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_dartobservatory._tcp</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-4715063571730383~2238940240</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>アプリの品質向上のため、一部の情報をトラッキング、収集します。これによる個人情報へのアクセスはありません。</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

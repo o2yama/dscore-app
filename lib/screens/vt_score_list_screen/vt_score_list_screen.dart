@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../utilities.dart';
+import '../../common/utilities.dart';
 
 class VTScoreSelectScreen extends StatelessWidget {
   @override
@@ -96,7 +97,10 @@ class VTScoreSelectScreen extends StatelessWidget {
 
   Future<void> _onStoreButtonPressed(context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
     await scoreModel.setVTScore();
+    totalScoreListModel.getFavoriteScores();
     return showDialog(
         context: context,
         builder: (BuildContext context) {

@@ -1,67 +1,25 @@
 import 'dart:io';
-import 'package:dscore_app/utilities.dart';
+import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
-import '../../ad_state.dart';
 
-class UsageScreen extends StatefulWidget {
-  @override
-  _UsageScreenState createState() => _UsageScreenState();
-}
-
-class _UsageScreenState extends State<UsageScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
+class UsageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            _ad(context),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    _backButton(context),
-                    _usageImages(),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              _backButton(context),
+              _usageImages(),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context) {

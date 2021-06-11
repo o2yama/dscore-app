@@ -26,6 +26,8 @@ dependencies:
   intro_slider: ^2.4.3
   fluttertoast: ^8.0.7
   url_launcher: ^6.0.4
+  app_tracking_transparency: ^2.0.1
+  tutorial_coach_mark: ^1.0.1
 
 dev_dependencies:
   flutter_test:

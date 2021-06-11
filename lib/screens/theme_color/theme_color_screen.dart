@@ -2,35 +2,10 @@ import 'dart:io';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import '../../ad_state.dart';
-import '../../utilities.dart';
+import '../../common/utilities.dart';
 
-class ThemeColorScreen extends StatefulWidget {
-  @override
-  _ThemeColorScreenState createState() => _ThemeColorScreenState();
-}
-
-class _ThemeColorScreenState extends State<ThemeColorScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
+class ThemeColorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,42 +13,28 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
       body: Consumer<ThemeColorModel>(builder: (context, model, child) {
         return SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _ad(context),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      _backButton(context),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        child: ListView(
-                          children: themes.keys
-                              .map(
-                                (color) => _colorTile(context, color),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  _backButton(context),
+                  _exampleCardWidget(context),
+                  SizedBox(height: 24),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    child: ListView(
+                      children: themes.keys
+                          .map((color) => _colorTile(context, color))
+                          .toList(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
       }),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context) {
@@ -123,43 +84,98 @@ class _ThemeColorScreenState extends State<ThemeColorScreen> {
     );
   }
 
+  Widget _exampleCardWidget(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Text(
+            'イメージ',
+            style: TextStyle(
+              fontSize: Utilities().isMobile() ? 18 : 24,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          Container(
+            height: 100,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: width * 0.1),
+                    Text(
+                      '5.2',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Expanded(child: Container()),
+                    Container(
+                      height: 80,
+                      width: width * 0.4,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Theme.of(context).primaryColor, width: 1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.arrow_forward_ios,
+                        color: Theme.of(context).primaryColor),
+                    SizedBox(width: 8),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _colorTile(BuildContext context, String color) {
     final themeColorModel =
         Provider.of<ThemeColorModel>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
-        horizontal: 2.0,
-      ),
-      child: InkWell(
-        onTap: () async {
-          await themeColorModel.setThemeColor(color);
-          await themeColorModel.getThemeColor();
-        },
-        child: Card(
-          shadowColor: Theme.of(context).primaryColor,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.check_circle_outline_outlined,
-                  color: themes[color],
-                  size: Utilities().isMobile() ? 20 : 30,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 8.0,
+            horizontal: 2.0,
+          ),
+          child: InkWell(
+            onTap: () async {
+              await themeColorModel.setThemeColor(color);
+              await themeColorModel.getThemeColor();
+            },
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: themes[color],
+                      size: Utilities().isMobile() ? 20 : 30,
+                    ),
+                    SizedBox(width: 16),
+                    Text(
+                      '$color',
+                      style: TextStyle(
+                        color: themes[color],
+                        fontSize: Utilities().isMobile() ? 18 : 24,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 16),
-                Text(
-                  '$color',
-                  style: TextStyle(
-                    color: themes[color],
-                    fontSize: Utilities().isMobile() ? 16 : 24,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
+        if (color == 'ブラック') SizedBox(height: 250),
+      ],
     );
   }
 }

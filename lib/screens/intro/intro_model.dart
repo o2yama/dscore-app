@@ -1,5 +1,8 @@
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:device_info/device_info.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/current_user.dart';
 

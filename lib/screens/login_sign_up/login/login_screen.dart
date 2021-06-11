@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
-import 'package:dscore_app/validator.dart';
+import 'package:dscore_app/common/validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import '../../../utilities.dart';
+import '../../../common/utilities.dart';
 import 'login_model.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();

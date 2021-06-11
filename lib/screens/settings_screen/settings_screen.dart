@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
@@ -8,37 +7,11 @@ import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../common/utilities.dart';
 
-import '../../ad_state.dart';
-import '../../utilities.dart';
-
-class SettingsScreen extends StatefulWidget {
-  @override
-  _SettingsScreenState createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  BannerAd? banner;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
+class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +22,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                _ad(context),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -66,15 +38,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
-  }
-
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container(height: 50)
-        : Container(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
   }
 
   Widget _backButton(BuildContext context) {
@@ -248,7 +211,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(width: 24),
                 Text(
                   '$title',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: Utilities().isMobile() ? 18 : 24,
+                  ),
                 ),
               ],
             ),

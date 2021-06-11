@@ -1,4 +1,4 @@
-import 'package:dscore_app/ad_state.dart';
+import 'package:dscore_app/common/ad_state.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_model.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_model.dart';

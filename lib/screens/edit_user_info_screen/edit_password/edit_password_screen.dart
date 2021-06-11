@@ -3,7 +3,7 @@ import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_pass
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../utilities.dart';
+import '../../../common/utilities.dart';
 import '../edit_email/edit_email_model.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();

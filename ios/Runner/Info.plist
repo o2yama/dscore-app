@@ -42,7 +42,16 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-4715063571730383~9318592177</string>
+	<string>ca-app-pub-4715063571730383~2238940240</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>アプリの品質向上のため、一部の情報をトラッキング、収集します。これによる個人情報へのアクセスはありません。</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 	<key>UIStatusBarHidden</key>
 	<false/>
 </dict>

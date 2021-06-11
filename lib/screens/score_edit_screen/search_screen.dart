@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/data/score_datas.dart';
-import 'package:dscore_app/utilities.dart';
+import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

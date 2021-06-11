@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import '../../../utilities.dart';
-import '../../../validator.dart';
+import '../../../common/utilities.dart';
+import '../../../common/validator.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -44,7 +44,6 @@ class EditEmailScreen extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 50),
                             _backButton(context),
                             SizedBox(height: 30),
                             _prevEmailDisplay(context),
