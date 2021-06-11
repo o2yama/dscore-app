@@ -47,8 +47,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     super.initState();
     final isAttPermitted = ATT.instance.requestPermission();
     print(isAttPermitted);
-
-    target.add(TargetFocus());
   }
 
   @override
