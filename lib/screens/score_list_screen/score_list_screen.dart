@@ -93,7 +93,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
                 Text(
-                  '6種目一覧',
+                  '6種目',
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                   ),

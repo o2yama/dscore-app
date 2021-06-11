@@ -11,6 +11,7 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<IntroModel>(
         builder: (context, model, child) {
           return SafeArea(
@@ -65,31 +66,30 @@ class IntroScreen extends StatelessWidget {
   }
 
   List<Slide> _sliders(BuildContext context) {
-    final backgroundColor = Colors.white;
     return [
       Slide(
         backgroundImage: 'images/tutorial_1.png',
         backgroundBlendMode: BlendMode.screen,
         backgroundImageFit: BoxFit.contain,
-        backgroundColor: backgroundColor,
+        backgroundColor: Colors.black,
       ),
       Slide(
         backgroundImage: 'images/tutorial_2.png',
         backgroundBlendMode: BlendMode.screen,
         backgroundImageFit: BoxFit.contain,
-        backgroundColor: backgroundColor,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       Slide(
         backgroundImage: 'images/tutorial_3.png',
         backgroundBlendMode: BlendMode.screen,
         backgroundImageFit: BoxFit.contain,
-        backgroundColor: backgroundColor,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       Slide(
         backgroundImage: 'images/tutorial_4.png',
         backgroundBlendMode: BlendMode.screen,
         backgroundImageFit: BoxFit.contain,
-        backgroundColor: backgroundColor,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
     ];
   }

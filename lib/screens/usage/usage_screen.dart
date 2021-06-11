@@ -72,8 +72,7 @@ class UsageScreen extends StatelessWidget {
     return Expanded(
       child: ListView(
         children: [
-          SizedBox(height: 50),
-          Image.asset('images/tutorial_1.png'),
+          SizedBox(height: 16),
           Image.asset('images/tutorial_2.png'),
           Image.asset('images/tutorial_3.png'),
           Image.asset('images/tutorial_4.png'),
