@@ -11,7 +11,7 @@ class TotalScoreListModel extends ChangeNotifier {
   ScoreRepository scoreRepository;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
-  bool isLoading = false;
+  bool isLoading = true;
   bool isDoneGetScore = false;
 
   ScoreWithCV? favoriteFx;

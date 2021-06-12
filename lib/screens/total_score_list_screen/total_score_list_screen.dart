@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dscore_app/common/ad_state.dart';
-import 'package:dscore_app/common/att.dart';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
@@ -10,14 +9,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../common/utilities.dart';
 import '../intro/intro_model.dart';
 import '../intro/intro_screen.dart';
 
 final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
 final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
-List<TargetFocus> target = [];
 
 class TotalScoreListScreen extends StatefulWidget {
   @override
@@ -40,13 +37,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         )..load();
       });
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final isAttPermitted = ATT.instance.requestPermission();
-    print(isAttPermitted);
   }
 
   @override

@@ -22,14 +22,14 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-4715063571730383~2238940240</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_dartobservatory._tcp</string>
 	</array>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-4715063571730383~2238940240</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>アプリの品質向上のため、一部の情報をトラッキング、収集します。これによる個人情報へのアクセスはありません。</string>
 	<key>SKAdNetworkItems</key>
