@@ -115,7 +115,7 @@ class IntroScreen extends StatelessWidget {
                   SizedBox(height: 12),
                   Divider(color: Colors.black54),
                   Text(
-                    'お客様により適した広告表示のために、次の画面で「許可」することをお勧めします。',
+                    '次の画面で「許可」を選択すると、お客様により適した広告が表示されます。',
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                   Divider(color: Colors.black54),
