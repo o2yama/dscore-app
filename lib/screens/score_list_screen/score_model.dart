@@ -178,10 +178,14 @@ class ScoreModel extends ChangeNotifier {
   num difficultyPoint = 0.0;
   num egr = 0.0;
   num cv = 0.0;
+  int numberOfGroup1 = 0;
+  int numberOfGroup2 = 0;
+  int numberOfGroup3 = 0;
+  num difficultyOfGroup4 = 1;
 
   List<String> searchChipWords = [];
   Map<String, num> difficulty = {};
-  Map<String, num> group = {};
+  Map<String, int> group = {};
 
   //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
@@ -238,6 +242,7 @@ class ScoreModel extends ChangeNotifier {
   void deleteTech(int index, String event) {
     decidedTechList.remove(decidedTechList[index]);
     isEdited = true;
+    calculateNumberOfGroup(event);
     calculateScore(event);
     notifyListeners();
   }
@@ -269,6 +274,7 @@ class ScoreModel extends ChangeNotifier {
       decidedTechList = hbScore.techs;
       cv = hbScore.cv;
     }
+    calculateNumberOfGroup(event);
     calculateScore(event);
 
     isLoading = false;
@@ -344,6 +350,27 @@ class ScoreModel extends ChangeNotifier {
   void onCVSelected(value) {
     cv = value;
     isEdited = true;
+    notifyListeners();
+  }
+
+  void calculateNumberOfGroup(String event) {
+    numberOfGroup1 = 0;
+    numberOfGroup2 = 0;
+    numberOfGroup3 = 0;
+    difficultyOfGroup4 = 0;
+    decidedTechList.forEach((tech) {
+      if (group[tech] == 1) {
+        numberOfGroup1++;
+      } else if (group[tech] == 2) {
+        numberOfGroup2++;
+      } else if (group[tech] == 3) {
+        numberOfGroup3++;
+      }
+      //床以外の種目かつ、技がグループ4だった時
+      if (event != '床' && group[tech] == 4) {
+        difficultyOfGroup4 = difficulty[tech]!;
+      }
+    });
     notifyListeners();
   }
 
@@ -494,13 +521,13 @@ class ScoreModel extends ChangeNotifier {
       //1番目以降の文字を含んでいないものをremoveListに追加
       if (i == 0) {
         final List<String> resultContainingFirstChar = group.keys
-            .where((techName) => techName.toLowerCase().contains(characters[0]))
+            .where((techName) => techName.contains(characters[0]))
             .toList();
         items = resultContainingFirstChar;
       } else {
-        items.forEach((techName) {
-          if (!techName.toLowerCase().contains(characters[i])) {
-            removeItems.add(techName);
+        items.forEach((item) {
+          if (!item.toLowerCase().contains(characters[i])) {
+            removeItems.add(item);
           }
         });
       }

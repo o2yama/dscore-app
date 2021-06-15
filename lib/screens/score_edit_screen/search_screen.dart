@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/common/score_data.dart';
 import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +8,11 @@ import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends StatelessWidget {
   SearchScreen(this.event, {this.order});
   final String event;
   final int? order;
 
-  @override
-  _SearchScreenState createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,10 +25,10 @@ class _SearchScreenState extends State<SearchScreen> {
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    _backButton(context, widget.event),
+                    _backButton(context, event),
                     _searchBar(context),
-                    _searchChips(context, widget.event),
-                    _searchResults(context, widget.event),
+                    _searchChips(context, event),
+                    _searchResults(context, event),
                   ],
                 ),
               );
@@ -97,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
             hintText: '検索',
           ),
           onChanged: (text) {
-            scoreModel.search(text, widget.event);
+            scoreModel.search(text, event);
           },
         ),
       ),
@@ -197,7 +192,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             onTap: () async {
-              await _onResultTileTapped(context, techName, widget.order);
+              await _onResultTileTapped(context, techName, order);
               Navigator.pop(context);
             },
           ),
@@ -214,7 +209,8 @@ class _SearchScreenState extends State<SearchScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {
       scoreModel.onTechTileSelected(techName, order);
-      scoreModel.calculateScore(widget.event);
+      scoreModel.calculateNumberOfGroup(event);
+      scoreModel.calculateScore(event);
     } catch (e) {
       print(e);
       await showDialog(

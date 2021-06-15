@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/data/score_datas.dart';
+import 'package:dscore_app/common/score_data.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
@@ -33,7 +33,7 @@ class ScoreEditScreen extends StatelessWidget {
                     ),
                     Container(
                       height: height * 0.1,
-                      child: _totalScore(context),
+                      child: _totalScoreDisplay(context),
                     ),
                     Container(
                       height: height * 0.1,
@@ -188,62 +188,158 @@ class ScoreEditScreen extends StatelessWidget {
                   );
           });
     } else {
-      scoreId == null
-          ? await scoreModel.setScore(event)
-          : await scoreModel.updateScore(event, scoreId!);
-      scoreModel.finishEdit();
-      await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () async {
-                          scoreModel.getScores(event);
-                          totalScoreListModel.getFavoriteScores();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text('0K'),
-                      ),
-                    ],
-                  )
-                : AlertDialog(
-                    title: Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () async {
-                          await scoreModel.getScores(event);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '0K',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
+      if (scoreModel.numberOfGroup1 > 5 ||
+          scoreModel.numberOfGroup2 > 5 ||
+          scoreModel.numberOfGroup3 > 5) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Platform.isIOS
+                  ? CupertinoAlertDialog(
+                      title: Text('同一グループが6つ以上登録されています。'),
+                      content: Text('この演技は保存できません。'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('OK'),
+                        )
+                      ],
+                    )
+                  : AlertDialog(
+                      title: Text('同一グループが6つ以上登録されています。'),
+                      content: Text('この演技は保存できません。'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('OK'),
+                        )
+                      ],
+                    );
+            });
+      } else {
+        scoreId == null
+            ? await scoreModel.setScore(event)
+            : await scoreModel.updateScore(event, scoreId!);
+        scoreModel.finishEdit();
+        await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Platform.isIOS
+                  ? CupertinoAlertDialog(
+                      title: Text('保存しました'),
+                      actions: [
+                        TextButton(
+                          onPressed: () async {
+                            scoreModel.getScores(event);
+                            totalScoreListModel.getFavoriteScores();
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text('0K'),
                         ),
-                      ),
-                    ],
-                  );
-          });
+                      ],
+                    )
+                  : AlertDialog(
+                      title: Text('保存しました'),
+                      actions: [
+                        TextButton(
+                          onPressed: () async {
+                            await scoreModel.getScores(event);
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            '0K',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ),
+                      ],
+                    );
+            });
+      }
     }
   }
 
-  Widget _totalScore(BuildContext context) {
+  Widget _totalScoreDisplay(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
       padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            padding: EdgeInsets.only(right: 15.0),
-            child: FittedBox(
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
               child: Text(
-                '${scoreModel.totalScore}',
-                style: TextStyle(fontSize: 40.0),
+                'Ⅰ : ${scoreModel.numberOfGroup1}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: scoreModel.numberOfGroup1 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+          VerticalDivider(color: Colors.black54),
+          Expanded(
+            child: Container(
+              child: Text(
+                'Ⅱ : ${scoreModel.numberOfGroup2}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: scoreModel.numberOfGroup2 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+          VerticalDivider(color: Colors.black54),
+          Expanded(
+            child: Container(
+              child: Text(
+                'Ⅲ : ${scoreModel.numberOfGroup3}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: scoreModel.numberOfGroup3 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
+                ),
+              ),
+            ),
+          ),
+          VerticalDivider(color: Colors.black54),
+          event != '床'
+              ? Expanded(
+                  child: Container(
+                    child: Text(
+                      scoreModel.difficultyOfGroup4 == 0
+                          ? 'Ⅳ : ／'
+                          : 'Ⅳ : ${scoreOfDifficulty[scoreModel.difficultyOfGroup4]}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                )
+              : Container(),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.only(right: 15.0),
+              child: FittedBox(
+                child: Text(
+                  '${scoreModel.totalScore}',
+                  style: TextStyle(fontSize: 40.0),
+                ),
               ),
             ),
           )
