@@ -58,6 +58,13 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
       }
       introModel.changeLoaded();
       totalScoreListModel.changeLoaded();
+      await totalScoreListModel.getIsAppReviewDialogShowed();
+      //トータルが20点超えたら、レビュー用のダイアログ表示
+      if (!(totalScoreListModel.isAppReviewDialogShowed) &&
+          totalScoreListModel.totalScore >= 20) {
+        totalScoreListModel.showAppReviewDialog();
+        totalScoreListModel.setAppReviewDialogShowed();
+      }
     });
     return Consumer<TotalScoreListModel>(
         builder: (context, totalScoreListModel, child) {

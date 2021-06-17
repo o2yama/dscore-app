@@ -181,7 +181,7 @@ class ScoreModel extends ChangeNotifier {
   int numberOfGroup1 = 0;
   int numberOfGroup2 = 0;
   int numberOfGroup3 = 0;
-  num difficultyOfGroup4 = 1;
+  num difficultyOfGroup4 = 0;
 
   List<String> searchChipWords = [];
   Map<String, num> difficulty = {};
@@ -220,13 +220,8 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startEdit() {
+  void doneEdit() {
     isEdited = false;
-    notifyListeners();
-  }
-
-  void finishEdit() {
-    isEdited = true;
     notifyListeners();
   }
 
@@ -236,6 +231,10 @@ class ScoreModel extends ChangeNotifier {
     difficultyPoint = 0.0;
     egr = 0.0;
     cv = 0.0;
+    numberOfGroup1 = 0;
+    numberOfGroup2 = 0;
+    numberOfGroup3 = 0;
+    difficultyOfGroup4 = 0;
     notifyListeners();
   }
 
@@ -477,6 +476,16 @@ class ScoreModel extends ChangeNotifier {
       cv = 0;
       totalScore = 0;
     }
+    notifyListeners();
+  }
+
+  void onReOrder(int oldIndex, int newIndex) {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    final String numberChangedTech = decidedTechList.removeAt(oldIndex);
+    decidedTechList.insert(newIndex, numberChangedTech);
+    isEdited = true;
     notifyListeners();
   }
 

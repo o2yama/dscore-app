@@ -71,6 +71,7 @@ Map<String, int> fxGroup = {
   "リューキン(後方抱え込み3回宙返り)": 3,
   "シライ3(伸身リジョンソン)": 3,
   //I
+  "ナゴルニー": 3,
 };
 
 Map<String, int> fxDifficulty = {
@@ -137,6 +138,7 @@ Map<String, int> fxDifficulty = {
   "リジョンソン": 7,
   "リューキン(後方抱え込み3回宙返り)": 8,
   "シライ3(伸身リジョンソン)": 8,
+  "ナゴルニー": 9,
 };
 
 List<String> fxChipWords = [

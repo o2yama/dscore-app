@@ -126,7 +126,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               onPressed: () {
                 scoreModel.selectEvent(widget.event);
                 scoreModel.resetScore();
-                scoreModel.startEdit();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -190,7 +189,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     return InkWell(
       onTap: () async {
         await scoreModel.getScore(scoreId, widget.event);
-        scoreModel.startEdit();
         Navigator.push(
           context,
           MaterialPageRoute(

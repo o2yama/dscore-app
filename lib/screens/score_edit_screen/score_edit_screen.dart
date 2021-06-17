@@ -162,6 +162,7 @@ class ScoreEditScreen extends StatelessWidget {
     if (scoreModel.currentUser == null) {
       showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) {
             return Platform.isIOS
                 ? CupertinoAlertDialog(
@@ -224,7 +225,7 @@ class ScoreEditScreen extends StatelessWidget {
         scoreId == null
             ? await scoreModel.setScore(event)
             : await scoreModel.updateScore(event, scoreId!);
-        scoreModel.finishEdit();
+        scoreModel.doneEdit();
         await showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -489,7 +490,10 @@ class ScoreEditScreen extends StatelessWidget {
                 ),
               ],
             )
-          : ListView(
+          : ReorderableListView(
+              onReorder: (int oldIndex, int newIndex) {
+                scoreModel.onReOrder(oldIndex, newIndex);
+              },
               children: scoreModel.decidedTechList
                   .map((tech) => _techTile(context, tech,
                       scoreModel.decidedTechList.indexOf(tech) + 1))
@@ -501,6 +505,7 @@ class ScoreEditScreen extends StatelessWidget {
   Widget _techTile(BuildContext context, String techName, int order) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
+      key: Key(scoreModel.decidedTechList.indexOf(techName).toString()),
       children: [
         Row(
           children: [
@@ -534,7 +539,6 @@ class ScoreEditScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: Utilities().isMobile() ? 15.0 : 18.0,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Railway',
                             ),
                           ),
                         ),
