@@ -4,6 +4,7 @@ import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
@@ -16,24 +17,22 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Consumer<ScoreModel>(builder: (context, model, child) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _backButton(context, event),
-                    _searchBar(context),
-                    _searchChips(context, event),
-                    _searchResults(context, event),
-                  ],
-                ),
-              );
-            }),
-          ),
+        child: SafeArea(
+          child: Consumer<ScoreModel>(builder: (context, model, child) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _backButton(context, event),
+                  _searchBar(context),
+                  _searchChips(context, event),
+                  _searchResults(context, event),
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
@@ -132,15 +131,34 @@ class SearchScreen extends StatelessWidget {
   Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.8,
-        child: ListView(
-          children: scoreModel.searchResult
-              .map((score) => resultTile(
-                  context, score, scoreModel.searchResult.indexOf(score)))
-              .toList(),
-        ),
-      );
+      return scoreModel.searchResult.isEmpty
+          ? Column(
+              children: [
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 50,
+                  child: TextButton(
+                    onPressed: () {
+                      launch(
+                        'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                        forceSafariVC: true,
+                        forceWebView: true,
+                      );
+                    },
+                    child: const Text('登録したい技がない場合はこちら'),
+                  ),
+                ),
+              ],
+            )
+          : SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: ListView(
+                children: scoreModel.searchResult
+                    .map((score) => resultTile(
+                        context, score, scoreModel.searchResult.indexOf(score)))
+                    .toList(),
+              ),
+            );
     });
   }
 
@@ -198,7 +216,25 @@ class SearchScreen extends StatelessWidget {
           ),
         ),
         scoreModel.searchResult.length - 1 == index
-            ? const SizedBox(height: 300)
+            ? Column(
+                children: [
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    height: 50,
+                    child: TextButton(
+                      onPressed: () {
+                        launch(
+                          'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                          forceSafariVC: true,
+                          forceWebView: true,
+                        );
+                      },
+                      child: const Text('登録したい技がない場合はこちら'),
+                    ),
+                  ),
+                  const SizedBox(height: 300),
+                ],
+              )
             : Container(),
       ],
     );
