@@ -10,7 +10,7 @@ class UsageScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               _backButton(context),
@@ -23,7 +23,7 @@ class UsageScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
@@ -35,7 +35,7 @@ class UsageScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     size: Utilities().isMobile() ? 20 : 30,
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Text(
                     '使い方',
                     style: TextStyle(
@@ -53,7 +53,7 @@ class UsageScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     size: Utilities().isMobile() ? 20 : 30,
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Text(
                     '使い方',
                     style: TextStyle(
@@ -72,7 +72,7 @@ class UsageScreen extends StatelessWidget {
     return Expanded(
       child: ListView(
         children: [
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Image.asset('images/tutorial_2.png'),
           Image.asset('images/tutorial_3.png'),
           Image.asset('images/tutorial_4.png'),

@@ -336,6 +336,8 @@ PODS:
   - nanopb/encode (2.30906.0)
   - package_info (0.0.1):
     - Flutter
+  - "permission_handler (5.1.0+2)":
+    - Flutter
   - PromisesObjC (1.2.12)
   - shared_preferences (0.0.1):
     - Flutter
@@ -353,6 +355,7 @@ DEPENDENCIES:
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
@@ -397,6 +400,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_mobile_ads/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   url_launcher:
@@ -429,6 +434,7 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196

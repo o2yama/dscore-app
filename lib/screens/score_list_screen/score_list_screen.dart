@@ -8,21 +8,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-class ScoreListScreen extends StatefulWidget {
-  ScoreListScreen(this.event);
+class ScoreListScreen extends StatelessWidget {
+  ScoreListScreen({required this.event});
   final String event;
-
-  @override
-  _ScoreListScreenState createState() => _ScoreListScreenState();
-}
-
-class _ScoreListScreenState extends State<ScoreListScreen> {
-  @override
-  void initState() {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    scoreModel.isFinishedGettingScores = false;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +18,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(
         builder: (context, model, child) {
-          Future(() async {
-            if ((!model.isFinishedGettingScores)) {
-              await model.getScores(widget.event);
-            }
-          });
           final height = MediaQuery.of(context).size.height;
           return SafeArea(
             child: Stack(
@@ -43,19 +26,19 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
+                      SizedBox(
                         height: height * 0.1,
-                        child: _backButton(context, widget.event),
+                        child: _backButton(context, event),
                       ),
-                      Container(
+                      SizedBox(
                         height: height * 0.1,
                         child: _eventNameDisplay(context),
                       ),
-                      Container(
+                      SizedBox(
                         height: MediaQuery.of(context).size.height * 0.8,
                         child: RefreshIndicator(
                           onRefresh: () async {
-                            await model.getScores(widget.event);
+                            await model.getScores(event);
                           },
                           child: _scoreList(context),
                         ),
@@ -68,8 +51,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                         color: Colors.grey.withOpacity(0.6),
                         child: Center(
                             child: Platform.isIOS
-                                ? CupertinoActivityIndicator()
-                                : CircularProgressIndicator()),
+                                ? const CupertinoActivityIndicator()
+                                : const CircularProgressIndicator()),
                       )
                     : Container(),
               ],
@@ -111,25 +94,26 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Container(
+    return SizedBox(
       height: height * 0.1,
       child: Row(
         children: [
           SizedBox(width: width * 0.1),
           Text(
-            '${widget.event}',
+            '$event',
             style: Theme.of(context).textTheme.headline4,
           ),
           Expanded(child: Container()),
           IconButton(
               icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onPressed: () {
-                scoreModel.selectEvent(widget.event);
-                scoreModel.resetScore();
-                Navigator.push(
+                scoreModel
+                  ..selectEvent(event)
+                  ..resetScore();
+                Navigator.push<Object>(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ScoreEditScreen(widget.event)),
+                      builder: (context) => ScoreEditScreen(event: event)),
                 );
               }),
           SizedBox(width: width * 0.1),
@@ -140,35 +124,35 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   Widget _scoreList(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return widget.event == '床'
+    return event == '床'
         ? ListView(
             children: scoreModel.fxScoreList
                 .map((score) => _scoreTile(context, score.techs, score.total,
                     score.isFavorite, score.scoreId))
                 .toList(),
           )
-        : widget.event == 'あん馬'
+        : event == 'あん馬'
             ? ListView(
                 children: scoreModel.phScoreList
                     .map((score) => _scoreTile(context, score.techs,
                         score.total, score.isFavorite, score.scoreId))
                     .toList(),
               )
-            : widget.event == '吊り輪'
+            : event == '吊り輪'
                 ? ListView(
                     children: scoreModel.srScoreList
                         .map((score) => _scoreTile(context, score.techs,
                             score.total, score.isFavorite, score.scoreId))
                         .toList(),
                   )
-                : widget.event == '平行棒'
+                : event == '平行棒'
                     ? ListView(
                         children: scoreModel.pbScoreList
                             .map((score) => _scoreTile(context, score.techs,
                                 score.total, score.isFavorite, score.scoreId))
                             .toList(),
                       )
-                    : widget.event == '鉄棒'
+                    : event == '鉄棒'
                         ? ListView(
                             children: scoreModel.hbScoreList
                                 .map((score) => _scoreTile(
@@ -188,17 +172,17 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
       onTap: () async {
-        await scoreModel.getScore(scoreId, widget.event);
-        Navigator.push(
+        await scoreModel.getScore(scoreId, event);
+        await Navigator.push<Object>(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ScoreEditScreen(widget.event, scoreId: scoreId)),
+          MaterialPageRoute(builder: (context) {
+            return ScoreEditScreen(event: event, scoreId: scoreId);
+          }),
         );
       },
       child: Slidable(
         actionExtentRatio: 0.2,
-        actionPane: SlidableScrollActionPane(),
+        actionPane: const SlidableScrollActionPane(),
         secondaryActions: [
           IconSlideAction(
             caption: '削除',
@@ -216,7 +200,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               flex: 8,
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -243,39 +227,39 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   Future<void> _onDeleteButtonPressed(
       BuildContext context, String scoreId) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    await showDialog(
+    await showDialog<Dialog>(
       context: context,
       builder: (context) => Platform.isIOS
           ? CupertinoAlertDialog(
-              title: Text('この演技を削除してもよろしいですか？'),
-              content: Text('削除した演技は元には戻りません。'),
+              title: const Text('この演技を削除してもよろしいですか？'),
+              content: const Text('削除した演技は元には戻りません。'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('キャンセル'),
+                  child: const Text('キャンセル'),
                 ),
                 TextButton(
                   onPressed: () {
-                    scoreModel.deletePerformance(widget.event, scoreId);
+                    scoreModel.deletePerformance(event, scoreId);
                     Navigator.pop(context);
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 )
               ],
             )
           : AlertDialog(
-              title: Text('この演技を削除してもよろしいですか？'),
-              content: Text('削除した演技は元には戻りません。'),
+              title: const Text('この演技を削除してもよろしいですか？'),
+              content: const Text('削除した演技は元には戻りません。'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('キャンセル'),
+                  child: const Text('キャンセル'),
                 ),
                 TextButton(
                   onPressed: () {
-                    scoreModel.deletePerformance(widget.event, scoreId);
+                    scoreModel.deletePerformance(event, scoreId);
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 )
               ],
             ),
@@ -295,9 +279,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
             ),
             onPressed: () async {
-              await model.onFavoriteButtonTapped(
-                  widget.event, isFavorite, scoreId);
-              totalScoreListModel.getFavoriteScores();
+              await model.onFavoriteButtonTapped(event, isFavorite, scoreId);
+              await totalScoreListModel.getFavoriteScores();
             });
       },
     );

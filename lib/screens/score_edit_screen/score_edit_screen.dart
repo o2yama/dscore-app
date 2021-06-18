@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import '../../common/utilities.dart';
 
 class ScoreEditScreen extends StatelessWidget {
-  ScoreEditScreen(this.event, {this.scoreId});
+  ScoreEditScreen({required this.event, this.scoreId});
   final String event;
   final String? scoreId;
 
@@ -27,19 +27,19 @@ class ScoreEditScreen extends StatelessWidget {
               SafeArea(
                 child: Column(
                   children: [
-                    Container(
+                    SizedBox(
                       height: height * 0.1,
                       child: _backButton(context, event),
                     ),
-                    Container(
+                    SizedBox(
                       height: height * 0.1,
                       child: _totalScoreDisplay(context),
                     ),
-                    Container(
+                    SizedBox(
                       height: height * 0.1,
                       child: _detailsScore(context),
                     ),
-                    Container(
+                    SizedBox(
                       height: height * 0.7,
                       child: _techListView(context),
                     ),
@@ -51,8 +51,8 @@ class ScoreEditScreen extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.6),
                       child: Center(
                         child: Platform.isIOS
-                            ? CupertinoActivityIndicator()
-                            : CircularProgressIndicator(),
+                            ? const CupertinoActivityIndicator()
+                            : const CircularProgressIndicator(),
                       ),
                     )
                   : Container(),
@@ -68,6 +68,9 @@ class ScoreEditScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
+          onPressed: () {
+            _onBackButtonPressed(context);
+          },
           child: Platform.isIOS
               ? Row(
                   children: [
@@ -87,19 +90,16 @@ class ScoreEditScreen extends StatelessWidget {
                   Icons.clear,
                   color: Theme.of(context).primaryColor,
                 ),
-          onPressed: () {
-            _onBackButtonPressed(context);
-          },
         ),
         TextButton(
-          child: Text(
-            scoreId == null ? '保存' : '更新',
-            style: TextStyle(
-                color: Theme.of(context).primaryColor, fontSize: 15.0),
-          ),
           onPressed: () {
             _onStoreButtonPressed(context);
           },
+          child: Text(
+            scoreId == null ? '保存' : '更新',
+            style:
+                TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+          ),
         ),
       ],
     );
@@ -108,44 +108,44 @@ class ScoreEditScreen extends StatelessWidget {
   void _onBackButtonPressed(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     if (scoreModel.isEdited) {
-      showDialog(
+      showDialog<Dialog>(
           context: context,
           builder: (context) => Platform.isIOS
               ? CupertinoAlertDialog(
-                  title: Text('保存せずに戻ってもよろしいですか？'),
-                  content: Text('変更した内容は破棄されます。'),
+                  title: const Text('保存せずに戻ってもよろしいですか？'),
+                  content: const Text('変更した内容は破棄されます。'),
                   actions: [
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('キャンセル'),
+                      child: const Text('キャンセル'),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
-                      child: Text('OK'),
+                      child: const Text('OK'),
                     )
                   ],
                 )
               : AlertDialog(
-                  title: Text('保存せずに戻ってもよろしいですか？'),
-                  content: Text('計算した内容は破棄されます。'),
+                  title: const Text('保存せずに戻ってもよろしいですか？'),
+                  content: const Text('計算した内容は破棄されます。'),
                   actions: [
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('キャンセル'),
+                      child: const Text('キャンセル'),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
-                      child: Text('OK'),
+                      child: const Text('OK'),
                     )
                   ],
                 ));
@@ -160,30 +160,30 @@ class ScoreEditScreen extends StatelessWidget {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     if (scoreModel.currentUser == null) {
-      showDialog(
+      await showDialog<Dialog>(
           context: context,
           barrierDismissible: false,
           builder: (context) {
             return Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('ログインしてください。'),
+                    title: const Text('ログインしてください。'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   )
                 : AlertDialog(
-                    title: Text('ログインしてください。'),
+                    title: const Text('ログインしてください。'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   );
@@ -192,60 +192,60 @@ class ScoreEditScreen extends StatelessWidget {
       if (scoreModel.numberOfGroup1 > 5 ||
           scoreModel.numberOfGroup2 > 5 ||
           scoreModel.numberOfGroup3 > 5) {
-        showDialog(
+        await showDialog<Dialog>(
             context: context,
             builder: (context) {
               return Platform.isIOS
                   ? CupertinoAlertDialog(
-                      title: Text('同一グループが6つ以上登録されています。'),
-                      content: Text('この演技は保存できません。'),
+                      title: const Text('同一グループが6つ以上登録されています。'),
+                      content: const Text('この演技は保存できません。'),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('OK'),
+                          child: const Text('OK'),
                         )
                       ],
                     )
                   : AlertDialog(
-                      title: Text('同一グループが6つ以上登録されています。'),
-                      content: Text('この演技は保存できません。'),
+                      title: const Text('同一グループが6つ以上登録されています。'),
+                      content: const Text('この演技は保存できません。'),
                       actions: [
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('OK'),
+                          child: const Text('OK'),
                         )
                       ],
                     );
             });
       } else {
+        scoreModel.noEdited();
         scoreId == null
             ? await scoreModel.setScore(event)
             : await scoreModel.updateScore(event, scoreId!);
-        scoreModel.doneEdit();
-        await showDialog(
+        await showDialog<Dialog>(
             context: context,
             builder: (BuildContext context) {
               return Platform.isIOS
                   ? CupertinoAlertDialog(
-                      title: Text('保存しました'),
+                      title: const Text('保存しました'),
                       actions: [
                         TextButton(
                           onPressed: () async {
-                            scoreModel.getScores(event);
-                            totalScoreListModel.getFavoriteScores();
+                            await scoreModel.getScores(event);
+                            await totalScoreListModel.getFavoriteScores();
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
-                          child: Text('0K'),
+                          child: const Text('0K'),
                         ),
                       ],
                     )
                   : AlertDialog(
-                      title: Text('保存しました'),
+                      title: const Text('保存しました'),
                       actions: [
                         TextButton(
                           onPressed: () async {
@@ -269,7 +269,7 @@ class ScoreEditScreen extends StatelessWidget {
   Widget _totalScoreDisplay(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
-      padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -288,7 +288,7 @@ class ScoreEditScreen extends StatelessWidget {
               ),
             ),
           ),
-          VerticalDivider(color: Colors.black54),
+          const VerticalDivider(color: Colors.black54),
           Expanded(
             child: Container(
               child: Text(
@@ -303,7 +303,7 @@ class ScoreEditScreen extends StatelessWidget {
               ),
             ),
           ),
-          VerticalDivider(color: Colors.black54),
+          const VerticalDivider(color: Colors.black54),
           Expanded(
             child: Container(
               child: Text(
@@ -318,16 +318,16 @@ class ScoreEditScreen extends StatelessWidget {
               ),
             ),
           ),
-          VerticalDivider(color: Colors.black54),
+          const VerticalDivider(color: Colors.black54),
           event != '床'
               ? Expanded(
                   child: Container(
                     child: Text(
-                      scoreModel.difficultyOfGroup4 == 0
+                      scoreModel.group4 == 0
                           ? 'Ⅳ : ／'
-                          : 'Ⅳ : ${scoreOfDifficulty[scoreModel.difficultyOfGroup4]}',
+                          : 'Ⅳ : ${scoreOfDifficulty[scoreModel.group4]}',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ),
                 )
@@ -335,11 +335,11 @@ class ScoreEditScreen extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(right: 15.0),
+              padding: const EdgeInsets.only(right: 15),
               child: FittedBox(
                 child: Text(
                   '${scoreModel.totalScore}',
-                  style: TextStyle(fontSize: 40.0),
+                  style: const TextStyle(fontSize: 40),
                 ),
               ),
             ),
@@ -355,44 +355,42 @@ class ScoreEditScreen extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Text(
                   '難度点',
-                  style: TextStyle(fontSize: 18.0),
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Text(
                   '要求点',
-                  style: TextStyle(fontSize: 18.0),
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ),
             event == '床' || event == '鉄棒'
-                ? Expanded(
+                ? const Expanded(
                     child: Center(
                       child: Text(
                         '組み合わせ',
-                        style: TextStyle(fontSize: 18.0),
+                        style: TextStyle(fontSize: 18),
                       ),
                     ),
                   )
                 : Container(),
           ],
         ),
-        SizedBox(
-          height: 10.0,
-        ),
+        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
               child: Center(
                 child: Text(
                   '${scoreModel.difficultyPoint}',
-                  style: TextStyle(fontSize: 15.0),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
             ),
@@ -400,15 +398,13 @@ class ScoreEditScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${scoreModel.egr}',
-                  style: TextStyle(fontSize: 15.0),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
             ),
             event == '床' || event == '鉄棒'
                 ? Expanded(
-                    child: Center(
-                      child: _cvSelectMenu(context),
-                    ),
+                    child: Center(child: _cvSelectMenu(context)),
                   )
                 : Container(),
           ],
@@ -423,29 +419,30 @@ class ScoreEditScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(width: 32),
+        const SizedBox(width: 32),
         Text('${scoreModel.cv}', textAlign: TextAlign.center),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         PopupMenuButton(
-          child: Icon(Icons.arrow_drop_down),
           itemBuilder: (context) => cvs
               .map(
-                (cv) => PopupMenuItem(
-                  child: Container(
+                (cv) => PopupMenuItem<Widget>(
+                  child: SizedBox(
                     width: 100,
                     height: 50,
                     child: TextButton(
-                      child: Text('$cv'),
                       onPressed: () {
-                        scoreModel.onCVSelected(cv);
-                        scoreModel.calculateScore(event);
+                        scoreModel
+                          ..onCVSelected(cv)
+                          ..calculateScore(event);
                         Navigator.pop(context);
                       },
+                      child: Text('$cv'),
                     ),
                   ),
                 ),
               )
               .toList(),
+          child: const Icon(Icons.arrow_drop_down),
         ),
       ],
     );
@@ -458,17 +455,13 @@ class ScoreEditScreen extends StatelessWidget {
           ? Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
+                SizedBox(
                   height: 50,
                   width: 100,
                   child: InkWell(
-                    child: Container(
-                      child: Icon(Icons.add,
-                          color: Theme.of(context).primaryColor),
-                    ),
                     onTap: () {
                       if (scoreModel.currentUser == null) {
-                        Navigator.push(
+                        Navigator.push<Object>(
                             context,
                             MaterialPageRoute(
                               builder: (context) => SignUpScreen(),
@@ -478,7 +471,7 @@ class ScoreEditScreen extends StatelessWidget {
                         searchController.clear();
                         scoreModel.searchResult.clear();
                         scoreModel.selectEvent(event);
-                        Navigator.push(
+                        Navigator.push<Object>(
                             context,
                             MaterialPageRoute(
                               builder: (context) => SearchScreen(event),
@@ -486,14 +479,16 @@ class ScoreEditScreen extends StatelessWidget {
                             ));
                       }
                     },
+                    child: Container(
+                      child: Icon(Icons.add,
+                          color: Theme.of(context).primaryColor),
+                    ),
                   ),
                 ),
               ],
             )
           : ReorderableListView(
-              onReorder: (int oldIndex, int newIndex) {
-                scoreModel.onReOrder(oldIndex, newIndex);
-              },
+              onReorder: scoreModel.onReOrder,
               children: scoreModel.decidedTechList
                   .map((tech) => _techTile(context, tech,
                       scoreModel.decidedTechList.indexOf(tech) + 1))
@@ -504,20 +499,19 @@ class ScoreEditScreen extends StatelessWidget {
 
   Widget _techTile(BuildContext context, String techName, int order) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final difficulty = scoreOfDifficulty[scoreModel.difficulty[techName]];
+    final group = groupDisplay[scoreModel.group[techName]];
     return Column(
       key: Key(scoreModel.decidedTechList.indexOf(techName).toString()),
       children: [
         Row(
           children: [
-            SizedBox(width: 16),
-            Text(
-              '$order',
-              textAlign: TextAlign.center,
-            ),
+            const SizedBox(width: 16),
+            Text('$order', textAlign: TextAlign.center),
             Expanded(
               child: Slidable(
                 actionExtentRatio: 0.2,
-                actionPane: SlidableScrollActionPane(),
+                actionPane: const SlidableScrollActionPane(),
                 secondaryActions: [
                   IconSlideAction(
                     caption: '削除',
@@ -532,7 +526,7 @@ class ScoreEditScreen extends StatelessWidget {
                   child: ListTile(
                     title: Row(
                       children: [
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Flexible(
                           child: Text(
                             '$techName',
@@ -544,7 +538,7 @@ class ScoreEditScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    trailing: Container(
+                    trailing: SizedBox(
                       width: 110,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -552,28 +546,26 @@ class ScoreEditScreen extends StatelessWidget {
                         children: [
                           Column(
                             children: [
-                              SizedBox(height: 8),
-                              Expanded(
+                              const SizedBox(height: 8),
+                              const Expanded(
                                 child:
                                     Text('難度', style: TextStyle(fontSize: 10)),
                               ),
                               Expanded(
-                                child: Text(
-                                    '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                                child: Text('$difficulty'),
                               ),
                             ],
                           ),
-                          SizedBox(width: 24),
+                          const SizedBox(width: 24),
                           Column(
                             children: [
-                              SizedBox(height: 8),
-                              Expanded(
+                              const SizedBox(height: 8),
+                              const Expanded(
                                 child: Text('グループ',
                                     style: TextStyle(fontSize: 10)),
                               ),
                               Expanded(
-                                child: Text(
-                                    '${groupDisplay[scoreModel.group[techName]]}'),
+                                child: Text('$group'),
                               ),
                             ],
                           ),
@@ -584,7 +576,7 @@ class ScoreEditScreen extends StatelessWidget {
                       searchController.clear();
                       scoreModel.searchResult.clear();
                       scoreModel.selectEvent(event);
-                      Navigator.push(
+                      Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
@@ -609,7 +601,7 @@ class ScoreEditScreen extends StatelessWidget {
                       searchController.clear();
                       scoreModel.searchResult.clear();
                       scoreModel.selectEvent(event);
-                      Navigator.push(
+                      Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
                             builder: (context) => SearchScreen(event),
@@ -617,12 +609,12 @@ class ScoreEditScreen extends StatelessWidget {
                           ));
                     },
                   ),
-                  SizedBox(height: 200),
+                  const SizedBox(height: 200),
                 ],
               )
             : scoreModel.decidedTechList.length == order &&
                     scoreModel.decidedTechList.length == 10
-                ? SizedBox(height: 200)
+                ? const SizedBox(height: 200)
                 : Container(),
       ],
     );

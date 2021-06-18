@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CurrentUser {
   CurrentUser(DocumentSnapshot doc) {
-    this.id = doc.data()!['id'];
-    this.email = doc.data()!['email'];
+    id = doc.data()!['id'] as String;
+    email = doc.data()!['email'] as String;
   }
 
   String id = '';
-  String? email;
+  String email = '';
 }

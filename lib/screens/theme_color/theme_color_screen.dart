@@ -14,13 +14,13 @@ class ThemeColorScreen extends StatelessWidget {
         return SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
                   _backButton(context),
                   _exampleCardWidget(context),
-                  SizedBox(height: 24),
-                  Container(
+                  const SizedBox(height: 24),
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.6,
                     child: ListView(
                       children: themes.keys
@@ -51,7 +51,7 @@ class ThemeColorScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     size: Utilities().isMobile() ? 20 : 30,
                   ),
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   Text(
                     'テーマカラー',
                     style: TextStyle(
@@ -69,7 +69,7 @@ class ThemeColorScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     size: Utilities().isMobile() ? 20 : 30,
                   ),
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   Text(
                     'テーマカラー',
                     style: TextStyle(
@@ -87,7 +87,7 @@ class ThemeColorScreen extends StatelessWidget {
   Widget _exampleCardWidget(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: Column(
         children: [
           Text(
@@ -97,11 +97,11 @@ class ThemeColorScreen extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
           ),
-          Container(
+          SizedBox(
             height: 100,
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -121,10 +121,10 @@ class ThemeColorScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Icon(Icons.arrow_forward_ios,
                         color: Theme.of(context).primaryColor),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                   ],
                 ),
               ),
@@ -142,8 +142,8 @@ class ThemeColorScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 8.0,
-            horizontal: 2.0,
+            vertical: 8,
+            horizontal: 2,
           ),
           child: InkWell(
             onTap: () async {
@@ -152,7 +152,7 @@ class ThemeColorScreen extends StatelessWidget {
             },
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(12),
                 child: Row(
                   children: [
                     Icon(
@@ -160,7 +160,7 @@ class ThemeColorScreen extends StatelessWidget {
                       color: themes[color],
                       size: Utilities().isMobile() ? 20 : 30,
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Text(
                       '$color',
                       style: TextStyle(
@@ -174,7 +174,7 @@ class ThemeColorScreen extends StatelessWidget {
             ),
           ),
         ),
-        if (color == 'ブラック') SizedBox(height: 250),
+        if (color == 'ブラック') const SizedBox(height: 250),
       ],
     );
   }

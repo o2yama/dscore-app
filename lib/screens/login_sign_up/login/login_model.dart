@@ -3,8 +3,8 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoginModel extends ChangeNotifier {
-  final UserRepository userRepository;
   LoginModel({required this.userRepository});
+  final UserRepository userRepository;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;
@@ -28,11 +28,12 @@ class LoginModel extends ChangeNotifier {
     try {
       await userRepository.logInWithEmailAndPassword(email, password);
       await userRepository.getCurrentUserData();
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
+      final Error error = ArgumentError(e);
       isLoading = false;
       notifyListeners();
-      throw e;
+      throw error;
     }
 
     isLoading = false;
@@ -40,6 +41,6 @@ class LoginModel extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    userRepository.signOut();
+    await userRepository.signOut();
   }
 }

@@ -16,13 +16,13 @@ class IntroModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
   }
 
   Future<void> finishIntro() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('intro', true);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('intro', true);
     isIntroWatched = prefs.getBool('intro') ?? false;
   }
 
@@ -33,7 +33,7 @@ class IntroModel extends ChangeNotifier {
     try {
       await userRepository.getCurrentUserData();
       isDoneGettingUserData = true;
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
     }
   }

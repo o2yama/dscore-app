@@ -21,16 +21,16 @@ class VTScoreSelectScreen extends StatelessWidget {
                 Container(
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: height * 0.1,
                         child: _backButton(context),
                       ),
-                      Container(
+                      SizedBox(
                         height: height * 0.2,
                         child: _dScoreDisplay(context),
                       ),
-                      SizedBox(height: 50),
-                      Container(
+                      const SizedBox(height: 50),
+                      SizedBox(
                         height: height * 0.5,
                         child: VTTechListView(),
                       ),
@@ -42,8 +42,8 @@ class VTScoreSelectScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.6),
                         child: Center(
                           child: Platform.isIOS
-                              ? CupertinoActivityIndicator()
-                              : CircularProgressIndicator(),
+                              ? const CupertinoActivityIndicator()
+                              : const CircularProgressIndicator(),
                         ),
                       )
                     : Container(),
@@ -82,32 +82,32 @@ class VTScoreSelectScreen extends StatelessWidget {
                 ),
         ),
         TextButton(
-          child: Text(
-            '保存',
-            style: TextStyle(
-                color: Theme.of(context).primaryColor, fontSize: 15.0),
-          ),
           onPressed: () {
             _onStoreButtonPressed(context);
           },
+          child: Text(
+            '保存',
+            style:
+                TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+          ),
         ),
       ],
     );
   }
 
-  Future<void> _onStoreButtonPressed(context) async {
+  Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     await scoreModel.setVTScore();
-    totalScoreListModel.getFavoriteScores();
+    await totalScoreListModel.getFavoriteScores();
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           return Consumer<ScoreModel>(builder: (context, model, child) {
             return Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('保存しました'),
+                    title: const Text('保存しました'),
                     actions: [
                       TextButton(
                         onPressed: () async {
@@ -123,7 +123,7 @@ class VTScoreSelectScreen extends StatelessWidget {
                     ],
                   )
                 : AlertDialog(
-                    title: Text('保存しました'),
+                    title: const Text('保存しました'),
                     actions: [
                       TextButton(
                         onPressed: () async {
@@ -149,7 +149,7 @@ class VTScoreSelectScreen extends StatelessWidget {
       children: [
         Container(
           width: width * 0.5,
-          margin: EdgeInsets.only(left: 40),
+          margin: const EdgeInsets.only(left: 40),
           child: Text(
             '${scoreModel.vtTechName}',
             style: TextStyle(
@@ -159,10 +159,10 @@ class VTScoreSelectScreen extends StatelessWidget {
         ),
         SizedBox(width: width * 0.1),
         Container(
-          margin: EdgeInsets.only(right: 16),
+          margin: const EdgeInsets.only(right: 16),
           child: Text(
             '${scoreModel.totalScore}',
-            style: TextStyle(fontSize: 40.0),
+            style: const TextStyle(fontSize: 40),
           ),
         ),
       ],

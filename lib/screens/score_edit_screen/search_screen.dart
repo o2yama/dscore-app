@@ -9,7 +9,7 @@ import '../score_list_screen/score_model.dart';
 final TextEditingController searchController = TextEditingController();
 
 class SearchScreen extends StatelessWidget {
-  SearchScreen(this.event, {this.order});
+  const SearchScreen(this.event, {this.order});
   final String event;
   final int? order;
 
@@ -40,7 +40,7 @@ class SearchScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context, String event) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,29 +61,29 @@ class SearchScreen extends StatelessWidget {
 
   Widget _searchBar(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.1,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+        padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
         child: TextField(
           controller: searchController,
           cursorColor: Theme.of(context).primaryColor,
           autofocus: true,
           decoration: InputDecoration(
             suffixIcon: InkWell(
-              child: Icon(Icons.clear),
               onTap: () => scoreModel.deleteSearchBarText(searchController),
+              child: const Icon(Icons.clear),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-            prefixIcon: Icon(Icons.search),
-            border: OutlineInputBorder(
+            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            prefixIcon: const Icon(Icons.search),
+            border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
-                Radius.circular(15.0),
+                Radius.circular(15),
               ),
             ),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
-                Radius.circular(15.0),
+                Radius.circular(15),
               ),
               borderSide: BorderSide(
                 color: Colors.grey,
@@ -101,10 +101,10 @@ class SearchScreen extends StatelessWidget {
 
   Widget _searchChips(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return Container(
+    return SizedBox(
       height: 50,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+        padding: const EdgeInsets.only(left: 15, right: 15),
         child: ListView(
             scrollDirection: Axis.horizontal,
             children: scoreModel.searchChipWords
@@ -117,7 +117,7 @@ class SearchScreen extends StatelessWidget {
   Widget _techChip(BuildContext context, String searchText, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Padding(
-      padding: const EdgeInsets.only(right: 10.0),
+      padding: const EdgeInsets.only(right: 10),
       child: ChoiceChip(
         label: Text('$searchText'),
         selected: false,
@@ -132,7 +132,7 @@ class SearchScreen extends StatelessWidget {
   Widget _searchResults(BuildContext context, String event) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
-      return Container(
+      return SizedBox(
         height: MediaQuery.of(context).size.height * 0.8,
         child: ListView(
           children: scoreModel.searchResult
@@ -146,6 +146,7 @@ class SearchScreen extends StatelessWidget {
 
   Widget resultTile(BuildContext context, String techName, int index) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final difficulty = scoreOfDifficulty[scoreModel.difficulty[techName]];
     return Column(
       children: [
         Card(
@@ -157,7 +158,7 @@ class SearchScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            trailing: Container(
+            trailing: SizedBox(
               width: 110,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,21 +166,20 @@ class SearchScreen extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: 8),
-                      Expanded(
+                      const SizedBox(height: 8),
+                      const Expanded(
                         child: Text('難度', style: TextStyle(fontSize: 10)),
                       ),
                       Expanded(
-                        child: Text(
-                            '${scoreOfDifficulty[scoreModel.difficulty[techName]]}'),
+                        child: Text('$difficulty'),
                       ),
                     ],
                   ),
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   Column(
                     children: [
-                      SizedBox(height: 8),
-                      Expanded(
+                      const SizedBox(height: 8),
+                      const Expanded(
                         child: Text('グループ', style: TextStyle(fontSize: 10)),
                       ),
                       Expanded(
@@ -198,7 +198,7 @@ class SearchScreen extends StatelessWidget {
           ),
         ),
         scoreModel.searchResult.length - 1 == index
-            ? SizedBox(height: 300)
+            ? const SizedBox(height: 300)
             : Container(),
       ],
     );
@@ -208,22 +208,23 @@ class SearchScreen extends StatelessWidget {
       BuildContext context, String techName, int? order) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     try {
-      scoreModel.onTechTileSelected(techName, order);
-      scoreModel.calculateNumberOfGroup(event);
-      scoreModel.calculateScore(event);
-    } catch (e) {
+      scoreModel
+        ..onTechTileSelected(techName, order)
+        ..calculateNumberOfGroup(event)
+        ..calculateScore(event);
+    } on Exception catch (e) {
       print(e);
-      await showDialog(
+      await showDialog<Dialog>(
         context: context,
         builder: (context) => Platform.isIOS
             ? CupertinoAlertDialog(
                 title: Text('$e'),
                 actions: [
                   TextButton(
-                    child: Text('OK'),
                     onPressed: () {
                       Navigator.pop(context);
                     },
+                    child: const Text('OK'),
                   )
                 ],
               )
@@ -231,10 +232,10 @@ class SearchScreen extends StatelessWidget {
                 title: Text('$e'),
                 actions: [
                   TextButton(
-                    child: Text('OK'),
                     onPressed: () {
                       Navigator.pop(context);
                     },
+                    child: const Text('OK'),
                   )
                 ],
               ),

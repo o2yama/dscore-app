@@ -62,7 +62,7 @@ List<SingleChildWidget> viewModels = [
   ),
 ];
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final initFuture = MobileAds.instance.initialize();
@@ -91,14 +91,14 @@ class MyApp extends StatelessWidget {
           cardTheme: CardTheme(
             color: Colors.white,
             elevation: 3,
-            margin: EdgeInsets.all(12),
+            margin: const EdgeInsets.all(12),
             shadowColor: Colors.black54,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
           buttonTheme: ButtonThemeData(
-            shape: RoundedRectangleBorder(),
+            shape: const RoundedRectangleBorder(),
             buttonColor: Theme.of(context).primaryColor,
             textTheme: ButtonTextTheme.primary,
             focusColor: Colors.white,

@@ -92,14 +92,12 @@ class TotalScoreListModel extends ChangeNotifier {
 
   Future<void> setAppReviewDialogShowed() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isAppReviewDialogShowed', true);
+    await prefs.setBool('isAppReviewDialogShowed', true);
   }
 
   //ユーザーにアプリを評価してもらうためのダイアログ
   Future<void> showAppReviewDialog() async {
-    AppReview.requestReview.then((onValue) {
-      print(onValue);
-    });
+    await AppReview.requestReview.then(print);
     notifyListeners();
   }
 }

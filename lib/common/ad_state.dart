@@ -2,15 +2,15 @@ import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdState {
-  Future<InitializationStatus> initialization;
   AdState(this.initialization);
+  Future<InitializationStatus> initialization;
 
   String get bannerAdUnitId => Platform.isAndroid
-      ? "ca-app-pub-4715063571730383/8443324315"
-      : "ca-app-pub-4715063571730383/7108123549";
+      ? 'ca-app-pub-4715063571730383/8443324315'
+      : 'ca-app-pub-4715063571730383/7108123549';
 
   AdListener get adListener => _adListener;
-  AdListener _adListener = AdListener(
+  final AdListener _adListener = AdListener(
     onAdLoaded: (ad) => print('Ad loaded: ${ad.adUnitId}.'),
     onAdClosed: (ad) => print('Ad closed: ${ad.adUnitId}.'),
     onAdFailedToLoad: (ad, error) =>

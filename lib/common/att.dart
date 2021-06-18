@@ -3,23 +3,22 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/services.dart';
 
 class ATT {
+  ATT._();
   static final ATT instance = ATT._();
 
-  ATT._();
-
   Future<bool> requestPermission() async {
-    bool result = false;
+    var result = false;
 
     if (Platform.isIOS) {
-      TrackingStatus trackingStatus =
+      final trackingStatus =
           await AppTrackingTransparency.trackingAuthorizationStatus;
-      print("trackingStatus:$trackingStatus");
+      print('trackingStatus:$trackingStatus');
 
       try {
         if (trackingStatus == TrackingStatus.notDetermined) {
-          var status =
+          final status =
               await AppTrackingTransparency.requestTrackingAuthorization();
-          print("requestTrackingAuthorization:$status");
+          print('requestTrackingAuthorization:$status');
 
           if (status == TrackingStatus.authorized) {
             result = true;

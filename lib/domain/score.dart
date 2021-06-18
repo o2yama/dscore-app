@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //床、鉄棒
 class Score {
   Score(DocumentSnapshot doc) {
-    total = doc.data()!['total'];
-    techs = List.from(doc['components']);
-    scoreId = doc.data()!['scoreId'];
-    isFavorite = isFavorite = doc.data()!['isFavorite'];
+    total = doc.data()!['total'] as num;
+    techs = List<String>.from(doc['components'] as List<dynamic>);
+    scoreId = doc.data()!['scoreId'] as String;
+    isFavorite = doc.data()!['isFavorite'] as bool;
   }
 
   num total = 0;

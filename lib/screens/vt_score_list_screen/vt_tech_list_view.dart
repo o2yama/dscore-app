@@ -9,21 +9,21 @@ FixedExtentScrollController vtController = FixedExtentScrollController();
 class VTTechListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Consumer<ScoreModel>(
         builder: (context, model, child) {
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.white,
               ),
               child: ListWheelScrollView.useDelegate(
-                physics: FixedExtentScrollPhysics(),
+                physics: const FixedExtentScrollPhysics(),
                 diameterRatio: 1.3,
-                squeeze: 2.0,
+                squeeze: 2,
                 controller: vtController,
                 itemExtent: 100,
                 perspective: 0.001,
@@ -45,14 +45,14 @@ class VTTechListView extends StatelessWidget {
   }
 
   Widget _vtTile(BuildContext context, String techName) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
             Text('${vtTech[techName]}'),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Flexible(child: Text('$techName')),
           ],
         ),

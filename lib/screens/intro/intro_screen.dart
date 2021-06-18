@@ -21,31 +21,31 @@ class IntroScreen extends StatelessWidget {
                 IntroSlider(
                   slides: _sliders(context),
                   renderNextBtn: Text(
-                    "次へ",
+                    '次へ',
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   renderDoneBtn: Text(
-                    "アプリへ",
+                    'アプリへ',
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   renderSkipBtn: Text(
-                    "スキップ",
+                    'スキップ',
                     style: TextStyle(
                       color: Colors.blue,
                       fontSize: Utilities().isMobile() ? 14 : 20,
                     ),
                   ),
                   onDonePress: () async {
-                    finishIntro(context);
+                    await finishIntro(context);
                   },
                   onSkipPress: () async {
-                    finishIntro(context);
+                    await finishIntro(context);
                   },
                 ),
                 model.isLoading
@@ -53,8 +53,8 @@ class IntroScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.7),
                         child: Center(
                           child: Platform.isIOS
-                              ? CupertinoActivityIndicator()
-                              : CircularProgressIndicator(),
+                              ? const CupertinoActivityIndicator()
+                              : const CircularProgressIndicator(),
                         ),
                       )
                     : Container(),
@@ -98,11 +98,11 @@ class IntroScreen extends StatelessWidget {
   Future<void> finishIntro(BuildContext context) async {
     final introModel = Provider.of<IntroModel>(context, listen: false);
     if (Platform.isIOS) {
-      await showDialog(
+      await showDialog<Dialog>(
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                 'このアプリでは広告を表示しています。',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -112,32 +112,32 @@ class IntroScreen extends StatelessWidget {
               ),
               content: Column(
                 children: [
-                  SizedBox(height: 12),
-                  Divider(color: Colors.black54),
-                  Text(
+                  const SizedBox(height: 12),
+                  const Divider(color: Colors.black54),
+                  const Text(
                     '次の画面で「許可」を選択すると、お客様により適した広告が表示されます。',
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
-                  Divider(color: Colors.black54),
-                  SizedBox(height: 12),
+                  const Divider(color: Colors.black54),
+                  const SizedBox(height: 12),
                   Image.asset('images/att_dialog.png'),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () async {
                       final isAttPermitted =
                           await ATT.instance.requestPermission();
                       print(isAttPermitted);
-                      introModel.finishIntro();
+                      await introModel.finishIntro();
                       Navigator.pop(context);
                     },
-                    child: Text('次へ'),
+                    child: const Text('次へ'),
                   ),
                 ],
               ),
             );
           });
     } else if (Platform.isAndroid) {
-      introModel.finishIntro();
+      await introModel.finishIntro();
     }
   }
 }
