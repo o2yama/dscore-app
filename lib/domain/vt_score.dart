@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class VTScore {
   VTScore(DocumentSnapshot doc) {
-    score = doc.data()!['score'];
-    techName = doc.data()!['techName'];
-    scoreId = doc.data()!['scoreId'];
+    score = doc.data()!['score'] as num;
+    techName = doc.data()!['techName'] as String;
+    scoreId = doc.data()!['scoreId'] as String;
   }
 
   num score = 0;

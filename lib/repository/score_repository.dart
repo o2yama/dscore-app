@@ -7,12 +7,12 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class ScoreRepository {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   CurrentUser? get currentUser => UserRepository.currentUser;
-  FirebaseFirestore _db = FirebaseFirestore.instance;
   String uuid = '';
 
-  Future<void> getUuid() async {
-    uuid = Uuid().v4();
+  void getUuid() {
+    uuid = const Uuid().v4();
   }
 
   Future<ScoreWithCV?> getFavoriteFXScore() async {
@@ -30,7 +30,7 @@ class ScoreRepository {
   }
 
   Future<List<ScoreWithCV>> getFXScores() async {
-    List<ScoreWithCV> scoreList = [];
+    var scoreList = <ScoreWithCV>[];
     final query = await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -38,11 +38,11 @@ class ScoreRepository {
         .get();
     final scores = query.docs.map((doc) => ScoreWithCV(doc)).toList();
     final favoriteScore = scores.where((score) => score.isFavorite).toList();
-    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    final otherScores = scores.where((score) => !score.isFavorite).toList();
     scoreList = favoriteScore;
-    otherScores.forEach((score) {
-      scoreList.add(score);
-    });
+    for (var i = 0; i < otherScores.length; i++) {
+      scoreList.add(otherScores[i]);
+    }
     return scoreList;
   }
 
@@ -65,7 +65,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('fx')
         .doc(uuid)
-        .set({
+        .set(<String, dynamic>{
       'scoreId': uuid,
       'total': total,
       'components': techList,
@@ -81,7 +81,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('fx')
         .doc(scoreId)
-        .update({
+        .update(<String, dynamic>{
       'total': total,
       'components': techs,
       'cv': cv,
@@ -112,7 +112,7 @@ class ScoreRepository {
   }
 
   Future<List<Score>> getPHScores() async {
-    List<Score> scoreList = [];
+    var scoreList = <Score>[];
     final query = await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -120,11 +120,11 @@ class ScoreRepository {
         .get();
     final scores = query.docs.map((doc) => Score(doc)).toList();
     final favoriteScore = scores.where((score) => score.isFavorite).toList();
-    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    final otherScores = scores.where((score) => !score.isFavorite).toList();
     scoreList = favoriteScore;
-    otherScores.forEach((score) {
-      scoreList.add(score);
-    });
+    for (var i = 0; i < otherScores.length; i++) {
+      scoreList.add(otherScores[i]);
+    }
     return scoreList;
   }
 
@@ -147,7 +147,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('ph')
         .doc(uuid)
-        .set({
+        .set(<String, dynamic>{
       'scoreId': uuid,
       'total': total,
       'components': techs,
@@ -162,7 +162,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('ph')
         .doc(scoreId)
-        .update({
+        .update(<String, dynamic>{
       'total': total,
       'components': techs,
     });
@@ -192,7 +192,7 @@ class ScoreRepository {
   }
 
   Future<List<Score>> getSRScores() async {
-    List<Score> scoreList = [];
+    var scoreList = <Score>[];
     final query = await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -200,11 +200,11 @@ class ScoreRepository {
         .get();
     final scores = query.docs.map((doc) => Score(doc)).toList();
     final favoriteScore = scores.where((score) => score.isFavorite).toList();
-    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    final otherScores = scores.where((score) => !score.isFavorite).toList();
     scoreList = favoriteScore;
-    otherScores.forEach((score) {
-      scoreList.add(score);
-    });
+    for (var i = 0; i < otherScores.length; i++) {
+      scoreList.add(otherScores[i]);
+    }
     return scoreList;
   }
 
@@ -227,7 +227,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('sr')
         .doc(uuid)
-        .set({
+        .set(<String, dynamic>{
       'scoreId': uuid,
       'total': total,
       'components': techs,
@@ -242,7 +242,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('sr')
         .doc(scoreId)
-        .update({
+        .update(<String, dynamic>{
       'total': total,
       'components': techs,
     });
@@ -272,7 +272,7 @@ class ScoreRepository {
   }
 
   Future<List<Score>> getPBScores() async {
-    List<Score> scoreList = [];
+    var scoreList = <Score>[];
     final query = await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -280,11 +280,11 @@ class ScoreRepository {
         .get();
     final scores = query.docs.map((doc) => Score(doc)).toList();
     final favoriteScore = scores.where((score) => score.isFavorite).toList();
-    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    final otherScores = scores.where((score) => !score.isFavorite).toList();
     scoreList = favoriteScore;
-    otherScores.forEach((score) {
-      scoreList.add(score);
-    });
+    for (var i = 0; i < otherScores.length; i++) {
+      scoreList.add(otherScores[i]);
+    }
     return scoreList;
   }
 
@@ -307,7 +307,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('pb')
         .doc(uuid)
-        .set({
+        .set(<String, dynamic>{
       'scoreId': uuid,
       'total': total,
       'components': techs,
@@ -322,7 +322,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('pb')
         .doc(scoreId)
-        .update({
+        .update(<String, dynamic>{
       'total': total,
       'components': techs,
     });
@@ -352,7 +352,7 @@ class ScoreRepository {
   }
 
   Future<List<ScoreWithCV>> getHBScores() async {
-    List<ScoreWithCV> scoreList = [];
+    var scoreList = <ScoreWithCV>[];
     final query = await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -360,11 +360,11 @@ class ScoreRepository {
         .get();
     final scores = query.docs.map((doc) => ScoreWithCV(doc)).toList();
     final favoriteScore = scores.where((score) => score.isFavorite).toList();
-    final otherScores = scores.where((score) => !(score.isFavorite)).toList();
+    final otherScores = scores.where((score) => !score.isFavorite).toList();
     scoreList = favoriteScore;
-    otherScores.forEach((score) {
-      scoreList.add(score);
-    });
+    for (var i = 0; i < otherScores.length; i++) {
+      scoreList.add(otherScores[i]);
+    }
     return scoreList;
   }
 
@@ -387,7 +387,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('hb')
         .doc(uuid)
-        .set({
+        .set(<String, dynamic>{
       'scoreId': uuid,
       'total': total,
       'components': techs,
@@ -403,7 +403,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('hb')
         .doc(scoreId)
-        .update({
+        .update(<String, dynamic>{
       'total': total,
       'components': techs,
       'cv': cv,
@@ -442,7 +442,7 @@ class ScoreRepository {
           .doc(currentUser!.id)
           .collection('vt')
           .doc(currentUser!.id)
-          .set({
+          .set(<String, dynamic>{
         'scoreId': currentUser!.id,
         'score': score,
         'techName': techName,
@@ -453,7 +453,7 @@ class ScoreRepository {
           .doc(currentUser!.id)
           .collection('vt')
           .doc(currentUser!.id)
-          .update({
+          .update(<String, dynamic>{
         'score': score,
         'techName': techName,
       });
@@ -466,7 +466,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('fx')
         .doc(scoreId)
-        .update({'isFavorite': isFavorite});
+        .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
   Future<void> favoritePHUpdate(String scoreId, bool isFavorite) async {
@@ -475,7 +475,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('ph')
         .doc(scoreId)
-        .update({'isFavorite': isFavorite});
+        .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
   Future<void> favoriteSRUpdate(String scoreId, bool isFavorite) async {
@@ -484,7 +484,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('sr')
         .doc(scoreId)
-        .update({'isFavorite': isFavorite});
+        .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
   Future<void> favoritePBUpdate(String scoreId, bool isFavorite) async {
@@ -493,7 +493,7 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('pb')
         .doc(scoreId)
-        .update({'isFavorite': isFavorite});
+        .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
   Future<void> favoriteHBUpdate(String scoreId, bool isFavorite) async {
@@ -502,6 +502,6 @@ class ScoreRepository {
         .doc(currentUser!.id)
         .collection('hb')
         .doc(scoreId)
-        .update({'isFavorite': isFavorite});
+        .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 }

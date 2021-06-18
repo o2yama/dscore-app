@@ -3,8 +3,8 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 
 class EditPasswordModel extends ChangeNotifier {
-  final UserRepository userRepository;
   EditPasswordModel({required this.userRepository});
+  final UserRepository userRepository;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;
@@ -14,7 +14,7 @@ class EditPasswordModel extends ChangeNotifier {
   String conFirmingPassword = '';
 
   void onEmailFieldChanged(String text) {
-    this.email = text;
+    email = text;
     notifyListeners();
   }
 }

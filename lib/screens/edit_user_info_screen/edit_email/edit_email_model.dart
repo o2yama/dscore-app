@@ -47,10 +47,11 @@ class EditEmailModel extends ChangeNotifier {
           notifyListeners();
           return 'fail auth';
         }
-      } catch (e) {
+      } on Exception catch (e) {
         isLoading = false;
         notifyListeners();
-        throw e;
+        final Error error = ArgumentError(e);
+        throw error;
       }
     } else {
       isLoading = false;

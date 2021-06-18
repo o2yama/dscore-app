@@ -18,12 +18,12 @@ class ThemeColorModel extends ChangeNotifier {
   bool isSelected = false;
 
   Future<void> setThemeColor(String color) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('themeColor', '$color');
+    final pref = await SharedPreferences.getInstance();
+    await pref.setString('themeColor', '$color');
   }
 
   Future<void> getThemeColor() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
+    final pref = await SharedPreferences.getInstance();
     themeColor = (themes[pref.getString('themeColor')] ?? Colors.yellow[700])!;
     notifyListeners();
   }

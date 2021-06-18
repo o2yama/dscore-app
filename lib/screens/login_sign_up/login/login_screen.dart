@@ -17,13 +17,13 @@ TextEditingController passwordController = TextEditingController();
 class LoginScreen extends StatelessWidget {
   void _showValidMessage(BuildContext context, String message) {
     Fluttertoast.showToast(
-        msg: "$message",
+        msg: '$message',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.pinkAccent,
         textColor: Colors.white,
-        fontSize: 16.0);
+        fontSize: 16);
   }
 
   @override
@@ -38,25 +38,25 @@ class LoginScreen extends StatelessWidget {
               return Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: Form(
                       key: _formKey,
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             _backButton(context),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             _description(context),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             _emailController(context),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
                             _passwordController(context),
-                            SizedBox(height: 50),
+                            const SizedBox(height: 50),
                             _loginButton(context),
-                            SizedBox(height: 30),
+                            const SizedBox(height: 30),
                             _toSignUpScreenButton(context),
-                            SizedBox(height: 300),
+                            const SizedBox(height: 300),
                           ],
                         ),
                       ),
@@ -67,8 +67,8 @@ class LoginScreen extends StatelessWidget {
                           color: Colors.grey.withOpacity(0.6),
                           child: Center(
                             child: Platform.isIOS
-                                ? CupertinoActivityIndicator()
-                                : CircularProgressIndicator(),
+                                ? const CupertinoActivityIndicator()
+                                : const CircularProgressIndicator(),
                           ),
                         )
                       : Container(),
@@ -87,16 +87,16 @@ class LoginScreen extends StatelessWidget {
       children: [
         SizedBox(width: Utilities().isMobile() ? 0 : 18),
         TextButton(
-          child: Icon(
-            Icons.clear,
-            color: Theme.of(context).primaryColor,
-          ),
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushAndRemoveUntil<Object>(
                 context,
                 MaterialPageRoute(builder: (context) => TotalScoreListScreen()),
                 (_) => false);
           },
+          child: Icon(
+            Icons.clear,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
       ],
     );
@@ -107,13 +107,13 @@ class LoginScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text('ログイン', style: Theme.of(context).textTheme.headline5),
-        SizedBox(height: 24),
-        Container(
+        const SizedBox(height: 24),
+        SizedBox(
           height: 150,
           child: Image.asset('images/splash_image.JPG'),
         ),
-        SizedBox(height: 24),
-        Text('ログインして、Dスコアを管理しましょう！'),
+        const SizedBox(height: 24),
+        const Text('ログインして、Dスコアを管理しましょう！'),
       ],
     );
   }
@@ -124,17 +124,17 @@ class LoginScreen extends StatelessWidget {
       controller: emailController,
       cursorColor: Theme.of(context).primaryColor,
       autofocus: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 10),
         prefixIcon: Icon(Icons.mail),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
           borderSide: BorderSide(
             color: Colors.grey,
@@ -142,9 +142,7 @@ class LoginScreen extends StatelessWidget {
         ),
         hintText: 'メールアドレス',
       ),
-      onChanged: (text) {
-        loginModel.onEmailEdited(text);
-      },
+      onChanged: loginModel.onEmailEdited,
     );
   }
 
@@ -154,17 +152,17 @@ class LoginScreen extends StatelessWidget {
       controller: passwordController,
       cursorColor: Theme.of(context).primaryColor,
       autofocus: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 10),
         prefixIcon: Icon(Icons.vpn_key_sharp),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
           borderSide: BorderSide(
             color: Colors.grey,
@@ -172,9 +170,7 @@ class LoginScreen extends StatelessWidget {
         ),
         hintText: 'パスワード',
       ),
-      onChanged: (text) {
-        loginModel.onPasswordEdited(text);
-      },
+      onChanged: loginModel.onPasswordEdited,
     );
   }
 
@@ -183,6 +179,9 @@ class LoginScreen extends StatelessWidget {
       onPressed: () async {
         await _onLoginButtonPressed(context);
       },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+      ),
       child: Text(
         'ログイン',
         style: TextStyle(
@@ -191,82 +190,81 @@ class LoginScreen extends StatelessWidget {
           fontSize: 18,
         ),
       ),
-      style:
-          ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),
     );
   }
 
   Future<void> _onLoginButtonPressed(BuildContext context) async {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
-    if (!(Validator().validEmail(loginModel.email))) {
+    if (!Validator().validEmail(loginModel.email)) {
       _showValidMessage(context, 'メールアドレスをご確認ください。');
     } else {
-      if (!(Validator().validPassword(loginModel.password))) {
+      if (!Validator().validPassword(loginModel.password)) {
         _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
       } else {
         try {
           await loginModel.logIn(loginModel.email, loginModel.password);
-          showDialog(
+          await showDialog<Dialog>(
             context: context,
             builder: (context) => Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('ログインできました。'),
-                    content: Text('Dスコアを登録しましょう！'),
+                    title: const Text('ログインできました。'),
+                    content: const Text('Dスコアを登録しましょう！'),
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
+                          Navigator.pushAndRemoveUntil<Object>(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TotalScoreListScreen()),
                               (_) => false);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   )
                 : AlertDialog(
-                    title: Text('ログインできました。'),
-                    content: Text('Dスコアを登録しましょう！'),
+                    title: const Text('ログインできました。'),
+                    content: const Text('Dスコアを登録しましょう！'),
                     actions: [
                       TextButton(
                         onPressed: () {
-                          Navigator.pushAndRemoveUntil(
+                          Navigator.pushAndRemoveUntil<Object>(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TotalScoreListScreen()),
                               (_) => false);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   ),
           );
-        } catch (e) {
-          showDialog(
+        } on Exception catch (e) {
+          print(e);
+          await showDialog<Dialog>(
             context: context,
             builder: (context) => Platform.isIOS
                 ? CupertinoAlertDialog(
-                    title: Text('ログインに失敗しました'),
-                    content: Text('メールアドレスとパスワードをご確認ください。'),
+                    title: const Text('ログインに失敗しました'),
+                    content: const Text('メールアドレスとパスワードをご確認ください。'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   )
                 : AlertDialog(
-                    title: Text('ログインに失敗しました'),
-                    content: Text('メールアドレスとパスワードをご確認ください。'),
+                    title: const Text('ログインに失敗しました'),
+                    content: const Text('メールアドレスとパスワードをご確認ください。'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       )
                     ],
                   ),
@@ -278,16 +276,14 @@ class LoginScreen extends StatelessWidget {
 
   Widget _toSignUpScreenButton(BuildContext context) {
     return TextButton(
-      child: Text(
-        'ユーザー登録がまだの方はこちら',
-        style: TextStyle(color: Colors.blue),
-      ),
       onPressed: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushAndRemoveUntil<Object>(
             context,
             MaterialPageRoute(builder: (context) => SignUpScreen()),
             (_) => false);
       },
+      child:
+          const Text('ユーザー登録がまだの方はこちら', style: TextStyle(color: Colors.blue)),
     );
   }
 }

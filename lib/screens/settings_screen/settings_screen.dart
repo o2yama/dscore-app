@@ -23,11 +23,11 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
                       _backButton(context),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       _settingsListView(context),
                     ],
                   ),
@@ -41,7 +41,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
               color: Theme.of(context).primaryColor,
               size: Utilities().isMobile() ? 20 : 30,
             ),
-            SizedBox(width: 24),
+            const SizedBox(width: 24),
             Text(
               '設定',
               style: TextStyle(
@@ -70,7 +70,7 @@ class SettingsScreen extends StatelessWidget {
   Widget _settingsListView(BuildContext context) {
     final loginModel = Provider.of<LoginModel>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
-    return Container(
+    return SizedBox(
       height: height * 0.8,
       child: ListView(
         children: [
@@ -105,62 +105,62 @@ class SettingsScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (title == 'ログアウト') {
-          showDialog(
+          showDialog<Dialog>(
               context: context,
               builder: (context) {
                 return Platform.isIOS
                     ? CupertinoAlertDialog(
-                        title: Text('ログアウトしてもよろしいですか？'),
-                        content: Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
+                        title: const Text('ログアウトしてもよろしいですか？'),
+                        content: const Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
                         actions: [
                           TextButton(
-                            child: Text('キャンセル'),
                             onPressed: () {
                               Navigator.pop(context);
                             },
+                            child: const Text('キャンセル'),
                           ),
                           TextButton(
-                            child: Text('OK'),
                             onPressed: () async {
                               scoreModel.resetScores();
                               await loginModel.signOut();
-                              Navigator.pushAndRemoveUntil(
+                              await Navigator.pushAndRemoveUntil<Object>(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => LoginScreen()),
                                   (_) => false);
                             },
+                            child: const Text('OK'),
                           ),
                         ],
                       )
                     : AlertDialog(
-                        title: Text('ログアウトしてもよろしいですか？'),
-                        content: Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
+                        title: const Text('ログアウトしてもよろしいですか？'),
+                        content: const Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
                         actions: [
                           TextButton(
-                            child: Text('キャンセル'),
                             onPressed: () {
                               Navigator.pop(context);
                             },
+                            child: const Text('キャンセル'),
                           ),
                           TextButton(
-                            child: Text('OK'),
                             onPressed: () async {
                               scoreModel.resetScores();
                               await loginModel.signOut();
-                              Navigator.pushAndRemoveUntil(
+                              await Navigator.pushAndRemoveUntil<Object>(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => LoginScreen()),
                                   (_) => false);
                             },
+                            child: const Text('OK'),
                           ),
                         ],
                       );
               });
         } else {
           if (title == 'ログイン') {
-            Navigator.push(
+            Navigator.push<Object>(
                 context,
                 MaterialPageRoute(
                   builder: (_) => screen!,
@@ -188,7 +188,7 @@ class SettingsScreen extends StatelessWidget {
                     forceWebView: true,
                   );
                 } else {
-                  Navigator.push(
+                  Navigator.push<Object>(
                       context, MaterialPageRoute(builder: (_) => screen!));
                 }
               }
@@ -196,19 +196,19 @@ class SettingsScreen extends StatelessWidget {
           }
         }
       },
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: 80,
         child: Card(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 Icon(
                   icon,
                   color: Theme.of(context).primaryColor,
                 ),
-                SizedBox(width: 24),
+                const SizedBox(width: 24),
                 Text(
                   '$title',
                   style: TextStyle(

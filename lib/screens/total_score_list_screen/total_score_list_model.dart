@@ -1,3 +1,4 @@
+import 'package:app_review/app_review.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
@@ -5,6 +6,7 @@ import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TotalScoreListModel extends ChangeNotifier {
   TotalScoreListModel({required this.scoreRepository});
@@ -13,6 +15,7 @@ class TotalScoreListModel extends ChangeNotifier {
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = true;
   bool isDoneGetScore = false;
+  bool isAppReviewDialogShowed = false;
 
   ScoreWithCV? favoriteFx;
   Score? favoritePh;
@@ -79,6 +82,22 @@ class TotalScoreListModel extends ChangeNotifier {
         favoritePbScore * 10 +
         favoriteHbScore * 10;
     totalScore /= 10;
+    notifyListeners();
+  }
+
+  Future<void> getIsAppReviewDialogShowed() async {
+    final prefs = await SharedPreferences.getInstance();
+    isAppReviewDialogShowed = prefs.getBool('isAppReviewDialogShowed') ?? false;
+  }
+
+  Future<void> setAppReviewDialogShowed() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isAppReviewDialogShowed', true);
+  }
+
+  //ユーザーにアプリを評価してもらうためのダイアログ
+  Future<void> showAppReviewDialog() async {
+    await AppReview.requestReview.then(print);
     notifyListeners();
   }
 }

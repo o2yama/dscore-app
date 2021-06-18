@@ -32,7 +32,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         banner = BannerAd(
           adUnitId: adState.bannerAdUnitId,
           size: AdSize.banner,
-          request: AdRequest(),
+          request: const AdRequest(),
           listener: adState.adListener,
         )..load();
       });
@@ -46,18 +46,24 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         Provider.of<TotalScoreListModel>(context, listen: false);
     Future(() async {
       await introModel.checkIsIntroWatched();
-      if (introModel.currentUser == null &&
-          !(introModel.isDoneGettingUserData)) {
+      if (introModel.currentUser == null && !introModel.isDoneGettingUserData) {
         await introModel.getCurrentUserData();
       } else {
         if (introModel.isIntroWatched) {
-          if (!(totalScoreListModel.isDoneGetScore)) {
+          if (!totalScoreListModel.isDoneGetScore) {
             await totalScoreListModel.getFavoriteScores();
           }
         }
       }
       introModel.changeLoaded();
       totalScoreListModel.changeLoaded();
+      await totalScoreListModel.getIsAppReviewDialogShowed();
+      //トータルが20点超えたら、レビュー用のダイアログ表示
+      if (!totalScoreListModel.isAppReviewDialogShowed &&
+          totalScoreListModel.totalScore >= 20) {
+        await totalScoreListModel.showAppReviewDialog();
+        await totalScoreListModel.setAppReviewDialogShowed();
+      }
     });
     return Consumer<TotalScoreListModel>(
         builder: (context, totalScoreListModel, child) {
@@ -71,7 +77,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                     color: Theme.of(context).backgroundColor,
                     child: SafeArea(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8),
                         child: Column(
                           children: [
                             _ad(context),
@@ -101,8 +107,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                       color: Colors.grey.withOpacity(0.6),
                       child: Center(
                         child: Platform.isIOS
-                            ? CupertinoActivityIndicator()
-                            : CircularProgressIndicator(),
+                            ? const CupertinoActivityIndicator()
+                            : const CircularProgressIndicator(),
                       ),
                     )
                   : Container(),
@@ -116,7 +122,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   Widget _ad(BuildContext context) {
     return banner == null
         ? Container()
-        : Container(
+        : SizedBox(
             height: 50,
             child: AdWidget(ad: banner!),
           );
@@ -124,7 +130,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
 
   Widget _settingButtons(BuildContext context) {
     final height = MediaQuery.of(context).size.height - 50; //広告の分の50px
-    return Container(
+    return SizedBox(
       height: height * 0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -132,7 +138,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
           IconButton(
             icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
             onPressed: () {
-              Navigator.push(
+              Navigator.push<Object>(
                 context,
                 MaterialPageRoute(
                   builder: (context) => SettingsScreen(),
@@ -148,7 +154,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
 
   Widget _eventsListView(BuildContext context) {
     final height = MediaQuery.of(context).size.height - 50;
-    return Container(
+    return SizedBox(
       height: height * 0.9,
       child: ListView(
         children: [
@@ -180,15 +186,16 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
               scoreModel.selectEvent(event);
               if (event == '跳馬') {
                 await scoreModel.getVTScore();
-                Navigator.push(
+                await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
                         builder: (context) => VTScoreSelectScreen()));
               } else {
-                Navigator.push(
+                await scoreModel.getScores(event);
+                await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ScoreListScreen(event),
+                      builder: (context) => ScoreListScreen(event: event),
                     ));
               }
             },
@@ -201,20 +208,22 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                       Expanded(
                         flex: 2,
                         child: Container(
-                          padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                          padding: const EdgeInsets.only(left: 15, top: 10),
                           child: Text(
                             '$event',
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                         ),
                       ),
                       Expanded(
                         child: Container(
-                          padding: EdgeInsets.only(left: 15.0),
+                          padding: const EdgeInsets.only(left: 15),
                           child: Text(
                             '$eventEng',
-                            style:
-                                TextStyle(fontSize: 15.0, color: Colors.grey),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       ),
@@ -224,7 +233,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    padding: EdgeInsets.only(left: 30.0),
+                    padding: const EdgeInsets.only(left: 30),
                     child: event == '床'
                         ? model.favoriteFx == null
                             ? Text('0.0',
@@ -289,12 +298,12 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                                                         .textTheme
                                                         .headline6,
                                                   )
-                                            : Text('0.0'),
+                                            : const Text('0.0'),
                   ),
                 ),
                 Expanded(
                   flex: 3,
-                  child: Container(
+                  child: SizedBox(
                     height: 200,
                     width: width * 0.4,
                     child: _techsList(event, context),
@@ -319,12 +328,12 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 30.0),
+          padding: const EdgeInsets.only(top: 30),
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.only(left: 20.0, right: 160.0),
-                child: Text(
+                padding: const EdgeInsets.only(left: 20, right: 160),
+                child: const Text(
                   '合計',
                   style: TextStyle(fontSize: 30),
                 ),
@@ -336,7 +345,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
             ],
           ),
         ),
-        Divider(color: Colors.black)
+        const Divider(color: Colors.black),
       ],
     );
   }
@@ -348,7 +357,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         Provider.of<TotalScoreListModel>(context, listen: false);
     if (event == '床') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),
@@ -375,7 +384,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     }
     if (event == 'あん馬') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),
@@ -402,7 +411,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     }
     if (event == '吊り輪') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),
@@ -429,7 +438,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     }
     if (event == '跳馬') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
             decoration: BoxDecoration(
               border:
@@ -443,7 +452,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     }
     if (event == '平行棒') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),
@@ -470,7 +479,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     }
     if (event == '鉄棒') {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).primaryColor, width: 1),

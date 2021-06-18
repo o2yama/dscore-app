@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ScoreWithCV {
   ScoreWithCV(DocumentSnapshot doc) {
-    total = doc.data()!['total'];
-    techs = List.from(doc['components']);
-    cv = doc.data()!['cv'];
-    scoreId = doc.data()!['scoreId'];
-    isFavorite = isFavorite = doc.data()!['isFavorite'];
+    total = doc.data()!['total'] as num;
+    techs = List<String>.from(doc['components'] as List<dynamic>);
+    cv = doc.data()!['cv'] as num;
+    scoreId = doc.data()!['scoreId'] as String;
+    isFavorite = isFavorite = doc.data()!['isFavorite'] as bool;
   }
 
   num total = 0;

@@ -27,7 +27,6 @@ class ScoreModel extends ChangeNotifier {
   List<ScoreWithCV> hbScoreList = [];
 
   bool isLoading = false;
-  bool isFinishedGettingScores = false;
 
   ///scoreListScreen関連
   Future<void> getScores(String event) async {
@@ -52,7 +51,6 @@ class ScoreModel extends ChangeNotifier {
       }
     }
 
-    isFinishedGettingScores = true;
     isLoading = false;
     notifyListeners();
   }
@@ -60,46 +58,74 @@ class ScoreModel extends ChangeNotifier {
   //お気に入り変更するため
   Future<List<String>> getScoreIds(String event) async {
     if (event == '床') {
-      List<String> scoreIds = [];
-      fxScoreList.forEach((fxScore) {
+      final scoreIds = <String>[];
+      for (final fxScore in fxScoreList) {
         scoreIds.add(fxScore.scoreId);
-      });
+      }
       return scoreIds;
     }
     if (event == 'あん馬') {
-      List<String> scoreIds = [];
-      phScoreList.forEach((phScore) {
+      final scoreIds = <String>[];
+      for (final phScore in phScoreList) {
         scoreIds.add(phScore.scoreId);
-      });
+      }
       return scoreIds;
     }
     if (event == '吊り輪') {
-      List<String> scoreIds = [];
-      srScoreList.forEach((srScore) {
+      final scoreIds = <String>[];
+      for (final srScore in srScoreList) {
         scoreIds.add(srScore.scoreId);
-      });
+      }
       return scoreIds;
     }
     if (event == '平行棒') {
-      List<String> scoreIds = [];
-      pbScoreList.forEach((pbScore) {
+      final scoreIds = <String>[];
+      for (final pbScore in pbScoreList) {
         scoreIds.add(pbScore.scoreId);
-      });
+      }
       return scoreIds;
     }
     if (event == '鉄棒') {
-      List<String> scoreIds = [];
-      hbScoreList.forEach((hbScore) {
+      final scoreIds = <String>[];
+      for (final hbScore in hbScoreList) {
         scoreIds.add(hbScore.scoreId);
-      });
+      }
       return scoreIds;
     } else {
       return [];
     }
   }
 
+  Future<void> onFavoriteButtonTapped(
+    String event,
+    bool isFavorite,
+    String scoreId,
+  ) async {
+    isLoading = true;
+    notifyListeners();
+
+    if (isFavorite) {
+      await changeFavoriteState(scoreId, event, false);
+    } else {
+      final scoreIdList = await getScoreIds(event);
+      //全てのスコアをのisFavoriteをfalseにしてから、選択されたものをtrueにする。
+      for (final scoreId in scoreIdList) {
+        await changeFavoriteState(scoreId, event, false);
+      }
+      await changeFavoriteState(scoreId, event, true);
+    }
+
+    await getScores(event);
+
+    isLoading = false;
+    notifyListeners();
+  }
+
   Future<void> changeFavoriteState(
-      String event, String scoreId, bool isFavorite) async {
+    String scoreId,
+    String event,
+    bool isFavorite,
+  ) async {
     if (event == '床') {
       await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
     }
@@ -115,29 +141,6 @@ class ScoreModel extends ChangeNotifier {
     if (event == '鉄棒') {
       await scoreRepository.favoriteHBUpdate(scoreId, isFavorite);
     }
-  }
-
-  Future<void> onFavoriteButtonTapped(
-      String event, bool isFavorite, String scoreId) async {
-    isLoading = true;
-    notifyListeners();
-
-    if (isFavorite) {
-      isFavorite = false;
-    } else {
-      final scoreIdList = await getScoreIds(event);
-      //全てのスコアをのisFavoriteをfalseにしてから、選択されたものをtrueにする。
-      scoreIdList.forEach((scoreId) {
-        changeFavoriteState(event, scoreId, false);
-      });
-      isFavorite = true;
-    }
-    await changeFavoriteState(event, scoreId, isFavorite);
-
-    getScores(event);
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> deletePerformance(String event, String scoreId) async {
@@ -156,7 +159,7 @@ class ScoreModel extends ChangeNotifier {
     if (event == '鉄棒') {
       await scoreRepository.deleteHBScore(scoreId);
     }
-    getScores(event);
+    await getScores(event);
     notifyListeners();
   }
 
@@ -178,10 +181,14 @@ class ScoreModel extends ChangeNotifier {
   num difficultyPoint = 0.0;
   num egr = 0.0;
   num cv = 0.0;
+  int numberOfGroup1 = 0;
+  int numberOfGroup2 = 0;
+  int numberOfGroup3 = 0;
+  num group4 = 0;
 
   List<String> searchChipWords = [];
   Map<String, num> difficulty = {};
-  Map<String, num> group = {};
+  Map<String, int> group = {};
 
   //どの種目かの判断を各ページで行う
   void selectEvent(String event) {
@@ -216,13 +223,8 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startEdit() {
+  void noEdited() {
     isEdited = false;
-    notifyListeners();
-  }
-
-  void finishEdit() {
-    isEdited = true;
     notifyListeners();
   }
 
@@ -232,12 +234,17 @@ class ScoreModel extends ChangeNotifier {
     difficultyPoint = 0.0;
     egr = 0.0;
     cv = 0.0;
+    numberOfGroup1 = 0;
+    numberOfGroup2 = 0;
+    numberOfGroup3 = 0;
+    group4 = 0;
     notifyListeners();
   }
 
   void deleteTech(int index, String event) {
     decidedTechList.remove(decidedTechList[index]);
     isEdited = true;
+    calculateNumberOfGroup(event);
     calculateScore(event);
     notifyListeners();
   }
@@ -248,27 +255,28 @@ class ScoreModel extends ChangeNotifier {
 
     selectEvent(event);
     if (event == '床') {
-      ScoreWithCV fxScore = await scoreRepository.getFXSCore(scoreId);
+      final fxScore = await scoreRepository.getFXSCore(scoreId);
       decidedTechList = fxScore.techs;
       cv = fxScore.cv;
     }
     if (event == 'あん馬') {
-      Score phScore = await scoreRepository.getPHScore(scoreId);
+      final phScore = await scoreRepository.getPHScore(scoreId);
       decidedTechList = phScore.techs;
     }
     if (event == '吊り輪') {
-      Score srScore = await scoreRepository.getSRScore(scoreId);
+      final srScore = await scoreRepository.getSRScore(scoreId);
       decidedTechList = srScore.techs;
     }
     if (event == '平行棒') {
-      Score pbScore = await scoreRepository.getPBScore(scoreId);
+      final pbScore = await scoreRepository.getPBScore(scoreId);
       decidedTechList = pbScore.techs;
     }
     if (event == '鉄棒') {
-      ScoreWithCV hbScore = await scoreRepository.getHBSCore(scoreId);
+      final hbScore = await scoreRepository.getHBSCore(scoreId);
       decidedTechList = hbScore.techs;
       cv = hbScore.cv;
     }
+    calculateNumberOfGroup(event);
     calculateScore(event);
 
     isLoading = false;
@@ -279,26 +287,36 @@ class ScoreModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    bool isFavorite = false;
+    var isFavorite = false;
     if (event == '床') {
-      if (fxScoreList.isEmpty) isFavorite = true;
+      if (fxScoreList.isEmpty) {
+        isFavorite = true;
+      }
       await scoreRepository.setFXScore(
           totalScore, decidedTechList, cv, isFavorite);
     }
     if (event == 'あん馬') {
-      if (phScoreList.isEmpty) isFavorite = true;
+      if (phScoreList.isEmpty) {
+        isFavorite = true;
+      }
       await scoreRepository.setPHScore(totalScore, decidedTechList, isFavorite);
     }
     if (event == '吊り輪') {
-      if (srScoreList.isEmpty) isFavorite = true;
+      if (srScoreList.isEmpty) {
+        isFavorite = true;
+      }
       await scoreRepository.setSRScore(totalScore, decidedTechList, isFavorite);
     }
     if (event == '平行棒') {
-      if (pbScoreList.isEmpty) isFavorite = true;
+      if (pbScoreList.isEmpty) {
+        isFavorite = true;
+      }
       await scoreRepository.setPBScore(totalScore, decidedTechList, isFavorite);
     }
     if (event == '鉄棒') {
-      if (hbScoreList.isEmpty) isFavorite = true;
+      if (hbScoreList.isEmpty) {
+        isFavorite = true;
+      }
       await scoreRepository.setHBScore(
           totalScore, decidedTechList, cv, isFavorite);
     }
@@ -341,20 +359,41 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onCVSelected(value) {
+  void onCVSelected(num value) {
     cv = value;
     isEdited = true;
     notifyListeners();
   }
 
+  void calculateNumberOfGroup(String event) {
+    numberOfGroup1 = 0;
+    numberOfGroup2 = 0;
+    numberOfGroup3 = 0;
+    group4 = 0;
+    for (final tech in decidedTechList) {
+      if (group[tech] == 1) {
+        numberOfGroup1++;
+      } else if (group[tech] == 2) {
+        numberOfGroup2++;
+      } else if (group[tech] == 3) {
+        numberOfGroup3++;
+      }
+      //床以外の種目かつ、技がグループ4だった時
+      if (event != '床' && group[tech] == 4) {
+        group4 = difficulty[tech]!;
+      }
+    }
+    notifyListeners();
+  }
+
   void calculateScore(String event) {
-    if (decidedTechList.length != 0) {
+    if (decidedTechList.isNotEmpty) {
       if (event == '床') {
         //床の要求点の計算
-        List<String> group1 = [];
-        List<String> group2 = [];
-        List<String> group3 = [];
-        decidedTechList.forEach((tech) {
+        final group1 = <String>[];
+        final group2 = <String>[];
+        final group3 = <String>[];
+        for (final tech in decidedTechList) {
           if (group[tech] == 1) {
             group1.add(tech);
           }
@@ -364,16 +403,16 @@ class ScoreModel extends ChangeNotifier {
           if (group[tech] == 3) {
             group3.add(tech);
           }
-        });
-        if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
+        }
+        if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
         } else {
-          if (group1.length > 0 && group2.length > 0 ||
-              group1.length > 0 && group3.length > 0 ||
-              group2.length > 0 && group3.length > 0) {
+          if (group1.isNotEmpty && group2.isNotEmpty ||
+              group1.isNotEmpty && group3.isNotEmpty ||
+              group2.isNotEmpty && group3.isNotEmpty) {
             egr = 1.0;
           } else {
-            if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
+            if (group1.isNotEmpty || group2.isNotEmpty || group3.isNotEmpty) {
               egr = 0.5;
             }
           }
@@ -391,11 +430,11 @@ class ScoreModel extends ChangeNotifier {
         }
       } else {
         //床以外の要求点の計算
-        List<String> group1 = [];
-        List<String> group2 = [];
-        List<String> group3 = [];
-        String group4 = '';
-        decidedTechList.forEach((tech) {
+        final group1 = <String>[];
+        final group2 = <String>[];
+        final group3 = <String>[];
+        var group4 = '';
+        for (final tech in decidedTechList) {
           if (group[tech] == 1) {
             group1.add(tech);
           }
@@ -408,16 +447,16 @@ class ScoreModel extends ChangeNotifier {
           if (group[tech] == 4) {
             group4 = tech;
           }
-        });
-        if (group1.length > 0 && group2.length > 0 && group3.length > 0) {
+        }
+        if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
         } else {
-          if (group1.length > 0 && group2.length > 0 ||
-              group1.length > 0 && group3.length > 0 ||
-              group2.length > 0 && group3.length > 0) {
+          if (group1.isNotEmpty && group2.isNotEmpty ||
+              group1.isNotEmpty && group3.isNotEmpty ||
+              group2.isNotEmpty && group3.isNotEmpty) {
             egr = 1.0;
           } else {
-            if (group1.length > 0 || group2.length > 0 || group3.length > 0) {
+            if (group1.isNotEmpty || group2.isNotEmpty || group3.isNotEmpty) {
               egr = 0.5;
             }
           }
@@ -436,10 +475,10 @@ class ScoreModel extends ChangeNotifier {
       }
       //難度点の計算
       difficultyPoint = 0;
-      decidedTechList.forEach((tech) {
+      for (final tech in decidedTechList) {
         difficultyPoint = difficultyPoint * 10 + difficulty[tech]!;
         difficultyPoint /= 10;
-      });
+      }
       //　トータルの計算
       totalScore = 0;
       totalScore = difficultyPoint * 10 + egr * 10 + cv * 10;
@@ -453,6 +492,17 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void onReOrder(int oldIndex, int newIndex) {
+    if (oldIndex < newIndex) {
+      // ignore: parameter_assignments
+      newIndex -= 1;
+    }
+    final numberChangedTech = decidedTechList.removeAt(oldIndex);
+    decidedTechList.insert(newIndex, numberChangedTech);
+    isEdited = true;
+    notifyListeners();
+  }
+
   ///SearchScreen関連
   List<String> searchResult = [];
   String vtTechName = '';
@@ -463,10 +513,8 @@ class ScoreModel extends ChangeNotifier {
       searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
-      List<String> inputCharacters = [];
-      text.characters.forEach((char) {
-        inputCharacters.add(char);
-      });
+      final inputCharacters = <String>[];
+      text.characters.forEach(inputCharacters.add);
       if (event == '床') {
         searchResult = searchLogic(fxGroup, inputCharacters.toList());
       }
@@ -487,28 +535,26 @@ class ScoreModel extends ChangeNotifier {
   }
 
   List<String> searchLogic(Map<String, int> group, List<String> characters) {
-    List<String> items = [];
-    List<String> removeItems = [];
-    for (int i = 0; i < characters.length; i++) {
+    var items = <String>[];
+    final removeItems = <String>[];
+    for (var i = 0; i < characters.length; i++) {
       //0番目の文字を含むものをitemsに追加
       //1番目以降の文字を含んでいないものをremoveListに追加
       if (i == 0) {
-        final List<String> resultContainingFirstChar = group.keys
-            .where((techName) => techName.toLowerCase().contains(characters[0]))
+        final resultContainingFirstChar = group.keys
+            .where((techName) => techName.contains(characters[0]))
             .toList();
         items = resultContainingFirstChar;
       } else {
-        items.forEach((techName) {
-          if (!techName.toLowerCase().contains(characters[i])) {
-            removeItems.add(techName);
+        for (final item in items) {
+          if (!item.toLowerCase().contains(characters[i])) {
+            removeItems.add(item);
           }
-        });
+        }
       }
     }
     //removeListの要素をitemsから削除
-    removeItems.forEach((removeTechName) {
-      items.remove(removeTechName);
-    });
+    removeItems.forEach(items.remove);
     return items;
   }
 
@@ -525,16 +571,17 @@ class ScoreModel extends ChangeNotifier {
   }
 
   void onTechTileSelected(String techName, int? order) {
-    bool isExist = false;
+    var isExist = false;
     if (order != null) {
       decidedTechList[order - 1] = techName;
     } else {
-      decidedTechList.forEach((tech) {
+      for (final tech in decidedTechList) {
         if (techName == tech) {
           isExist = true;
-          throw '同じ技が登録されています。';
+          final Error error = ArgumentError('同じ技が登録されています。');
+          throw error;
         }
-      });
+      }
       if (!isExist) {
         decidedTechList.add(techName);
       }
@@ -546,8 +593,7 @@ class ScoreModel extends ChangeNotifier {
 
   ///VTScoreList関連
   void onVTTechSelected(int index) {
-    final List<String> vtTechList =
-        vtTech.keys.map((tech) => tech.toString()).toList();
+    final vtTechList = vtTech.keys.map((tech) => tech.toString()).toList();
     vtTechName = vtTechList[index];
     totalScore = vtTech[vtTechList[index]]!;
     isEdited = true;

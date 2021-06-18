@@ -11,8 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.2
   provider: ^5.0.0
   firebase_core: ^1.0.3
   firebase_auth: ^1.1.0
@@ -27,10 +26,13 @@ dependencies:
   fluttertoast: ^8.0.7
   url_launcher: ^6.0.4
   app_tracking_transparency: ^2.0.1
+  app_review: ^2.1.1+1
+  permission_handler: ^8.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic_mono: any
 
 flutter_icons:
   android: true
@@ -47,6 +49,12 @@ flutter:
   uses-material-design: true
   assets:
    - images/
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  exclude:
 
   # example:
   # fonts:

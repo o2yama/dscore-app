@@ -9,17 +9,18 @@ class UserRepository {
 
   Future<void> signUpWithEmailAndPassWord(String email, String password) async {
     try {
-      final User? user = (await _auth.createUserWithEmailAndPassword(
+      final user = (await _auth.createUserWithEmailAndPassword(
               email: email, password: password))
           .user;
       if (user != null) {
-        await _db.collection("users").doc(user.uid).set({
-          "email": user.email,
-          "id": user.uid,
+        await _db.collection('users').doc(user.uid).set(<String, dynamic>{
+          'email': user.email,
+          'id': user.uid,
         });
       }
-    } catch (e) {
-      throw e;
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      throw error;
     }
   }
 
@@ -29,25 +30,26 @@ class UserRepository {
       if (user != null) {
         await user.sendEmailVerification();
       }
-    } catch (e) {
-      print(e);
-      throw e;
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      throw error;
     }
   }
 
   Future<void> logInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } catch (e) {
-      print('authによるエラー');
-      throw e;
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      print(error);
+      throw error;
     }
   }
 
   Future<bool> getIsExistUser(User user) async {
     final query =
-        await _db.collection("users").where("id", isEqualTo: user.uid).get();
-    if (query.docs.length > 0) {
+        await _db.collection('users').where('id', isEqualTo: user.uid).get();
+    if (query.docs.isNotEmpty) {
       return true;
     }
     return false;
@@ -68,8 +70,9 @@ class UserRepository {
         print('ログインしていない。');
         return;
       }
-    } catch (e) {
-      throw (e);
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      throw error;
     }
   }
 
@@ -85,7 +88,7 @@ class UserRepository {
           EmailAuthProvider.credential(email: user!.email!, password: password);
       await user.reauthenticateWithCredential(credential);
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       print(e);
       return false;
     }
@@ -95,21 +98,23 @@ class UserRepository {
     try {
       final user = _auth.currentUser!;
       await user.updateEmail(newEmail);
-    } catch (e) {
-      print(e);
-      throw e;
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      print(error);
+      throw error;
     }
   }
 
   Future<void> updateEmailInDB() async {
     try {
       final user = _auth.currentUser!;
-      await _db.collection('user').doc('${user.uid}').update({
+      await _db.collection('user').doc('${user.uid}').update(<String, dynamic>{
         'email': user.email,
       });
-    } catch (e) {
-      print(e);
-      throw e;
+    } on Exception catch (e) {
+      final Error error = ArgumentError(e);
+      print(error);
+      throw error;
     }
   }
 }

@@ -21,20 +21,20 @@ class EditPasswordScreen extends StatelessWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(height: 50),
+                          const SizedBox(height: 50),
                           _backButton(context),
-                          SizedBox(height: 24),
-                          SizedBox(height: 24),
-                          SizedBox(height: 24),
-                          SizedBox(height: 50),
-                          SizedBox(height: 30),
-                          SizedBox(height: 300),
+                          const SizedBox(height: 24),
+                          const SizedBox(height: 24),
+                          const SizedBox(height: 24),
+                          const SizedBox(height: 50),
+                          const SizedBox(height: 30),
+                          const SizedBox(height: 300),
                         ],
                       ),
                     ),
@@ -45,8 +45,8 @@ class EditPasswordScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.6),
                         child: Center(
                           child: Platform.isIOS
-                              ? CupertinoActivityIndicator()
-                              : CircularProgressIndicator(),
+                              ? const CupertinoActivityIndicator()
+                              : const CircularProgressIndicator(),
                         ),
                       )
                     : Container(),
@@ -59,7 +59,7 @@ class EditPasswordScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
@@ -74,7 +74,7 @@ class EditPasswordScreen extends StatelessWidget {
                         Icons.arrow_back_ios,
                         color: Theme.of(context).primaryColor,
                       ),
-                      SizedBox(width: 24),
+                      const SizedBox(width: 24),
                       Text(
                         'パスワード変更',
                         style: TextStyle(
@@ -85,7 +85,7 @@ class EditPasswordScreen extends StatelessWidget {
                       )
                     ],
                   )
-                : Icon(Icons.clear),
+                : const Icon(Icons.clear),
           ],
         ),
       ),
@@ -99,17 +99,17 @@ class EditPasswordScreen extends StatelessWidget {
       controller: emailController,
       cursorColor: Theme.of(context).primaryColor,
       autofocus: true,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+      decoration: const InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 10),
         prefixIcon: Icon(Icons.mail),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0),
+            Radius.circular(15),
           ),
           borderSide: BorderSide(
             color: Colors.grey,
@@ -117,9 +117,7 @@ class EditPasswordScreen extends StatelessWidget {
         ),
         hintText: 'メールアドレス',
       ),
-      onChanged: (text) {
-        editPasswordModel.onEmailFieldChanged(text);
-      },
+      onChanged: editPasswordModel.onEmailFieldChanged,
     );
   }
 }
