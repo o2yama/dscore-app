@@ -92,13 +92,10 @@ class ThemeColorScreen extends StatelessWidget {
         children: [
           Text(
             'イメージ',
-            style: TextStyle(
-              fontSize: Utilities().isMobile() ? 18 : 24,
-              color: Theme.of(context).primaryColor,
-            ),
+            style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
           ),
           SizedBox(
-            height: 100,
+            height: 130,
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -113,7 +110,7 @@ class ThemeColorScreen extends StatelessWidget {
                     ),
                     Expanded(child: Container()),
                     Container(
-                      height: 80,
+                      height: 130,
                       width: width * 0.4,
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -121,9 +118,6 @@ class ThemeColorScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Icon(Icons.arrow_forward_ios,
-                        color: Theme.of(context).primaryColor),
                     const SizedBox(width: 8),
                   ],
                 ),

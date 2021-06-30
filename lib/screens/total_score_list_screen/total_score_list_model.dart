@@ -5,17 +5,24 @@ import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TotalScoreListModel extends ChangeNotifier {
-  TotalScoreListModel({required this.scoreRepository});
+  TotalScoreListModel({
+    required this.userRepository,
+    required this.scoreRepository,
+  });
+  UserRepository userRepository;
   ScoreRepository scoreRepository;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = true;
-  bool isDoneGetScore = false;
+  bool isFetchedScore = false;
   bool isAppReviewDialogShowed = false;
+  bool isFetchedToken = false;
+  NotificationSettings? settings;
 
   ScoreWithCV? favoriteFx;
   Score? favoritePh;
@@ -66,7 +73,9 @@ class TotalScoreListModel extends ChangeNotifier {
           : favoriteHbScore = 0.0;
     }
     setTotalScore();
-    isDoneGetScore = true;
+    isFetchedScore = true;
+    print('getFavoriteScores');
+    notifyListeners();
   }
 
   void changeLoaded() {
@@ -88,6 +97,7 @@ class TotalScoreListModel extends ChangeNotifier {
   Future<void> getIsAppReviewDialogShowed() async {
     final prefs = await SharedPreferences.getInstance();
     isAppReviewDialogShowed = prefs.getBool('isAppReviewDialogShowed') ?? false;
+    notifyListeners();
   }
 
   Future<void> setAppReviewDialogShowed() async {
@@ -97,7 +107,40 @@ class TotalScoreListModel extends ChangeNotifier {
 
   //ユーザーにアプリを評価してもらうためのダイアログ
   Future<void> showAppReviewDialog() async {
-    await AppReview.requestReview.then(print);
+    final status = await AppReview.requestReview;
+    print('showAppReviewDialog: $status');
+    notifyListeners();
+  }
+
+  //プッシュ通知の許可
+  Future<void> requestNotificationPermission() async {
+    final settings = await userRepository.requestNotificationPermission();
+    this.settings = settings;
+    print(settings.authorizationStatus);
+    notifyListeners();
+  }
+
+  Future<void> getFCMToken() async {
+    var isTokenExist = false;
+    if (!isFetchedToken &&
+        settings!.authorizationStatus == AuthorizationStatus.authorized) {
+      final inComingToken = await userRepository.getFCMToken();
+      print(inComingToken);
+      if (inComingToken != null) {
+        final tokens = await userRepository.getTokens(); //すでに登録済みのトークン取得
+        if (tokens.isNotEmpty) {
+          for (final token in tokens) {
+            if (token == inComingToken) {
+              isTokenExist = true;
+            }
+          }
+        }
+        if (!isTokenExist) {
+          await userRepository.setToken(inComingToken);
+        }
+      }
+    }
+    isFetchedToken = true;
     notifyListeners();
   }
 }

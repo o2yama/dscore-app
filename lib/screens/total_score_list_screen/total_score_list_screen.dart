@@ -42,28 +42,41 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
   @override
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
-    final totalScoreListModel =
+    final totalScreenModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     Future(() async {
-      await introModel.checkIsIntroWatched();
-      if (introModel.currentUser == null && !introModel.isDoneGettingUserData) {
+      //イントロを見たか確認
+      if (!introModel.isIntroWatched) {
+        await introModel.checkIsIntroWatched();
+      }
+
+      //currentUserがnullならユーザーデータ取得
+      if (introModel.currentUser == null && !introModel.isFetchedUserData) {
         await introModel.getCurrentUserData();
       } else {
-        if (introModel.isIntroWatched) {
-          if (!totalScoreListModel.isDoneGetScore) {
-            await totalScoreListModel.getFavoriteScores();
-          }
+        if (introModel.isIntroWatched && !totalScreenModel.isFetchedScore) {
+          await totalScreenModel.getFavoriteScores();
         }
       }
-      introModel.changeLoaded();
-      totalScoreListModel.changeLoaded();
-      await totalScoreListModel.getIsAppReviewDialogShowed();
-      //トータルが20点超えたら、レビュー用のダイアログ表示
-      if (!totalScoreListModel.isAppReviewDialogShowed &&
-          totalScoreListModel.totalScore >= 20) {
-        await totalScoreListModel.showAppReviewDialog();
-        await totalScoreListModel.setAppReviewDialogShowed();
+
+      //プッシュ通知の許可ダイアログ
+      if (totalScreenModel.settings == null) {
+        await totalScreenModel.requestNotificationPermission();
       }
+      if (!totalScreenModel.isFetchedToken) {
+        await totalScreenModel.getFCMToken();
+      }
+
+      //トータルが20点超えたら、レビュー用のダイアログ
+      await totalScreenModel.getIsAppReviewDialogShowed();
+      if (!totalScreenModel.isAppReviewDialogShowed &&
+          totalScreenModel.totalScore >= 20) {
+        await totalScreenModel.showAppReviewDialog();
+        await totalScreenModel.setAppReviewDialogShowed();
+      }
+
+      totalScreenModel.changeLoaded();
+      introModel.changeLoaded();
     });
     return Consumer<TotalScoreListModel>(
         builder: (context, totalScoreListModel, child) {
@@ -176,7 +189,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
     final width = MediaQuery.of(context).size.width - 50;
     return Consumer<TotalScoreListModel>(builder: (context, model, child) {
       return SizedBox(
-        height: 100,
+        height: 130,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -206,9 +219,8 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   child: Column(
                     children: [
                       Expanded(
-                        flex: 2,
                         child: Container(
-                          padding: const EdgeInsets.only(left: 15, top: 10),
+                          padding: const EdgeInsets.only(left: 15, top: 20),
                           child: Text(
                             '$event',
                             style: const TextStyle(fontSize: 18),
@@ -217,7 +229,7 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                       ),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.only(left: 15),
+                          padding: const EdgeInsets.only(left: 15, top: 10),
                           child: Text(
                             '$eventEng',
                             style: const TextStyle(
@@ -302,17 +314,13 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                   ),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: SizedBox(
-                    height: 200,
                     width: width * 0.4,
                     child: _techsList(event, context),
                   ),
                 ),
-                Expanded(
-                  child: Icon(Icons.arrow_forward_ios,
-                      color: Theme.of(context).primaryColor),
-                )
+                const SizedBox(width: 16),
               ],
             ),
           ),
@@ -335,23 +343,29 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                 padding: const EdgeInsets.only(left: 20, right: 160),
                 child: const Text(
                   '合計',
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
               Text(
                 '${totalScoreListModel.totalScore}',
-                style: TextStyle(fontSize: Utilities().isMobile() ? 30 : 50),
+                style: TextStyle(
+                  fontSize: Utilities().isMobile() ? 30 : 50,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ],
           ),
         ),
-        const Divider(color: Colors.black),
+        Divider(color: Theme.of(context).primaryColor),
       ],
     );
   }
 
   //技のリスト表示
-  //他に描き方が見つからなくて冗長になってしまった
   Widget _techsList(String event, BuildContext context) {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);

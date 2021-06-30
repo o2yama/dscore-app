@@ -56,7 +56,6 @@ class SettingsScreen extends StatelessWidget {
             Text(
               '設定',
               style: TextStyle(
-                color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: Utilities().isMobile() ? 18 : 24,
               ),
@@ -211,10 +210,7 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(width: 24),
                 Text(
                   '$title',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: Utilities().isMobile() ? 18 : 24,
-                  ),
+                  style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
                 ),
               ],
             ),

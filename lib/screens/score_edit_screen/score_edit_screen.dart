@@ -37,7 +37,7 @@ class ScoreEditScreen extends StatelessWidget {
                     ),
                     SizedBox(
                       height: height * 0.1,
-                      child: _detailsScore(context),
+                      child: _detailScores(context),
                     ),
                     SizedBox(
                       height: height * 0.7,
@@ -334,12 +334,16 @@ class ScoreEditScreen extends StatelessWidget {
               : Container(),
           const SizedBox(width: 16),
           Expanded(
+            flex: 2,
             child: Container(
               padding: const EdgeInsets.only(right: 15),
               child: FittedBox(
                 child: Text(
                   '${scoreModel.totalScore}',
-                  style: const TextStyle(fontSize: 40),
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -349,7 +353,7 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _detailsScore(BuildContext context) {
+  Widget _detailScores(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Column(
       children: [
@@ -390,7 +394,10 @@ class ScoreEditScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${scoreModel.difficultyPoint}',
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -398,7 +405,10 @@ class ScoreEditScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${scoreModel.egr}',
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -420,15 +430,18 @@ class ScoreEditScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(width: 32),
-        Text('${scoreModel.cv}', textAlign: TextAlign.center),
+        Text(
+          '${scoreModel.cv}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(width: 16),
         PopupMenuButton(
           itemBuilder: (context) => cvs
               .map(
                 (cv) => PopupMenuItem<Widget>(
+                  height: 32,
                   child: SizedBox(
-                    width: 100,
-                    height: 50,
                     child: TextButton(
                       onPressed: () {
                         scoreModel
@@ -436,7 +449,10 @@ class ScoreEditScreen extends StatelessWidget {
                           ..calculateScore(event);
                         Navigator.pop(context);
                       },
-                      child: Text('$cv'),
+                      child: Text(
+                        '$cv',
+                        style: const TextStyle(color: Colors.black),
+                      ),
                     ),
                   ),
                 ),
