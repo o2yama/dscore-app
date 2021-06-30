@@ -13,6 +13,7 @@ import 'package:dscore_app/screens/total_score_list_screen/total_score_list_scre
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,7 @@ List<SingleChildWidget> viewModels = [
   ),
   ChangeNotifierProvider<TotalScoreListModel>(
     create: (context) => TotalScoreListModel(
+        userRepository: Provider.of<UserRepository>(context, listen: false),
         scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
   ),
   ChangeNotifierProvider<SignUpModel>(
@@ -67,15 +69,16 @@ Future<void> main() async {
   await Firebase.initializeApp();
   final initFuture = MobileAds.instance.initialize();
   final adState = AdState(initFuture);
-  runApp(
-    Provider.value(
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+    runApp(Provider.value(
       value: adState,
       builder: (context, child) => MultiProvider(
         providers: multiProviders,
         child: MyApp(),
       ),
-    ),
-  );
+    ));
+  });
 }
 
 class MyApp extends StatelessWidget {

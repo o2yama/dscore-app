@@ -8,7 +8,7 @@ class IntroModel extends ChangeNotifier {
   final UserRepository userRepository;
   bool isIntroWatched = false;
   bool isLoading = false;
-  bool isDoneGettingUserData = false;
+  bool isFetchedUserData = false;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
 
@@ -18,6 +18,7 @@ class IntroModel extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
+    print('checkIntroWatched: $isIntroWatched');
   }
 
   Future<void> finishIntro() async {
@@ -32,7 +33,8 @@ class IntroModel extends ChangeNotifier {
 
     try {
       await userRepository.getCurrentUserData();
-      isDoneGettingUserData = true;
+      print('getCurrentUser: $currentUser');
+      isFetchedUserData = true;
     } on Exception catch (e) {
       print(e);
     }

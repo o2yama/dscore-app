@@ -16,11 +16,11 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: SafeArea(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: SafeArea(
           child: Consumer<ScoreModel>(builder: (context, model, child) {
             return SingleChildScrollView(
               child: Column(
@@ -88,7 +88,7 @@ class SearchScreen extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            hintText: '検索',
+            hintText: '技名を検索',
           ),
           onChanged: (text) {
             scoreModel.search(text, event);

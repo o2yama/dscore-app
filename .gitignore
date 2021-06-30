@@ -31,6 +31,7 @@
 .pub/
 /build/
 firebase/node_modules/*
+keystore.jks
 
 # Web related
 lib/generated_plugin_registrant.dart

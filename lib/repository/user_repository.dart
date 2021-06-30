@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UserRepository {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
   static CurrentUser? currentUser;
 
   Future<void> signUpWithEmailAndPassWord(String email, String password) async {
@@ -116,5 +119,48 @@ class UserRepository {
       print(error);
       throw error;
     }
+  }
+
+  Future<NotificationSettings> requestNotificationPermission() async {
+    final settings = await _firebaseMessaging.requestPermission(
+      sound: true,
+      badge: true,
+      alert: true,
+    );
+    return settings;
+  }
+
+  Future<String?> getFCMToken() async {
+    var token = await _firebaseMessaging.getToken();
+    _firebaseMessaging.onTokenRefresh
+        .listen((String? newToken) => token = newToken);
+    print('token: $token');
+    return token;
+  }
+
+  Future<void> setToken(String inComingToken) async {
+    if (currentUser != null) {
+      await _db
+          .collection('users')
+          .doc(currentUser!.id)
+          .collection('tokens')
+          .doc(inComingToken)
+          .set(<String, dynamic>{
+        'token': inComingToken,
+      });
+    }
+  }
+
+  Future<List<String>> getTokens() async {
+    var tokens = <String>[];
+    if (currentUser != null) {
+      final query = await _db
+          .collection('users')
+          .doc(currentUser!.id)
+          .collection('tokens')
+          .get();
+      tokens = query.docs.map((token) => token.toString()).toList();
+    }
+    return tokens;
   }
 }
