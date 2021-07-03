@@ -58,7 +58,12 @@ class ScoreRepository {
   }
 
   Future<void> setFXScore(
-      num total, List<String> techList, num cv, bool isFavorite) async {
+    num total,
+    List<String> techList,
+    num cv,
+    bool isFavorite,
+    bool? isUnder16,
+  ) async {
     getUuid();
     await _db
         .collection('users')
@@ -70,12 +75,18 @@ class ScoreRepository {
       'total': total,
       'components': techList,
       'isFavorite': isFavorite,
+      'isUnder16': isUnder16,
       'cv': cv,
     });
   }
 
   Future<void> updateFXScore(
-      String scoreId, num total, List<String> techs, num cv) async {
+    String scoreId,
+    num total,
+    List<String> techs,
+    num cv,
+    bool? isUnder16,
+  ) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -84,6 +95,7 @@ class ScoreRepository {
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
+      'isUnder16': isUnder16,
       'cv': cv,
     });
   }
@@ -140,7 +152,11 @@ class ScoreRepository {
   }
 
   Future<void> setPHScore(
-      num total, List<String> techs, bool isFavorite) async {
+    num total,
+    List<String> techs,
+    bool isFavorite,
+    bool? isUnder16,
+  ) async {
     getUuid();
     await _db
         .collection('users')
@@ -152,11 +168,16 @@ class ScoreRepository {
       'total': total,
       'components': techs,
       'isFavorite': isFavorite,
+      'isUnder16': isUnder16,
     });
   }
 
   Future<void> updatePHScore(
-      String scoreId, num total, List<String> techs) async {
+    String scoreId,
+    num total,
+    List<String> techs,
+    bool? isUnder16,
+  ) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -165,6 +186,7 @@ class ScoreRepository {
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
+      'isUnder16': isUnder16,
     });
   }
 
@@ -220,7 +242,11 @@ class ScoreRepository {
   }
 
   Future<void> setSRScore(
-      num total, List<String> techs, bool isFavorite) async {
+    num total,
+    List<String> techs,
+    bool isFavorite,
+    bool? isUnder16,
+  ) async {
     getUuid();
     await _db
         .collection('users')
@@ -232,11 +258,16 @@ class ScoreRepository {
       'total': total,
       'components': techs,
       'isFavorite': isFavorite,
+      'isUnder16': isUnder16,
     });
   }
 
   Future<void> updateSRScore(
-      String scoreId, num total, List<String> techs) async {
+    String scoreId,
+    num total,
+    List<String> techs,
+    bool? isUnder16,
+  ) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -245,6 +276,7 @@ class ScoreRepository {
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
+      'isUnder16': isUnder16,
     });
   }
 
@@ -300,7 +332,7 @@ class ScoreRepository {
   }
 
   Future<void> setPBScore(
-      num total, List<String> techs, bool isFavorite) async {
+      num total, List<String> techs, bool isFavorite, bool? isUnder16) async {
     getUuid();
     await _db
         .collection('users')
@@ -312,11 +344,16 @@ class ScoreRepository {
       'total': total,
       'components': techs,
       'isFavorite': isFavorite,
+      'isUnder16': isUnder16,
     });
   }
 
   Future<void> updatePBScore(
-      String scoreId, num total, List<String> techs) async {
+    String scoreId,
+    num total,
+    List<String> techs,
+    bool? isUnder16,
+  ) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -325,6 +362,7 @@ class ScoreRepository {
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
+      'isUnder16': isUnder16,
     });
   }
 
@@ -380,7 +418,12 @@ class ScoreRepository {
   }
 
   Future<void> setHBScore(
-      num total, List<String> techs, num cv, bool isFavorite) async {
+    num total,
+    List<String> techs,
+    num cv,
+    bool isFavorite,
+    bool? isUnder16,
+  ) async {
     getUuid();
     await _db
         .collection('users')
@@ -392,6 +435,7 @@ class ScoreRepository {
       'total': total,
       'components': techs,
       'isFavorite': isFavorite,
+      'isUnder16': isUnder16,
       'cv': cv,
     });
   }

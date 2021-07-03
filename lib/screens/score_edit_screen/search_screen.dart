@@ -71,22 +71,22 @@ class SearchScreen extends StatelessWidget {
           decoration: InputDecoration(
             suffixIcon: InkWell(
               onTap: () => scoreModel.deleteSearchBarText(searchController),
-              child: const Icon(Icons.clear),
+              child: Icon(
+                Icons.clear,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).primaryColor,
+            ),
             border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
             focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-              borderSide: BorderSide(
-                color: Colors.grey,
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(color: Colors.grey),
             ),
             hintText: '技名を検索',
           ),
@@ -164,7 +164,8 @@ class SearchScreen extends StatelessWidget {
 
   Widget resultTile(BuildContext context, String techName, int index) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final difficulty = scoreOfDifficulty[scoreModel.difficulty[techName]];
+    final group = scoreModel.group[techName];
+    final difficulty = scoreModel.difficulty[techName];
     return Column(
       children: [
         Card(
@@ -189,7 +190,9 @@ class SearchScreen extends StatelessWidget {
                         child: Text('難度', style: TextStyle(fontSize: 10)),
                       ),
                       Expanded(
-                        child: Text('$difficulty'),
+                        child: Text(
+                          '${difficultyDisplay[difficulty]}',
+                        ),
                       ),
                     ],
                   ),
@@ -201,8 +204,7 @@ class SearchScreen extends StatelessWidget {
                         child: Text('グループ', style: TextStyle(fontSize: 10)),
                       ),
                       Expanded(
-                        child:
-                            Text('${groupDisplay[scoreModel.group[techName]]}'),
+                        child: Text('${groupDisplay[group]}'),
                       ),
                     ],
                   ),
