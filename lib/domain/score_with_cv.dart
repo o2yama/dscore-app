@@ -7,6 +7,7 @@ class ScoreWithCV {
     cv = doc.data()!['cv'] as num;
     scoreId = doc.data()!['scoreId'] as String;
     isFavorite = isFavorite = doc.data()!['isFavorite'] as bool;
+    isUnder16 = doc.data()!['isUnder16'] as bool? ?? false;
   }
 
   num total = 0;
@@ -14,4 +15,5 @@ class ScoreWithCV {
   num cv = 0;
   String scoreId = '';
   bool isFavorite = false;
+  bool isUnder16 = false;
 }

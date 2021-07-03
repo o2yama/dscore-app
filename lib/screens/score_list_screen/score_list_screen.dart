@@ -175,9 +175,9 @@ class ScoreListScreen extends StatelessWidget {
         await scoreModel.getScore(scoreId, event);
         await Navigator.push<Object>(
           context,
-          MaterialPageRoute(builder: (context) {
-            return ScoreEditScreen(event: event, scoreId: scoreId);
-          }),
+          MaterialPageRoute(
+              builder: (context) =>
+                  ScoreEditScreen(event: event, scoreId: scoreId)),
         );
       },
       child: Slidable(

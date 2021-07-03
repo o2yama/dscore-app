@@ -39,6 +39,7 @@ class ScoreEditScreen extends StatelessWidget {
                       height: height * 0.1,
                       child: _detailScores(context),
                     ),
+                    SizedBox(height: 40, child: _under16SwitchButton(context)),
                     SizedBox(
                       height: height * 0.7,
                       child: _techListView(context),
@@ -268,6 +269,7 @@ class ScoreEditScreen extends StatelessWidget {
 
   Widget _totalScoreDisplay(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final difficultyOfGroup4 = scoreModel.difficultyOfGroup4;
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
@@ -323,9 +325,9 @@ class ScoreEditScreen extends StatelessWidget {
               ? Expanded(
                   child: Container(
                     child: Text(
-                      scoreModel.group4 == 0
+                      scoreModel.difficultyOfGroup4 == 0
                           ? 'Ⅳ : ／'
-                          : 'Ⅳ : ${scoreOfDifficulty[scoreModel.group4]}',
+                          : 'Ⅳ : ${difficultyDisplay[difficultyOfGroup4]}',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
@@ -464,6 +466,20 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
+  Widget _under16SwitchButton(BuildContext context) {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const Text('高校生ルール'),
+        Switch(
+          value: scoreModel.isUnder16,
+          onChanged: (bool isUnder16) => scoreModel.setRule(event, isUnder16),
+        )
+      ],
+    );
+  }
+
   Widget _techListView(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Container(
@@ -515,8 +531,8 @@ class ScoreEditScreen extends StatelessWidget {
 
   Widget _techTile(BuildContext context, String techName, int order) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final difficulty = scoreOfDifficulty[scoreModel.difficulty[techName]];
-    final group = groupDisplay[scoreModel.group[techName]];
+    final group = scoreModel.group[techName];
+    final difficulty = scoreModel.difficulty[techName];
     return Column(
       key: Key(scoreModel.decidedTechList.indexOf(techName).toString()),
       children: [
@@ -568,7 +584,9 @@ class ScoreEditScreen extends StatelessWidget {
                                     Text('難度', style: TextStyle(fontSize: 10)),
                               ),
                               Expanded(
-                                child: Text('$difficulty'),
+                                child: Text(
+                                  '${difficultyDisplay[difficulty]}',
+                                ),
                               ),
                             ],
                           ),
@@ -581,7 +599,7 @@ class ScoreEditScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 10)),
                               ),
                               Expanded(
-                                child: Text('$group'),
+                                child: Text('${groupDisplay[group]}'),
                               ),
                             ],
                           ),

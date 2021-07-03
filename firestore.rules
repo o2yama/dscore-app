@@ -22,7 +22,7 @@ service cloud.firestore {
     }
 
     function isValidScoreWithCV(score) {
-      return score.size() == 5
+      return score.size() == 5 || 6
         && 'components' in score && score.components is list
         && 'cv' in score && score.cv is number
         && 'isFavorite' in score  && score.isFavorite is bool
@@ -31,7 +31,7 @@ service cloud.firestore {
     }
 
     function isValidScore(score) {
-      return score.size() == 4 
+      return score.size() == 4 || 5
         && 'components' in score && score.components is list
         && 'isFavorite' in score && score.isFavorite is bool 
         && 'scoreId' in score && score.scoreId is string 
@@ -55,6 +55,13 @@ service cloud.firestore {
         allow read: if isUserAuthenticated(userId);
         allow create: if isUserAuthenticated(userId) && isValidScoreWithCV(request.resource.data);
         allow update: if isUserAuthenticated(userId) && isNotUpdating('scoreId');
+        allow delete: if isUserAuthenticated(userId);
+      }
+
+      match /tokens/{token} {
+        allow read: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId);
+        allow update: if isUserAuthenticated(userId);
         allow delete: if isUserAuthenticated(userId);
       }
 
