@@ -508,54 +508,57 @@ class ScoreModel extends ChangeNotifier {
   String vtTechName = '';
 
   //技検索
-  void search(String text, String event) {
-    if (text.isEmpty) {
+  void search(String inputText, String event) {
+    if (inputText.isEmpty) {
       searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
       final inputCharacters = <String>[];
-      text.characters.forEach(inputCharacters.add);
+      inputText.characters.forEach(inputCharacters.add);
       if (event == '床') {
-        searchResult = searchLogic(fxGroup, inputCharacters.toList());
+        searchResult = searchLogic(fxSearchWords, inputCharacters);
       }
       if (event == 'あん馬') {
-        searchResult = searchLogic(phGroup, inputCharacters.toList());
+        searchResult = searchLogic(phSearchWords, inputCharacters);
       }
       if (event == '吊り輪') {
-        searchResult = searchLogic(srGroup, inputCharacters.toList());
+        searchResult = searchLogic(srSearchWords, inputCharacters);
       }
       if (event == '平行棒') {
-        searchResult = searchLogic(pbGroup, inputCharacters.toList());
+        searchResult = searchLogic(pbSearchWords, inputCharacters);
       }
       if (event == '鉄棒') {
-        searchResult = searchLogic(hbGroup, inputCharacters.toList());
+        searchResult = searchLogic(hbSearchWords, inputCharacters);
       }
     }
     notifyListeners();
   }
 
-  List<String> searchLogic(Map<String, int> group, List<String> characters) {
-    var items = <String>[];
-    final removeItems = <String>[];
+  List<String> searchLogic(
+      Map<String, String> searchWords, List<String> characters) {
+    final techsContainingFirstChar = <String>[];
+    final techsToRemove = <String>[];
+
     for (var i = 0; i < characters.length; i++) {
       //0番目の文字を含むものをitemsに追加
-      //1番目以降の文字を含んでいないものをremoveListに追加
       if (i == 0) {
-        final resultContainingFirstChar = group.keys
-            .where((techName) => techName.contains(characters[0]))
-            .toList();
-        items = resultContainingFirstChar;
+        for (final word in searchWords.keys) {
+          if (searchWords[word]!.contains(characters[0])) {
+            techsContainingFirstChar.add(word);
+          }
+        }
       } else {
-        for (final item in items) {
-          if (!item.toLowerCase().contains(characters[i])) {
-            removeItems.add(item);
+        //2番目以降の文字を含んでいないものをremoveListに追加
+        for (final techs in techsContainingFirstChar) {
+          if (!searchWords[techs]!.contains(characters[i])) {
+            techsToRemove.add(techs);
           }
         }
       }
     }
     //removeListの要素をitemsから削除
-    removeItems.forEach(items.remove);
-    return items;
+    techsToRemove.forEach(techsContainingFirstChar.remove);
+    return techsContainingFirstChar;
   }
 
   void onTechChipSelected(String event, String searchText) {

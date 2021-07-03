@@ -76,17 +76,11 @@ class SearchScreen extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
             prefixIcon: const Icon(Icons.search),
             border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
             focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-              borderSide: BorderSide(
-                color: Colors.grey,
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderSide: BorderSide(color: Colors.grey),
             ),
             hintText: '技名を検索',
           ),
