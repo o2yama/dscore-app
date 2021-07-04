@@ -63,9 +63,6 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
       if (totalScreenModel.settings == null) {
         await totalScreenModel.requestNotificationPermission();
       }
-      if (!totalScreenModel.isFetchedToken) {
-        await totalScreenModel.getFCMToken();
-      }
 
       //トータルが20点超えたら、レビュー用のダイアログ
       await totalScreenModel.getIsAppReviewDialogShowed();

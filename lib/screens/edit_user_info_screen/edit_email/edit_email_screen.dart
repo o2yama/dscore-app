@@ -257,7 +257,7 @@ class EditEmailScreen extends StatelessWidget {
                             actions: [
                               TextButton(
                                 onPressed: () async {
-                                  await editEmailModel.updateEmailInDB();
+                                  // await editEmailModel.updateEmailInDB();
                                   editEmailModel.resetController();
                                   Navigator.pop(context);
                                   Navigator.pop(context);
@@ -272,7 +272,7 @@ class EditEmailScreen extends StatelessWidget {
                             actions: [
                               TextButton(
                                 onPressed: () async {
-                                  await editEmailModel.updateEmailInDB();
+                                  // await editEmailModel.updateEmailInDB();
                                   editEmailModel.resetController();
                                   Navigator.pop(context);
                                   Navigator.pop(context);

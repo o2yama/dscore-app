@@ -30,10 +30,9 @@ class LoginModel extends ChangeNotifier {
       await userRepository.getCurrentUserData();
     } on Exception catch (e) {
       print(e);
-      final Error error = ArgumentError(e);
       isLoading = false;
       notifyListeners();
-      throw error;
+      rethrow;
     }
 
     isLoading = false;
