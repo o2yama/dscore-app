@@ -19,20 +19,23 @@ class SearchScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: SafeArea(
-          child: Consumer<ScoreModel>(builder: (context, model, child) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  _backButton(context, event),
-                  _searchBar(context),
-                  _searchChips(context, event),
-                  _searchResults(context, event),
-                ],
-              ),
-            );
-          }),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          color: Theme.of(context).backgroundColor,
+          child: SafeArea(
+            child: Consumer<ScoreModel>(builder: (context, model, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _backButton(context, event),
+                    _searchBar(context),
+                    _searchChips(context, event),
+                    _searchResults(context, event),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );
@@ -118,6 +121,8 @@ class SearchScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: ChoiceChip(
+        backgroundColor: Colors.grey[200],
+        elevation: 5,
         label: Text('$searchText'),
         selected: false,
         onSelected: (selected) {

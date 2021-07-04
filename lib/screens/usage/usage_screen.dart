@@ -7,15 +7,17 @@ class UsageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              _backButton(context),
-              _usageImages(),
-            ],
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _backButton(context),
+                _usageImages(),
+              ],
+            ),
           ),
         ),
       ),

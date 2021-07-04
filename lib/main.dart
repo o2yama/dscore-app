@@ -90,12 +90,12 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: model.themeColor,
-          backgroundColor: Colors.grey[200],
+          backgroundColor: model.themeColor.withOpacity(0.2),
           cardTheme: CardTheme(
             color: Colors.white,
             elevation: 3,
             margin: const EdgeInsets.all(12),
-            shadowColor: Colors.black54,
+            shadowColor: model.themeColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

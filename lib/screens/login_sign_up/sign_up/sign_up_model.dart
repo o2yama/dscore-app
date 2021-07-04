@@ -28,11 +28,10 @@ class SignUpModel extends ChangeNotifier {
     try {
       await userRepository.signUpWithEmailAndPassWord(email, password);
       await userRepository.getCurrentUserData();
-    } on Exception catch (e) {
-      final Error error = ArgumentError(e);
+    } on Exception {
       isLoading = false;
       notifyListeners();
-      throw error;
+      rethrow;
     }
 
     isLoading = false;

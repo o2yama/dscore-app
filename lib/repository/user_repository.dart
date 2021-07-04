@@ -22,8 +22,8 @@ class UserRepository {
         });
       }
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      throw error;
+      print(e);
+      rethrow;
     }
   }
 
@@ -34,8 +34,8 @@ class UserRepository {
         await user.sendEmailVerification();
       }
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      throw error;
+      print(e);
+      rethrow;
     }
   }
 
@@ -43,19 +43,9 @@ class UserRepository {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      print(error);
-      throw error;
+      print(e);
+      rethrow;
     }
-  }
-
-  Future<bool> getIsExistUser(User user) async {
-    final query =
-        await _db.collection('users').where('id', isEqualTo: user.uid).get();
-    if (query.docs.isNotEmpty) {
-      return true;
-    }
-    return false;
   }
 
   Future<void> getCurrentUserData() async {
@@ -74,8 +64,8 @@ class UserRepository {
         return;
       }
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      throw error;
+      print(e);
+      rethrow;
     }
   }
 
@@ -102,9 +92,8 @@ class UserRepository {
       final user = _auth.currentUser!;
       await user.updateEmail(newEmail);
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      print(error);
-      throw error;
+      print(e);
+      rethrow;
     }
   }
 
@@ -115,9 +104,8 @@ class UserRepository {
         'email': user.email,
       });
     } on Exception catch (e) {
-      final Error error = ArgumentError(e);
-      print(error);
-      throw error;
+      print(e);
+      rethrow;
     }
   }
 
@@ -128,39 +116,5 @@ class UserRepository {
       alert: true,
     );
     return settings;
-  }
-
-  Future<String?> getFCMToken() async {
-    var token = await _firebaseMessaging.getToken();
-    _firebaseMessaging.onTokenRefresh
-        .listen((String? newToken) => token = newToken);
-    print('token: $token');
-    return token;
-  }
-
-  Future<void> setToken(String inComingToken) async {
-    if (currentUser != null) {
-      await _db
-          .collection('users')
-          .doc(currentUser!.id)
-          .collection('tokens')
-          .doc(inComingToken)
-          .set(<String, dynamic>{
-        'token': inComingToken,
-      });
-    }
-  }
-
-  Future<List<String>> getTokens() async {
-    var tokens = <String>[];
-    if (currentUser != null) {
-      final query = await _db
-          .collection('users')
-          .doc(currentUser!.id)
-          .collection('tokens')
-          .get();
-      tokens = query.docs.map((token) => token.toString()).toList();
-    }
-    return tokens;
   }
 }

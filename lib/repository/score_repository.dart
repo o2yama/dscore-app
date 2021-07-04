@@ -332,7 +332,11 @@ class ScoreRepository {
   }
 
   Future<void> setPBScore(
-      num total, List<String> techs, bool isFavorite, bool? isUnder16) async {
+    num total,
+    List<String> techs,
+    bool isFavorite,
+    bool? isUnder16,
+  ) async {
     getUuid();
     await _db
         .collection('users')
@@ -441,7 +445,12 @@ class ScoreRepository {
   }
 
   Future<void> updateHBScore(
-      String scoreId, num total, List<String> techs, num cv) async {
+    String scoreId,
+    num total,
+    List<String> techs,
+    num cv,
+    bool? isUnder16,
+  ) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
@@ -450,6 +459,7 @@ class ScoreRepository {
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
+      'isUnder16': isUnder16,
       'cv': cv,
     });
   }

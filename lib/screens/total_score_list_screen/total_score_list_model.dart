@@ -119,28 +119,4 @@ class TotalScoreListModel extends ChangeNotifier {
     print(settings.authorizationStatus);
     notifyListeners();
   }
-
-  Future<void> getFCMToken() async {
-    var isTokenExist = false;
-    if (!isFetchedToken &&
-        settings!.authorizationStatus == AuthorizationStatus.authorized) {
-      final inComingToken = await userRepository.getFCMToken();
-      print(inComingToken);
-      if (inComingToken != null) {
-        final tokens = await userRepository.getTokens(); //すでに登録済みのトークン取得
-        if (tokens.isNotEmpty) {
-          for (final token in tokens) {
-            if (token == inComingToken) {
-              isTokenExist = true;
-            }
-          }
-        }
-        if (!isTokenExist) {
-          await userRepository.setToken(inComingToken);
-        }
-      }
-    }
-    isFetchedToken = true;
-    notifyListeners();
-  }
 }

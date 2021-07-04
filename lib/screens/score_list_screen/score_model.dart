@@ -403,7 +403,7 @@ class ScoreModel extends ChangeNotifier {
     }
     if (event == '鉄棒') {
       await scoreRepository.updateHBScore(
-          scoreId, totalScore, decidedTechList, cv);
+          scoreId, totalScore, decidedTechList, cv, isUnder16);
       difficulty = hbDifficulty;
       group = hbGroup;
     }
