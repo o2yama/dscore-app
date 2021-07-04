@@ -9,26 +9,28 @@ class ThemeColorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ThemeColorModel>(builder: (context, model, child) {
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  _backButton(context),
-                  _exampleCardWidget(context),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.6,
-                    child: ListView(
-                      children: themes.keys
-                          .map((color) => _colorTile(context, color))
-                          .toList(),
+        return Container(
+          color: Theme.of(context).backgroundColor,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    _backButton(context),
+                    _exampleCardWidget(context),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: ListView(
+                        children: themes.keys
+                            .map((color) => _colorTile(context, color))
+                            .toList(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -38,8 +40,7 @@ class ThemeColorScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
+    return SizedBox(
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),

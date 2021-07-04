@@ -18,46 +18,49 @@ class ScoreEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(builder: (context, model, child) {
         final height = MediaQuery.of(context).size.height;
-        return SingleChildScrollView(
-          child: Stack(
-            children: [
-              SafeArea(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: height * 0.1,
-                      child: _backButton(context, event),
-                    ),
-                    SizedBox(
-                      height: height * 0.1,
-                      child: _totalScoreDisplay(context),
-                    ),
-                    SizedBox(
-                      height: height * 0.1,
-                      child: _detailScores(context),
-                    ),
-                    SizedBox(height: 40, child: _under16SwitchButton(context)),
-                    SizedBox(
-                      height: height * 0.7,
-                      child: _techListView(context),
-                    ),
-                  ],
-                ),
-              ),
-              model.isLoading
-                  ? Container(
-                      color: Colors.grey.withOpacity(0.6),
-                      child: Center(
-                        child: Platform.isIOS
-                            ? const CupertinoActivityIndicator()
-                            : const CircularProgressIndicator(),
+        return Container(
+          color: Theme.of(context).backgroundColor,
+          child: SingleChildScrollView(
+            child: Stack(
+              children: [
+                SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: height * 0.1,
+                        child: _backButton(context, event),
                       ),
-                    )
-                  : Container(),
-            ],
+                      SizedBox(
+                        height: height * 0.1,
+                        child: _totalScoreDisplay(context),
+                      ),
+                      SizedBox(
+                        height: height * 0.1,
+                        child: _detailScores(context),
+                      ),
+                      SizedBox(
+                          height: 40, child: _under16SwitchButton(context)),
+                      SizedBox(
+                        height: height * 0.7,
+                        child: _techListView(context),
+                      ),
+                    ],
+                  ),
+                ),
+                model.isLoading
+                    ? Container(
+                        color: Colors.grey.withOpacity(0.6),
+                        child: Center(
+                          child: Platform.isIOS
+                              ? const CupertinoActivityIndicator()
+                              : const CircularProgressIndicator(),
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         );
       }),
@@ -471,8 +474,14 @@ class ScoreEditScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text('高校生ルール'),
+        Text(
+          '高校生ルール',
+          style: TextStyle(
+            color: scoreModel.isUnder16 ? Colors.black : Colors.grey,
+          ),
+        ),
         Switch(
+          activeColor: Theme.of(context).primaryColor,
           value: scoreModel.isUnder16,
           onChanged: (bool isUnder16) => scoreModel.setRule(event, isUnder16),
         )

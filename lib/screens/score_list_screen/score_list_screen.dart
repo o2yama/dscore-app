@@ -15,47 +15,49 @@ class ScoreListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: Consumer<ScoreModel>(
         builder: (context, model, child) {
           final height = MediaQuery.of(context).size.height;
-          return SafeArea(
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: height * 0.1,
-                        child: _backButton(context, event),
-                      ),
-                      SizedBox(
-                        height: height * 0.1,
-                        child: _eventNameDisplay(context),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.8,
-                        child: RefreshIndicator(
-                          onRefresh: () async {
-                            await model.getScores(event);
-                          },
-                          child: _scoreList(context),
+          return Container(
+            color: Theme.of(context).backgroundColor,
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: height * 0.1,
+                          child: _backButton(context, event),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: height * 0.1,
+                          child: _eventNameDisplay(context),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              await model.getScores(event);
+                            },
+                            child: _scoreList(context),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                            child: Platform.isIOS
-                                ? const CupertinoActivityIndicator()
-                                : const CircularProgressIndicator()),
-                      )
-                    : Container(),
-              ],
+                  model.isLoading
+                      ? Container(
+                          color: Colors.grey.withOpacity(0.6),
+                          child: Center(
+                              child: Platform.isIOS
+                                  ? const CupertinoActivityIndicator()
+                                  : const CircularProgressIndicator()),
+                        )
+                      : Container(),
+                ],
+              ),
             ),
           );
         },

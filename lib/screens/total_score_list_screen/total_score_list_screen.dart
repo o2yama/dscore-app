@@ -214,16 +214,21 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
             },
             child: Row(
               children: [
+                const SizedBox(width: 8),
                 Expanded(
                   flex: 2,
                   child: Column(
                     children: [
+                      const SizedBox(height: 8),
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.only(left: 15, top: 20),
                           child: Text(
                             '$event',
-                            style: const TextStyle(fontSize: 18),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -308,11 +313,12 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                                                     '${model.favoriteHbScore}',
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .headline6,
+                                                        .headline5,
                                                   )
                                             : const Text('0.0'),
                   ),
                 ),
+                const SizedBox(width: 8),
                 Expanded(
                   flex: 4,
                   child: SizedBox(
