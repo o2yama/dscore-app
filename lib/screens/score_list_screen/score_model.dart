@@ -647,21 +647,21 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onTechTileSelected(String techName, int? order) {
+  bool isSameTechSelected(String techName) {
     var isExist = false;
+    for (final tech in decidedTechList) {
+      if (techName == tech) {
+        isExist = true;
+      }
+    }
+    return isExist;
+  }
+
+  void setTech(String techName, int? order) {
     if (order != null) {
       decidedTechList[order - 1] = techName;
     } else {
-      for (final tech in decidedTechList) {
-        if (techName == tech) {
-          isExist = true;
-          final Error error = ArgumentError('同じ技が登録されています。');
-          throw error;
-        }
-      }
-      if (!isExist) {
-        decidedTechList.add(techName);
-      }
+      decidedTechList.add(techName);
     }
     print(decidedTechList);
     isEdited = true;

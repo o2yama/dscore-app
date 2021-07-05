@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/score_data.dart';
 import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
@@ -143,13 +143,11 @@ class SearchScreen extends StatelessWidget {
                 SizedBox(
                   height: 50,
                   child: TextButton(
-                    onPressed: () {
-                      launch(
-                        'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                        forceSafariVC: true,
-                        forceWebView: true,
-                      );
-                    },
+                    onPressed: () => launch(
+                      'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                      forceSafariVC: true,
+                      forceWebView: true,
+                    ),
                     child: const Text('登録したい技がない場合はこちら'),
                   ),
                 ),
@@ -171,20 +169,19 @@ class SearchScreen extends StatelessWidget {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final group = scoreModel.group[techName];
     final difficulty = scoreModel.difficulty[techName];
-    return Column(
-      children: [
-        Card(
-          child: ListTile(
-            title: Text(
-              '$techName',
-              style: TextStyle(
-                fontSize: Utilities().isMobile() ? 14.0 : 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(children: [
+      Card(
+        child: ListTile(
+          title: Text(
+            '$techName',
+            style: TextStyle(
+              fontSize: Utilities().isMobile() ? 14.0 : 18.0,
+              fontWeight: FontWeight.bold,
             ),
-            trailing: SizedBox(
-              width: 110,
-              child: Row(
+          ),
+          trailing: SizedBox(
+            width: 110,
+            child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -202,87 +199,61 @@ class SearchScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      const Expanded(
-                        child: Text('グループ', style: TextStyle(fontSize: 10)),
+                  Column(children: [
+                    const SizedBox(height: 8),
+                    const Expanded(
+                      child: Text(
+                        'グループ',
+                        style: TextStyle(fontSize: 10),
                       ),
-                      Expanded(
-                        child: Text('${groupDisplay[group]}'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            onTap: () async {
-              await _onResultTileTapped(context, techName, order);
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        scoreModel.searchResult.length - 1 == index
-            ? Column(
-                children: [
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    height: 50,
-                    child: TextButton(
-                      onPressed: () {
-                        launch(
-                          'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                          forceSafariVC: true,
-                          forceWebView: true,
-                        );
-                      },
-                      child: const Text('登録したい技がない場合はこちら'),
                     ),
+                    Expanded(
+                      child: Text('${groupDisplay[group]}'),
+                    ),
+                  ]),
+                ]),
+          ),
+          onTap: () async => _onResultTileTapped(context, techName, order),
+        ),
+      ),
+      scoreModel.searchResult.length - 1 == index
+          ? Column(
+              children: [
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 50,
+                  child: TextButton(
+                    onPressed: () {
+                      launch(
+                        'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                        forceSafariVC: true,
+                        forceWebView: true,
+                      );
+                    },
+                    child: const Text('登録したい技がない場合はこちら'),
                   ),
-                  const SizedBox(height: 300),
-                ],
-              )
-            : Container(),
-      ],
-    );
+                ),
+                const SizedBox(height: 300),
+              ],
+            )
+          : Container(),
+    ]);
   }
 
   Future<void> _onResultTileTapped(
       BuildContext context, String techName, int? order) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    try {
+    if (scoreModel.isSameTechSelected(techName)) {
+      await showOkAlertDialog(
+        context: context,
+        title: 'すでに同じ技が登録されています。',
+      );
+    } else {
       scoreModel
-        ..onTechTileSelected(techName, order)
+        ..setTech(techName, order)
         ..calculateNumberOfGroup(event)
         ..calculateScore(event);
-    } on Exception catch (e) {
-      print(e);
-      await showDialog<Dialog>(
-        context: context,
-        builder: (context) => Platform.isIOS
-            ? CupertinoAlertDialog(
-                title: Text('$e'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK'),
-                  )
-                ],
-              )
-            : AlertDialog(
-                title: Text('$e'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK'),
-                  )
-                ],
-              ),
-      );
     }
+    Navigator.pop(context);
   }
 }

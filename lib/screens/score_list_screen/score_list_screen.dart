@@ -38,9 +38,7 @@ class ScoreListScreen extends StatelessWidget {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: RefreshIndicator(
-                            onRefresh: () async {
-                              await model.getScores(event);
-                            },
+                            onRefresh: () async => model.getScores(event),
                             child: _scoreList(context),
                           ),
                         ),
@@ -67,24 +65,20 @@ class ScoreListScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context, String event) {
     return TextButton(
-      onPressed: () {
-        Navigator.pop(context);
-      },
+      onPressed: () => Navigator.pop(context),
       child: Platform.isIOS
-          ? Row(
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
+          ? Row(children: [
+              Icon(
+                Icons.arrow_back_ios,
+                color: Theme.of(context).primaryColor,
+              ),
+              Text(
+                '6種目',
+                style: TextStyle(
                   color: Theme.of(context).primaryColor,
                 ),
-                Text(
-                  '6種目',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ],
-            )
+              ),
+            ])
           : Icon(
               Icons.clear,
               color: Theme.of(context).primaryColor,
@@ -98,78 +92,80 @@ class ScoreListScreen extends StatelessWidget {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return SizedBox(
       height: height * 0.1,
-      child: Row(
-        children: [
-          SizedBox(width: width * 0.1),
-          Text(
-            '$event',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          Expanded(child: Container()),
-          IconButton(
-              icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-              onPressed: () {
-                scoreModel
-                  ..selectEvent(event)
-                  ..resetScore();
-                Navigator.push<Object>(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ScoreEditScreen(event: event)),
-                );
-              }),
-          SizedBox(width: width * 0.1),
-        ],
-      ),
+      child: Row(children: [
+        SizedBox(width: width * 0.1),
+        Text(
+          '$event',
+          style: Theme.of(context).textTheme.headline4,
+        ),
+        Expanded(child: Container()),
+        IconButton(
+            icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+            onPressed: () {
+              scoreModel
+                ..selectEvent(event)
+                ..resetScore();
+              Navigator.push<Object>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScoreEditScreen(event: event),
+                ),
+              );
+            }),
+        SizedBox(width: width * 0.1),
+      ]),
     );
   }
 
   Widget _scoreList(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return event == '床'
-        ? ListView(
-            children: scoreModel.fxScoreList
-                .map((score) => _scoreTile(context, score.techs, score.total,
-                    score.isFavorite, score.scoreId))
-                .toList(),
-          )
-        : event == 'あん馬'
-            ? ListView(
-                children: scoreModel.phScoreList
-                    .map((score) => _scoreTile(context, score.techs,
-                        score.total, score.isFavorite, score.scoreId))
-                    .toList(),
-              )
-            : event == '吊り輪'
-                ? ListView(
-                    children: scoreModel.srScoreList
-                        .map((score) => _scoreTile(context, score.techs,
-                            score.total, score.isFavorite, score.scoreId))
-                        .toList(),
-                  )
-                : event == '平行棒'
-                    ? ListView(
-                        children: scoreModel.pbScoreList
-                            .map((score) => _scoreTile(context, score.techs,
-                                score.total, score.isFavorite, score.scoreId))
-                            .toList(),
-                      )
-                    : event == '鉄棒'
-                        ? ListView(
-                            children: scoreModel.hbScoreList
-                                .map((score) => _scoreTile(
-                                    context,
-                                    score.techs,
-                                    score.total,
-                                    score.isFavorite,
-                                    score.scoreId))
-                                .toList(),
-                          )
-                        : ListView();
+    if (event == '床') {
+      return ListView(
+        children: scoreModel.fxScoreList
+            .map((score) => _scoreTile(context, score.techs, score.total,
+                score.isFavorite, score.scoreId))
+            .toList(),
+      );
+    } else if (event == 'あん馬') {
+      return ListView(
+        children: scoreModel.phScoreList
+            .map((score) => _scoreTile(context, score.techs, score.total,
+                score.isFavorite, score.scoreId))
+            .toList(),
+      );
+    } else if (event == '吊り輪') {
+      return ListView(
+        children: scoreModel.srScoreList
+            .map((score) => _scoreTile(context, score.techs, score.total,
+                score.isFavorite, score.scoreId))
+            .toList(),
+      );
+    } else if (event == '平行棒') {
+      return ListView(
+        children: scoreModel.pbScoreList
+            .map((score) => _scoreTile(context, score.techs, score.total,
+                score.isFavorite, score.scoreId))
+            .toList(),
+      );
+    } else if (event == '鉄棒') {
+      return ListView(
+        children: scoreModel.hbScoreList
+            .map((score) => _scoreTile(context, score.techs, score.total,
+                score.isFavorite, score.scoreId))
+            .toList(),
+      );
+    } else {
+      return ListView();
+    }
   }
 
-  Widget _scoreTile(BuildContext context, List<String> techs, num total,
-      bool isFavorite, String scoreId) {
+  Widget _scoreTile(
+    BuildContext context,
+    List<String> techs,
+    num total,
+    bool isFavorite,
+    String scoreId,
+  ) {
     final width = MediaQuery.of(context).size.width;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
@@ -195,33 +191,33 @@ class ScoreListScreen extends StatelessWidget {
             },
           ),
         ],
-        child: Row(
-          children: [
-            Expanded(child: _favoriteButton(context, isFavorite, scoreId)),
-            Expanded(
-              flex: 8,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(width: width * 0.1),
-                      Text(
-                        '$total',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      Expanded(child: Container()),
-                      _techsListView(context, techs),
-                      SizedBox(width: width * 0.05),
-                    ],
-                  ),
+        child: Row(children: [
+          Expanded(
+            child: _favoriteButton(context, isFavorite, scoreId),
+          ),
+          Expanded(
+            flex: 8,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: width * 0.1),
+                    Text(
+                      '$total',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                    Expanded(child: Container()),
+                    _techsListView(context, techs),
+                    SizedBox(width: width * 0.05),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ]),
       ),
     );
   }
@@ -236,35 +232,32 @@ class ScoreListScreen extends StatelessWidget {
               title: const Text('この演技を削除してもよろしいですか？'),
               content: const Text('削除した演技は元には戻りません。'),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('キャンセル'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    scoreModel.deletePerformance(event, scoreId);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('OK'),
-                )
-              ],
-            )
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('キャンセル'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      scoreModel.deletePerformance(event, scoreId);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'),
+                  )
+                ])
           : AlertDialog(
               title: const Text('この演技を削除してもよろしいですか？'),
               content: const Text('削除した演技は元には戻りません。'),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('キャンセル'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    scoreModel.deletePerformance(event, scoreId);
-                  },
-                  child: const Text('OK'),
-                )
-              ],
-            ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('キャンセル'),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        scoreModel.deletePerformance(event, scoreId),
+                    child: const Text('OK'),
+                  )
+                ]),
     );
   }
 
@@ -272,20 +265,17 @@ class ScoreListScreen extends StatelessWidget {
       BuildContext context, bool isFavorite, String scoreId) {
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
-    return Consumer<ScoreModel>(
-      builder: (context, model, child) {
-        return IconButton(
-            icon: Icon(
-              Icons.star,
-              size: 30,
-              color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
-            ),
-            onPressed: () async {
-              await model.onFavoriteButtonTapped(event, isFavorite, scoreId);
-              await totalScoreListModel.getFavoriteScores();
-            });
-      },
-    );
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    return IconButton(
+        icon: Icon(
+          Icons.star,
+          size: 30,
+          color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
+        ),
+        onPressed: () async {
+          await scoreModel.onFavoriteButtonTapped(event, isFavorite, scoreId);
+          await totalScoreListModel.getFavoriteScores();
+        });
   }
 
   //演技の内容が見れるところ
@@ -299,16 +289,13 @@ class ScoreListScreen extends StatelessWidget {
       ),
       child: ListView(
         children: techs
-            .map(
-              (tech) => Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Flexible(child: Text('$tech')),
-                  ],
-                ),
-              ),
-            )
+            .map((tech) => Card(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Flexible(child: Text('$tech')),
+                      ]),
+                ))
             .toList(),
       ),
     );

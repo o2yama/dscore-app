@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/score_data.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
@@ -30,7 +31,7 @@ class ScoreEditScreen extends StatelessWidget {
                     children: [
                       SizedBox(
                         height: height * 0.1,
-                        child: _backButton(context, event),
+                        child: _functionButtons(context, event),
                       ),
                       SizedBox(
                         height: height * 0.1,
@@ -67,42 +68,46 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _backButton(BuildContext context, String event) {
+  Widget _functionButtons(BuildContext context, String event) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: () {
-            _onBackButtonPressed(context);
-          },
+          onPressed: () => _onBackButtonPressed(context),
           child: Platform.isIOS
-              ? Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_back_ios,
+              ? Row(children: [
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  Text(
+                    '$eventスコア一覧',
+                    style: TextStyle(
                       color: Theme.of(context).primaryColor,
                     ),
-                    Text(
-                      '$eventスコア一覧',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ],
-                )
-              : Icon(
-                  Icons.clear,
-                  color: Theme.of(context).primaryColor,
-                ),
+                  ),
+                ])
+              : Icon(Icons.clear, color: Theme.of(context).primaryColor),
         ),
+        Container(),
+        scoreId != null
+            ? TextButton(
+                onPressed: () => _onCopyButtonPressed(context),
+                child: Text(
+                  '複製',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor, fontSize: 15),
+                ),
+              )
+            : Container(),
         TextButton(
-          onPressed: () {
-            _onStoreButtonPressed(context);
-          },
+          onPressed: () => _onStoreButtonPressed(context),
           child: Text(
             scoreId == null ? '保存' : '更新',
-            style:
-                TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              fontSize: 15,
+            ),
           ),
         ),
       ],
@@ -158,114 +163,50 @@ class ScoreEditScreen extends StatelessWidget {
     }
   }
 
-  //保存ボタン押された時の処理
+  Future<void> _onCopyButtonPressed(BuildContext context) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
+    await scoreModel.setScore(event);
+    await scoreModel.getScores(event);
+    await totalScoreListModel.getFavoriteScores();
+    await showOkAlertDialog(
+      context: context,
+      title: '複製が完了しました。',
+    );
+    Navigator.pop(context);
+  }
+
   Future<void> _onStoreButtonPressed(BuildContext context) async {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     final totalScoreListModel =
         Provider.of<TotalScoreListModel>(context, listen: false);
     if (scoreModel.currentUser == null) {
-      await showDialog<Dialog>(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            return Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: const Text('ログインしてください。'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('OK'),
-                      )
-                    ],
-                  )
-                : AlertDialog(
-                    title: const Text('ログインしてください。'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('OK'),
-                      )
-                    ],
-                  );
-          });
+      await showOkAlertDialog(
+        context: context,
+        title: 'ログインしてください。',
+      );
     } else {
       if (scoreModel.numberOfGroup1 > 5 ||
           scoreModel.numberOfGroup2 > 5 ||
           scoreModel.numberOfGroup3 > 5) {
-        await showDialog<Dialog>(
-            context: context,
-            builder: (context) {
-              return Platform.isIOS
-                  ? CupertinoAlertDialog(
-                      title: const Text('同一グループが6つ以上登録されています。'),
-                      content: const Text('この演技は保存できません。'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        )
-                      ],
-                    )
-                  : AlertDialog(
-                      title: const Text('同一グループが6つ以上登録されています。'),
-                      content: const Text('この演技は保存できません。'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        )
-                      ],
-                    );
-            });
+        await showOkAlertDialog(
+          context: context,
+          title: '同一グループが6つ以上登録されています。',
+          message: 'この演技は保存できません。',
+        );
       } else {
         scoreModel.noEdited();
         scoreId == null
             ? await scoreModel.setScore(event)
             : await scoreModel.updateScore(event, scoreId!);
-        await showDialog<Dialog>(
-            context: context,
-            builder: (BuildContext context) {
-              return Platform.isIOS
-                  ? CupertinoAlertDialog(
-                      title: const Text('保存しました'),
-                      actions: [
-                        TextButton(
-                          onPressed: () async {
-                            await scoreModel.getScores(event);
-                            await totalScoreListModel.getFavoriteScores();
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: const Text('0K'),
-                        ),
-                      ],
-                    )
-                  : AlertDialog(
-                      title: const Text('保存しました'),
-                      actions: [
-                        TextButton(
-                          onPressed: () async {
-                            await scoreModel.getScores(event);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            '0K',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
-                          ),
-                        ),
-                      ],
-                    );
-            });
+        await scoreModel.getScores(event);
+        await totalScoreListModel.getFavoriteScores();
+        await showOkAlertDialog(
+          context: context,
+          title: '保存しました。',
+        );
+        Navigator.pop(context);
       }
     }
   }
