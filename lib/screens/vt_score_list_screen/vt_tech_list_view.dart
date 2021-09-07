@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-FixedExtentScrollController vtController = FixedExtentScrollController();
+FixedExtentScrollController vtController =
+    FixedExtentScrollController(initialItem: 14); //アカピアンスタート
 
 class VTTechListView extends StatelessWidget {
   @override
@@ -53,7 +54,15 @@ class VTTechListView extends StatelessWidget {
           children: [
             Text('${vtTech[techName]}'),
             const SizedBox(width: 16),
-            Flexible(child: Text('$techName')),
+            Flexible(
+              child: Text(
+                '$techName',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
           ],
         ),
       ),

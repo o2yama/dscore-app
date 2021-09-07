@@ -74,7 +74,6 @@ class TotalScoreListModel extends ChangeNotifier {
     }
     setTotalScore();
     isFetchedScore = true;
-    print('getFavoriteScores');
     notifyListeners();
   }
 
@@ -107,8 +106,7 @@ class TotalScoreListModel extends ChangeNotifier {
 
   //ユーザーにアプリを評価してもらうためのダイアログ
   Future<void> showAppReviewDialog() async {
-    final status = await AppReview.requestReview;
-    print('showAppReviewDialog: $status');
+    await AppReview.requestReview;
     notifyListeners();
   }
 
@@ -116,7 +114,6 @@ class TotalScoreListModel extends ChangeNotifier {
   Future<void> requestNotificationPermission() async {
     final settings = await userRepository.requestNotificationPermission();
     this.settings = settings;
-    print(settings.authorizationStatus);
     notifyListeners();
   }
 }

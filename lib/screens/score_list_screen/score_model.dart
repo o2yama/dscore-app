@@ -249,6 +249,7 @@ class ScoreModel extends ChangeNotifier {
   void setRule(String event, bool isUnder16) {
     this.isUnder16 = isUnder16;
     calculateScore(event);
+    isEdited = true;
     notifyListeners();
   }
 
@@ -301,57 +302,35 @@ class ScoreModel extends ChangeNotifier {
         isFavorite = true;
       }
       await scoreRepository.setFXScore(
-        totalScore,
-        decidedTechList,
-        cv,
-        isFavorite,
-        isUnder16,
-      );
+          totalScore, decidedTechList, cv, isFavorite, isUnder16);
     }
     if (event == 'あん馬') {
       if (phScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setPHScore(
-        totalScore,
-        decidedTechList,
-        isFavorite,
-        isUnder16,
-      );
+          totalScore, decidedTechList, isFavorite, isUnder16);
     }
     if (event == '吊り輪') {
       if (srScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setSRScore(
-        totalScore,
-        decidedTechList,
-        isFavorite,
-        isUnder16,
-      );
+          totalScore, decidedTechList, isFavorite, isUnder16);
     }
     if (event == '平行棒') {
       if (pbScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setPBScore(
-        totalScore,
-        decidedTechList,
-        isFavorite,
-        isUnder16,
-      );
+          totalScore, decidedTechList, isFavorite, isUnder16);
     }
     if (event == '鉄棒') {
       if (hbScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setHBScore(
-        totalScore,
-        decidedTechList,
-        cv,
-        isFavorite,
-        isUnder16,
-      );
+          totalScore, decidedTechList, cv, isFavorite, isUnder16);
     }
 
     isLoading = false;
@@ -364,40 +343,23 @@ class ScoreModel extends ChangeNotifier {
 
     if (event == '床') {
       await scoreRepository.updateFXScore(
-        scoreId,
-        totalScore,
-        decidedTechList,
-        cv,
-        isUnder16,
-      );
+          scoreId, totalScore, decidedTechList, cv, isUnder16);
     }
     if (event == 'あん馬') {
       await scoreRepository.updatePHScore(
-        scoreId,
-        totalScore,
-        decidedTechList,
-        isUnder16,
-      );
+          scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = phDifficulty;
       group = phGroup;
     }
     if (event == '吊り輪') {
       await scoreRepository.updateSRScore(
-        scoreId,
-        totalScore,
-        decidedTechList,
-        isUnder16,
-      );
+          scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = srDifficulty;
       group = srGroup;
     }
     if (event == '平行棒') {
       await scoreRepository.updatePBScore(
-        scoreId,
-        totalScore,
-        decidedTechList,
-        isUnder16,
-      );
+          scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = pbDifficulty;
       group = pbGroup;
     }
@@ -470,6 +432,7 @@ class ScoreModel extends ChangeNotifier {
             }
           }
         }
+        //終末技
         if (group[decidedTechList.last]! != 1) {
           if (difficulty[decidedTechList.last]! >= 4) {
             egr = egr * 10 + 5;
@@ -510,6 +473,7 @@ class ScoreModel extends ChangeNotifier {
             group4 = tech;
           }
         }
+
         if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
         } else {
@@ -523,6 +487,7 @@ class ScoreModel extends ChangeNotifier {
             }
           }
         }
+        //終末技
         if (group4 != '') {
           if (difficulty[group4]! >= 4) {
             egr = egr * 10 + 5;
@@ -546,6 +511,7 @@ class ScoreModel extends ChangeNotifier {
           }
         }
       }
+
       //難度点の計算
       difficultyPoint = 0;
       for (final tech in decidedTechList) {
@@ -556,7 +522,6 @@ class ScoreModel extends ChangeNotifier {
       totalScore = 0;
       totalScore = difficultyPoint * 10 + egr * 10 + cv * 10;
       totalScore /= 10;
-      print('計算したよ');
     } else {
       difficultyPoint = 0;
       egr = 0;
@@ -566,13 +531,14 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onReOrder(int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) {
-      // ignore: parameter_assignments
-      newIndex -= 1;
-    }
+  void onReOrder(int oldIndex, int newIndex, String event) {
     final numberChangedTech = decidedTechList.removeAt(oldIndex);
-    decidedTechList.insert(newIndex, numberChangedTech);
+    if (oldIndex < newIndex) {
+      decidedTechList.insert(newIndex - 1, numberChangedTech);
+    } else {
+      decidedTechList.insert(newIndex, numberChangedTech);
+    }
+    calculateScore(event);
     isEdited = true;
     notifyListeners();
   }

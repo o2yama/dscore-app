@@ -20,20 +20,18 @@ class SettingsScreen extends StatelessWidget {
         color: Theme.of(context).backgroundColor,
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      _backButton(context),
-                      const SizedBox(height: 24),
-                      _settingsListView(context),
-                    ],
-                  ),
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    _backButton(context),
+                    const SizedBox(height: 24),
+                    _settingsListView(context),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ]),
           ),
         ),
       ),
@@ -45,24 +43,22 @@ class SettingsScreen extends StatelessWidget {
       height: Utilities().isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
-        child: Row(
-          children: [
-            Icon(
-              Icons.clear,
+        child: Row(children: [
+          Icon(
+            Icons.clear,
+            color: Theme.of(context).primaryColor,
+            size: Utilities().isMobile() ? 20 : 30,
+          ),
+          const SizedBox(width: 24),
+          Text(
+            '設定',
+            style: TextStyle(
               color: Theme.of(context).primaryColor,
-              size: Utilities().isMobile() ? 20 : 30,
+              fontWeight: FontWeight.bold,
+              fontSize: Utilities().isMobile() ? 18 : 24,
             ),
-            const SizedBox(width: 24),
-            Text(
-              '設定',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: Utilities().isMobile() ? 18 : 24,
-              ),
-            )
-          ],
-        ),
+          )
+        ]),
       ),
     );
   }
@@ -72,29 +68,26 @@ class SettingsScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     return SizedBox(
       height: height * 0.8,
-      child: ListView(
-        children: [
-          _settingTile(context, 'テーマカラー', Icons.color_lens,
-              screen: ThemeColorScreen()),
-          _settingTile(context, '使い方', Icons.info, screen: UsageScreen()),
-          _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip),
-          _settingTile(context, '技追加の申請', Icons.playlist_add_rounded),
-          _settingTile(context, 'お問い合わせ', Icons.send),
-          // loginModel.currentUser != null
-          //     ? _settingTile(
-          //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
-          //     : Container(),
-          loginModel.currentUser != null
-              ? _settingTile(context, 'メールアドレス', Icons.mail,
-                  screen: EditEmailScreen())
-              : Container(),
-          loginModel.currentUser == null
-              ? _settingTile(context, 'ログイン', Icons.login,
-                  screen: LoginScreen())
-              : _settingTile(context, 'ログアウト', Icons.logout),
-          Container(height: Utilities().isMobile() ? 200 : 300),
-        ],
-      ),
+      child: ListView(children: [
+        _settingTile(context, 'テーマカラー', Icons.color_lens,
+            screen: ThemeColorScreen()),
+        _settingTile(context, '使い方', Icons.info, screen: UsageScreen()),
+        _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip),
+        _settingTile(context, '技追加の申請', Icons.playlist_add_rounded),
+        _settingTile(context, 'お問い合わせ', Icons.send),
+        // loginModel.currentUser != null
+        //     ? _settingTile(
+        //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
+        //     : Container(),
+        loginModel.currentUser != null
+            ? _settingTile(context, 'メールアドレス', Icons.mail,
+                screen: EditEmailScreen())
+            : Container(),
+        loginModel.currentUser == null
+            ? _settingTile(context, 'ログイン', Icons.login, screen: LoginScreen())
+            : _settingTile(context, 'ログアウト', Icons.logout),
+        Container(height: Utilities().isMobile() ? 200 : 300),
+      ]),
     );
   }
 
@@ -202,19 +195,14 @@ class SettingsScreen extends StatelessWidget {
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(width: 24),
-                Text(
-                  '$title',
-                  style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
-                ),
-              ],
-            ),
+            child: Row(children: [
+              Icon(icon, color: Theme.of(context).primaryColor),
+              const SizedBox(width: 24),
+              Text(
+                '$title',
+                style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
+              ),
+            ]),
           ),
         ),
       ),

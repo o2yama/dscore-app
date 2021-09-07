@@ -12,7 +12,7 @@ class VTScoreSelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<ScoreModel>(builder: (context, model, child) {
-        final height = MediaQuery.of(context).size.height - 50;
+        final height = MediaQuery.of(context).size.height;
         return Container(
           color: Theme.of(context).backgroundColor,
           child: SafeArea(
@@ -153,7 +153,7 @@ class VTScoreSelectScreen extends StatelessWidget {
           child: Text(
             '${scoreModel.vtTechName}',
             style: TextStyle(
-              fontSize: Utilities().isMobile() ? 18.0 : 20,
+              fontSize: Utilities().isMobile() ? 24 : 30,
             ),
           ),
         ),

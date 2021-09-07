@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/common/score_data.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 import '../../common/utilities.dart';
 
 class ScoreEditScreen extends StatelessWidget {
-  ScoreEditScreen({required this.event, this.scoreId});
+  const ScoreEditScreen({required this.event, this.scoreId});
   final String event;
   final String? scoreId;
 
@@ -50,16 +51,7 @@ class ScoreEditScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
+                model.isLoading ? LoadingScreen() : Container(),
               ],
             ),
           ),
@@ -90,16 +82,6 @@ class ScoreEditScreen extends StatelessWidget {
               : Icon(Icons.clear, color: Theme.of(context).primaryColor),
         ),
         Container(),
-        scoreId != null
-            ? TextButton(
-                onPressed: () => _onCopyButtonPressed(context),
-                child: Text(
-                  '複製',
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor, fontSize: 15),
-                ),
-              )
-            : Container(),
         TextButton(
           onPressed: () => _onStoreButtonPressed(context),
           child: Text(
@@ -132,6 +114,7 @@ class ScoreEditScreen extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
+                        scoreModel.noEdited();
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -161,20 +144,6 @@ class ScoreEditScreen extends StatelessWidget {
     } else {
       Navigator.pop(context);
     }
-  }
-
-  Future<void> _onCopyButtonPressed(BuildContext context) async {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final totalScoreListModel =
-        Provider.of<TotalScoreListModel>(context, listen: false);
-    await scoreModel.setScore(event);
-    await scoreModel.getScores(event);
-    await totalScoreListModel.getFavoriteScores();
-    await showOkAlertDialog(
-      context: context,
-      title: '複製が完了しました。',
-    );
-    Navigator.pop(context);
   }
 
   Future<void> _onStoreButtonPressed(BuildContext context) async {
@@ -470,7 +439,8 @@ class ScoreEditScreen extends StatelessWidget {
               ],
             )
           : ReorderableListView(
-              onReorder: scoreModel.onReOrder,
+              onReorder: (int oldIndex, int newIndex) =>
+                  scoreModel.onReOrder(oldIndex, newIndex, event),
               children: scoreModel.decidedTechList
                   .map((tech) => _techTile(context, tech,
                       scoreModel.decidedTechList.indexOf(tech) + 1))

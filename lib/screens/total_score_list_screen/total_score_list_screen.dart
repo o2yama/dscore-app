@@ -1,5 +1,5 @@
-import 'dart:io';
-import 'package:dscore_app/common/ad_state.dart';
+import 'package:dscore_app/common/ad.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
@@ -7,7 +7,6 @@ import 'package:dscore_app/screens/total_score_list_screen/total_score_list_mode
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../../common/utilities.dart';
 import '../intro/intro_model.dart';
@@ -22,23 +21,6 @@ class TotalScoreListScreen extends StatefulWidget {
 }
 
 class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
-  BannerAd? banner;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final adState = Provider.of<AdState>(context);
-    adState.initialization.then((status) {
-      setState(() {
-        banner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize.banner,
-          request: const AdRequest(),
-          listener: adState.adListener,
-        )..load();
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final introModel = Provider.of<IntroModel>(context, listen: false);
@@ -79,111 +61,80 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
         builder: (context, totalScoreListModel, child) {
       return Consumer<IntroModel>(
         builder: (context, model, child) {
-          return Stack(
-            children: [
-              Scaffold(
-                body: SingleChildScrollView(
-                  child: Container(
-                    color: Theme.of(context).backgroundColor,
-                    child: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            _ad(context),
-                            RefreshIndicator(
-                              onRefresh: () async {
-                                await introModel.getCurrentUserData();
-                                await totalScoreListModel.getFavoriteScores();
-                                totalScoreListModel.changeLoaded();
-                              },
-                              child: Column(
-                                children: [
-                                  _settingButtons(context),
-                                  _eventsListView(context)
-                                ],
-                              ),
-                            ),
-                          ],
+          return Stack(children: [
+            Scaffold(
+              body: SingleChildScrollView(
+                child: Container(
+                  color: Theme.of(context).backgroundColor,
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(children: [
+                        RefreshIndicator(
+                          onRefresh: () async {
+                            await introModel.getCurrentUserData();
+                            await totalScoreListModel.getFavoriteScores();
+                            totalScoreListModel.changeLoaded();
+                          },
+                          child: Column(children: [
+                            _settingButtons(context),
+                            _eventsListView(context)
+                          ]),
                         ),
-                      ),
+                      ]),
                     ),
                   ),
                 ),
               ),
-              (!model.isIntroWatched) ? IntroScreen() : Container(),
-              (model.isLoading || totalScoreListModel.isLoading)
-                  ? Container(
-                      color: Colors.grey.withOpacity(0.6),
-                      child: Center(
-                        child: Platform.isIOS
-                            ? const CupertinoActivityIndicator()
-                            : const CircularProgressIndicator(),
-                      ),
-                    )
-                  : Container(),
-            ],
-          );
+            ),
+            const Ad(),
+            (!model.isIntroWatched) ? IntroScreen() : Container(),
+            (model.isLoading || totalScoreListModel.isLoading)
+                ? LoadingScreen()
+                : Container(),
+          ]);
         },
       );
     });
   }
 
-  Widget _ad(BuildContext context) {
-    return banner == null
-        ? Container()
-        : SizedBox(
-            height: 50,
-            child: AdWidget(ad: banner!),
-          );
-  }
-
   Widget _settingButtons(BuildContext context) {
-    final height = MediaQuery.of(context).size.height - 50; //広告の分の50px
-    return SizedBox(
-      height: height * 0.1,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          IconButton(
-            icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
-            onPressed: () {
-              Navigator.push<Object>(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsScreen(),
-                  fullscreenDialog: true,
-                ),
-              );
-            },
-          )
-        ],
-      ),
-    );
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      IconButton(
+        icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
+        onPressed: () {
+          Navigator.push<Object>(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SettingsScreen(),
+              fullscreenDialog: true,
+            ),
+          );
+        },
+      )
+    ]);
   }
 
   Widget _eventsListView(BuildContext context) {
-    final height = MediaQuery.of(context).size.height - 50;
+    final height = MediaQuery.of(context).size.height;
     return SizedBox(
       height: height * 0.9,
-      child: ListView(
-        children: [
-          _eventCard(context, event[0], eventEng[0]),
-          _eventCard(context, event[1], eventEng[1]),
-          _eventCard(context, event[2], eventEng[2]),
-          _eventCard(context, event[3], eventEng[3]),
-          _eventCard(context, event[4], eventEng[4]),
-          _eventCard(context, event[5], eventEng[5]),
-          _totalScore(),
-          Container(height: 100),
-        ],
-      ),
+      child: ListView(children: [
+        _eventCard(context, event[0], eventEng[0]),
+        _eventCard(context, event[1], eventEng[1]),
+        _eventCard(context, event[2], eventEng[2]),
+        _eventCard(context, event[3], eventEng[3]),
+        _eventCard(context, event[4], eventEng[4]),
+        _eventCard(context, event[5], eventEng[5]),
+        _totalScore(),
+        Container(height: 100),
+      ]),
     );
   }
 
   Widget _eventCard(BuildContext context, String event, String eventEng) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final width = MediaQuery.of(context).size.width - 50;
+    final width = MediaQuery.of(context).size.width;
     return Consumer<TotalScoreListModel>(builder: (context, model, child) {
       return SizedBox(
         height: 130,
@@ -209,127 +160,96 @@ class _TotalScoreListScreenState extends State<TotalScoreListScreen> {
                     ));
               }
             },
-            child: Row(
-              children: [
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 15, top: 20),
-                          child: Text(
-                            '$event',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+            child: Row(children: [
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: Column(children: [
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 15, top: 20),
+                      child: Text(
+                        '$event',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 15, top: 10),
-                          child: Text(
-                            '$eventEng',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                            ),
-                          ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Text(
+                        '$eventEng',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                ]),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: _scoreDisplay(context, event),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: event == '床'
-                        ? model.favoriteFx == null
-                            ? Text('0.0',
-                                style: Theme.of(context).textTheme.headline6)
-                            : Text('${model.favoriteFxScore}',
-                                style: Theme.of(context).textTheme.headline6)
-                        : event == 'あん馬'
-                            ? model.favoritePh == null
-                                ? Text('0.0',
-                                    style:
-                                        Theme.of(context).textTheme.headline6)
-                                : Text(
-                                    '${model.favoritePhScore}',
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  )
-                            : event == '吊り輪'
-                                ? model.favoriteSr == null
-                                    ? Text('0.0',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6)
-                                    : Text(
-                                        '${model.favoriteSrScore}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6,
-                                      )
-                                : event == '跳馬'
-                                    ? model.vt == null
-                                        ? Text('0.0',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline6)
-                                        : Text(
-                                            '${model.vt!.score}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline6,
-                                          )
-                                    : event == '平行棒'
-                                        ? model.favoritePb == null
-                                            ? Text('0.0',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline6)
-                                            : Text(
-                                                '${model.favoritePbScore}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline6,
-                                              )
-                                        : event == '鉄棒'
-                                            ? model.favoriteHb == null
-                                                ? Text('0.0',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline6)
-                                                : Text(
-                                                    '${model.favoriteHbScore}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline5,
-                                                  )
-                                            : const Text('0.0'),
-                  ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 4,
+                child: SizedBox(
+                  width: width * 0.4,
+                  child: _techsList(event, context),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  flex: 4,
-                  child: SizedBox(
-                    width: width * 0.4,
-                    child: _techsList(event, context),
-                  ),
-                ),
-                const SizedBox(width: 16),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+            ]),
           ),
         ),
       );
     });
+  }
+
+  Widget _scoreDisplay(BuildContext context, String event) {
+    final model = Provider.of<TotalScoreListModel>(context, listen: false);
+    if (event == '床') {
+      return model.favoriteFx == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.favoriteFxScore}',
+              style: Theme.of(context).textTheme.headline6);
+    } else if (event == 'あん馬') {
+      return model.favoritePh == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.favoritePhScore}',
+              style: Theme.of(context).textTheme.headline6);
+    } else if (event == '吊り輪') {
+      return model.favoriteSr == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.favoriteSrScore}',
+              style: Theme.of(context).textTheme.headline6);
+    } else if (event == '跳馬') {
+      return model.vt == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.vt!.score}',
+              style: Theme.of(context).textTheme.headline6);
+    } else if (event == '平行棒') {
+      return model.favoritePb == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.favoritePbScore}',
+              style: Theme.of(context).textTheme.headline6);
+    } else if (event == '鉄棒') {
+      return model.favoriteHb == null
+          ? Text('0.0', style: Theme.of(context).textTheme.headline6)
+          : Text('${model.favoriteHbScore}',
+              style: Theme.of(context).textTheme.headline6);
+    } else {
+      return const Text('0.0');
+    }
   }
 
   //  6種目の合計

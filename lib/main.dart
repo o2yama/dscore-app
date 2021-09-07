@@ -75,13 +75,15 @@ Future<void> main() async {
       value: adState,
       builder: (context, child) => MultiProvider(
         providers: multiProviders,
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ));
   });
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeColorModel>(builder: (context, model, child) {
@@ -90,7 +92,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primaryColor: model.themeColor,
-          backgroundColor: model.themeColor.withOpacity(0.2),
+          backgroundColor: model.themeColor.withOpacity(0.1),
           cardTheme: CardTheme(
             color: Colors.white,
             elevation: 3,

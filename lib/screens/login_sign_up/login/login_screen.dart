@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
 import 'package:dscore_app/common/validator.dart';
@@ -62,16 +63,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
+                model.isLoading ? LoadingScreen() : Container(),
               ]);
             }),
           ),

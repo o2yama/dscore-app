@@ -44,20 +44,15 @@ class SearchScreen extends StatelessWidget {
   Widget _backButton(BuildContext context, String event) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.1,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.clear,
-              color: Theme.of(context).primaryColor,
-            ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Icon(
+            Icons.clear,
+            color: Theme.of(context).primaryColor,
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
@@ -93,9 +88,7 @@ class SearchScreen extends StatelessWidget {
             ),
             hintText: '技名を検索',
           ),
-          onChanged: (text) {
-            scoreModel.search(text, event);
-          },
+          onChanged: (text) => scoreModel.search(text, event),
         ),
       ),
     );
@@ -137,22 +130,20 @@ class SearchScreen extends StatelessWidget {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return Consumer<ScoreModel>(builder: (context, model, child) {
       return scoreModel.searchResult.isEmpty
-          ? Column(
-              children: [
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 50,
-                  child: TextButton(
-                    onPressed: () => launch(
-                      'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                      forceSafariVC: true,
-                      forceWebView: true,
-                    ),
-                    child: const Text('登録したい技がない場合はこちら'),
+          ? Column(children: [
+              const SizedBox(height: 24),
+              SizedBox(
+                height: 50,
+                child: TextButton(
+                  onPressed: () => launch(
+                    'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                    forceSafariVC: true,
+                    forceWebView: true,
                   ),
+                  child: const Text('登録したい技がない場合はこちら'),
                 ),
-              ],
-            )
+              ),
+            ])
           : SizedBox(
               height: MediaQuery.of(context).size.height * 0.8,
               child: ListView(
@@ -217,25 +208,21 @@ class SearchScreen extends StatelessWidget {
         ),
       ),
       scoreModel.searchResult.length - 1 == index
-          ? Column(
-              children: [
-                const SizedBox(height: 30),
-                SizedBox(
-                  height: 50,
-                  child: TextButton(
-                    onPressed: () {
-                      launch(
-                        'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                        forceSafariVC: true,
-                        forceWebView: true,
-                      );
-                    },
-                    child: const Text('登録したい技がない場合はこちら'),
+          ? Column(children: [
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 50,
+                child: TextButton(
+                  onPressed: () => launch(
+                    'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                    forceSafariVC: true,
+                    forceWebView: true,
                   ),
+                  child: const Text('登録したい技がない場合はこちら'),
                 ),
-                const SizedBox(height: 300),
-              ],
-            )
+              ),
+              const SizedBox(height: 300),
+            ])
           : Container(),
     ]);
   }

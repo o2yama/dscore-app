@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dscore_app/common/att.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/common/utilities.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,7 @@ class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Colors.grey[200],
       body: Consumer<IntroModel>(
         builder: (context, model, child) {
           return SafeArea(
@@ -48,16 +49,7 @@ class IntroScreen extends StatelessWidget {
                     await finishIntro(context);
                   },
                 ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.7),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
+                model.isLoading ? LoadingScreen() : Container(),
               ],
             ),
           );
@@ -70,6 +62,8 @@ class IntroScreen extends StatelessWidget {
     return [
       Slide(
         backgroundImage: 'images/tutorial_1.png',
+        widthImage: MediaQuery.of(context).size.width * 0.8,
+        heightImage: MediaQuery.of(context).size.height * 0.8,
         backgroundBlendMode: BlendMode.screen,
         backgroundImageFit: BoxFit.contain,
         backgroundColor: Colors.black,
@@ -124,9 +118,7 @@ class IntroScreen extends StatelessWidget {
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: () async {
-                      final isAttPermitted =
-                          await ATT.instance.requestPermission();
-                      print(isAttPermitted);
+                      await ATT.instance.requestPermission();
                       await introModel.finishIntro();
                       Navigator.pop(context);
                     },

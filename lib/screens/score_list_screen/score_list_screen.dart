@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/common/ad.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
@@ -9,7 +12,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class ScoreListScreen extends StatelessWidget {
-  ScoreListScreen({required this.event});
+  const ScoreListScreen({Key? key, required this.event}) : super(key: key);
   final String event;
 
   @override
@@ -45,15 +48,8 @@ class ScoreListScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  model.isLoading
-                      ? Container(
-                          color: Colors.grey.withOpacity(0.6),
-                          child: Center(
-                              child: Platform.isIOS
-                                  ? const CupertinoActivityIndicator()
-                                  : const CircularProgressIndicator()),
-                        )
-                      : Container(),
+                  const Ad(),
+                  model.isLoading ? LoadingScreen() : Container(),
                 ],
               ),
             ),
@@ -88,84 +84,81 @@ class ScoreListScreen extends StatelessWidget {
 
   Widget _eventNameDisplay(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    return SizedBox(
-      height: height * 0.1,
-      child: Row(children: [
-        SizedBox(width: width * 0.1),
-        Text(
-          '$event',
-          style: Theme.of(context).textTheme.headline4,
+    return Row(children: [
+      SizedBox(width: width * 0.15),
+      Text(
+        '$event',
+        style: TextStyle(
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+          fontStyle: FontStyle.italic,
+          color: Colors.black.withOpacity(0.7),
         ),
-        Expanded(child: Container()),
-        IconButton(
-            icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-            onPressed: () {
-              scoreModel
-                ..selectEvent(event)
-                ..resetScore();
-              Navigator.push<Object>(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ScoreEditScreen(event: event),
-                ),
-              );
-            }),
-        SizedBox(width: width * 0.1),
-      ]),
-    );
+      ),
+      Expanded(child: Container()),
+      IconButton(
+          icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+          onPressed: () {
+            scoreModel
+              ..selectEvent(event)
+              ..resetScore();
+            Navigator.push<Object>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ScoreEditScreen(event: event),
+              ),
+            );
+          }),
+      SizedBox(width: width * 0.1),
+    ]);
   }
 
   Widget _scoreList(BuildContext context) {
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    if (event == '床') {
-      return ListView(
-        children: scoreModel.fxScoreList
-            .map((score) => _scoreTile(context, score.techs, score.total,
-                score.isFavorite, score.scoreId))
-            .toList(),
-      );
-    } else if (event == 'あん馬') {
-      return ListView(
-        children: scoreModel.phScoreList
-            .map((score) => _scoreTile(context, score.techs, score.total,
-                score.isFavorite, score.scoreId))
-            .toList(),
-      );
-    } else if (event == '吊り輪') {
-      return ListView(
-        children: scoreModel.srScoreList
-            .map((score) => _scoreTile(context, score.techs, score.total,
-                score.isFavorite, score.scoreId))
-            .toList(),
-      );
-    } else if (event == '平行棒') {
-      return ListView(
-        children: scoreModel.pbScoreList
-            .map((score) => _scoreTile(context, score.techs, score.total,
-                score.isFavorite, score.scoreId))
-            .toList(),
-      );
-    } else if (event == '鉄棒') {
-      return ListView(
-        children: scoreModel.hbScoreList
-            .map((score) => _scoreTile(context, score.techs, score.total,
-                score.isFavorite, score.scoreId))
-            .toList(),
-      );
-    } else {
-      return ListView();
+    switch (event) {
+      case '床':
+        return ListView(
+          children: scoreModel.fxScoreList
+              .map((score) => _scoreTile(context, score.techs, score.total,
+                  score.isFavorite, score.scoreId))
+              .toList(),
+        );
+      case 'あん馬':
+        return ListView(
+          children: scoreModel.phScoreList
+              .map((score) => _scoreTile(context, score.techs, score.total,
+                  score.isFavorite, score.scoreId))
+              .toList(),
+        );
+      case '吊り輪':
+        return ListView(
+          children: scoreModel.srScoreList
+              .map((score) => _scoreTile(context, score.techs, score.total,
+                  score.isFavorite, score.scoreId))
+              .toList(),
+        );
+      case '平行棒':
+        return ListView(
+          children: scoreModel.pbScoreList
+              .map((score) => _scoreTile(context, score.techs, score.total,
+                  score.isFavorite, score.scoreId))
+              .toList(),
+        );
+      case '鉄棒':
+        return ListView(
+          children: scoreModel.hbScoreList
+              .map((score) => _scoreTile(context, score.techs, score.total,
+                  score.isFavorite, score.scoreId))
+              .toList(),
+        );
+      default:
+        return ListView();
     }
   }
 
-  Widget _scoreTile(
-    BuildContext context,
-    List<String> techs,
-    num total,
-    bool isFavorite,
-    String scoreId,
-  ) {
+  Widget _scoreTile(BuildContext context, List<String> techs, num total,
+      bool isFavorite, String scoreId) {
     final width = MediaQuery.of(context).size.width;
     final scoreModel = Provider.of<ScoreModel>(context, listen: false);
     return InkWell(
@@ -181,6 +174,14 @@ class ScoreListScreen extends StatelessWidget {
       child: Slidable(
         actionExtentRatio: 0.2,
         actionPane: const SlidableScrollActionPane(),
+        actions: [
+          IconSlideAction(
+            caption: '複製',
+            color: Colors.blue,
+            icon: CupertinoIcons.plus_square_fill_on_square_fill,
+            onTap: () => _onCopyButtonPressed(context, scoreId),
+          ),
+        ],
         secondaryActions: [
           IconSlideAction(
             caption: '削除',
@@ -196,20 +197,20 @@ class ScoreListScreen extends StatelessWidget {
             child: _favoriteButton(context, isFavorite, scoreId),
           ),
           Expanded(
-            flex: 8,
+            flex: 9,
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: width * 0.1),
+                    SizedBox(width: width * 0.05),
                     Text(
                       '$total',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headline5,
                     ),
-                    Expanded(child: Container()),
+                    SizedBox(width: width * 0.05),
                     _techsListView(context, techs),
                     SizedBox(width: width * 0.05),
                   ],
@@ -219,6 +220,22 @@ class ScoreListScreen extends StatelessWidget {
           ),
         ]),
       ),
+    );
+  }
+
+  ///選択した演技を複製する
+  Future<void> _onCopyButtonPressed(
+      BuildContext context, String scoreId) async {
+    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+    final totalScoreListModel =
+        Provider.of<TotalScoreListModel>(context, listen: false);
+    await scoreModel.getScore(scoreId, event);
+    await scoreModel.setScore(event);
+    await scoreModel.getScores(event);
+    await totalScoreListModel.getFavoriteScores();
+    await showOkAlertDialog(
+      context: context,
+      title: '複製が完了しました。',
     );
   }
 
@@ -282,7 +299,7 @@ class ScoreListScreen extends StatelessWidget {
   Widget _techsListView(BuildContext context, List<String> techs) {
     return Container(
       height: 80,
-      width: MediaQuery.of(context).size.width * 0.4,
+      width: MediaQuery.of(context).size.width * 0.5,
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(5),

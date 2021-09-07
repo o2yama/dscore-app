@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/common/loading_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_model.dart';
 import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
@@ -35,45 +37,34 @@ class SignUpScreen extends StatelessWidget {
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           child: SafeArea(
             child: Consumer<SignUpModel>(builder: (context, model, child) {
-              return Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Form(
-                      key: _formKey,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 16),
-                            _backButton(context),
-                            const SizedBox(height: 24),
-                            _description(context),
-                            const SizedBox(height: 24),
-                            _emailController(context),
-                            const SizedBox(height: 24),
-                            _passwordController(context),
-                            const SizedBox(height: 50),
-                            _resisterButton(context),
-                            const SizedBox(height: 30),
-                            _toLoginScreenButton(context),
-                            const SizedBox(height: 300),
-                          ],
-                        ),
+              return Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          _backButton(context),
+                          const SizedBox(height: 24),
+                          _description(context),
+                          const SizedBox(height: 24),
+                          _emailController(context),
+                          const SizedBox(height: 24),
+                          _passwordController(context),
+                          const SizedBox(height: 50),
+                          _resisterButton(context),
+                          const SizedBox(height: 30),
+                          _toLoginScreenButton(context),
+                          const SizedBox(height: 300),
+                        ],
                       ),
                     ),
                   ),
-                  model.isLoading
-                      ? Container(
-                          color: Colors.grey.withOpacity(0.6),
-                          child: Center(
-                            child: Platform.isIOS
-                                ? const CupertinoActivityIndicator()
-                                : const CircularProgressIndicator(),
-                          ),
-                        )
-                      : Container(),
-                ],
-              );
+                ),
+                model.isLoading ? LoadingScreen() : Container(),
+              ]);
             }),
           ),
         ),
@@ -82,40 +73,32 @@ class SignUpScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(width: Utilities().isMobile() ? 0 : 18),
-        TextButton(
-          onPressed: () {
-            Navigator.pushAndRemoveUntil<Object>(
-                context,
-                MaterialPageRoute(builder: (context) => TotalScoreListScreen()),
-                (_) => false);
-          },
-          child: Icon(
-            Icons.clear,
-            color: Theme.of(context).primaryColor,
-          ),
+    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+      SizedBox(width: Utilities().isMobile() ? 0 : 18),
+      TextButton(
+        onPressed: () => Navigator.pushAndRemoveUntil<Object>(
+            context,
+            MaterialPageRoute(builder: (context) => TotalScoreListScreen()),
+            (_) => false),
+        child: Icon(
+          Icons.clear,
+          color: Theme.of(context).primaryColor,
         ),
-      ],
-    );
+      ),
+    ]);
   }
 
   Widget _description(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text('ユーザー登録', style: Theme.of(context).textTheme.headline5),
-        const SizedBox(height: 24),
-        SizedBox(
-          height: 150,
-          child: Image.asset('images/splash_image.JPG'),
-        ),
-        const SizedBox(height: 24),
-        const Text('演技の保存にはユーザー登録が必要です。')
-      ],
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text('ユーザー登録', style: Theme.of(context).textTheme.headline5),
+      const SizedBox(height: 24),
+      SizedBox(
+        height: 150,
+        child: Image.asset('images/splash_image.JPG'),
+      ),
+      const SizedBox(height: 24),
+      const Text('演技の保存にはユーザー登録が必要です。')
+    ]);
   }
 
   Widget _emailController(BuildContext context) {
@@ -133,9 +116,7 @@ class SignUpScreen extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide(
             color: Colors.grey,
           ),
@@ -156,17 +137,11 @@ class SignUpScreen extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 10),
         prefixIcon: Icon(Icons.vpn_key_sharp),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-          borderSide: BorderSide(
-            color: Colors.grey,
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: Colors.grey),
         ),
         hintText: 'パスワード',
       ),
@@ -176,9 +151,7 @@ class SignUpScreen extends StatelessWidget {
 
   Widget _resisterButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        await _onResisterButtonPressed(context);
-      },
+      onPressed: () => _onResisterButtonPressed(context),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
       ),
@@ -197,99 +170,64 @@ class SignUpScreen extends StatelessWidget {
     final signInModel = Provider.of<SignUpModel>(context, listen: false);
     if (!Validator().validEmail(signInModel.email)) {
       _showValidMessage(context, '登録できないメールアドレスです。');
+    } else if (!Validator().validPassword(signInModel.password)) {
+      _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
     } else {
-      if (!Validator().validPassword(signInModel.password)) {
-        _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
-      } else {
-        try {
-          await signInModel.signUpWithEmailAndPassword();
-          await showDialog<Dialog>(
-            context: context,
-            builder: (context) => Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: const Text('登録が完了しました。'),
-                    content: const Text('Dスコアを登録しましょう！'),
-                    actions: [
+      try {
+        await signInModel.signUpWithEmailAndPassword();
+        await showDialog<Dialog>(
+          context: context,
+          builder: (context) => Platform.isIOS
+              ? CupertinoAlertDialog(
+                  title: const Text('登録が完了しました。'),
+                  content: const Text('Dスコアを登録しましょう！'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        signInModel.sendEmailVerification();
+                        Navigator.pushAndRemoveUntil<Object>(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TotalScoreListScreen()),
+                            (_) => false);
+                      },
+                      child: const Text('OK'),
+                    )
+                  ],
+                )
+              : AlertDialog(
+                  title: const Text('登録が完了しました。'),
+                  content: const Text('Dスコアを登録しましょう！'),
+                  actions: [
                       TextButton(
-                        onPressed: () {
-                          signInModel.sendEmailVerification();
-                          Navigator.pushAndRemoveUntil<Object>(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TotalScoreListScreen()),
-                              (_) => false);
-                        },
+                        onPressed: () => Navigator.pushAndRemoveUntil<Object>(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TotalScoreListScreen()),
+                            (_) => false),
                         child: const Text('OK'),
                       )
-                    ],
-                  )
-                : AlertDialog(
-                    title: const Text('登録が完了しました。'),
-                    content: const Text('Dスコアを登録しましょう！'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil<Object>(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TotalScoreListScreen()),
-                              (_) => false);
-                        },
-                        child: const Text('OK'),
-                      )
-                    ],
-                  ),
-          );
-        } on Exception catch (e) {
-          print(e);
-          await showDialog<Dialog>(
-            context: context,
-            builder: (context) => Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: const Text('登録に失敗しました。'),
-                    content: Column(
-                      children: const [
-                        SizedBox(height: 8),
-                        Text('すでに同じメールアドレスが登録されている可能性があります。'),
-                        Text('メールアドレスとパスワードをご確認ください。'),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('OK'),
-                      )
-                    ],
-                  )
-                : AlertDialog(
-                    title: const Text('登録に失敗しました'),
-                    content: const Text('メールアドレスとパスワードをご確認ください。'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('OK'),
-                      )
-                    ],
-                  ),
-          );
-        }
+                    ]),
+        );
+      } on Exception catch (e) {
+        print(e);
+        await showOkAlertDialog(
+          context: context,
+          title: '登録に失敗しました。',
+          message: 'すでに同じメールアドレスが登録されている可能性があります。',
+        );
       }
     }
   }
 
   Widget _toLoginScreenButton(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        Navigator.pushAndRemoveUntil<Object>(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-            (_) => false);
-      },
-      child: const Text('ユーザー登録済みの方はこちら', style: TextStyle(color: Colors.blue)),
+      onPressed: () => Navigator.pushAndRemoveUntil<Object>(context,
+          MaterialPageRoute(builder: (context) => LoginScreen()), (_) => false),
+      child: const Text(
+        'ユーザー登録済みの方はこちら',
+        style: TextStyle(color: Colors.blue),
+      ),
     );
   }
 }
