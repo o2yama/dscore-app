@@ -15,7 +15,6 @@ Map<String, Color?> themes = {
 
 class ThemeColorModel extends ChangeNotifier {
   Color themeColor = Colors.white;
-  bool isSelected = false;
 
   Future<void> setThemeColor(String color) async {
     final pref = await SharedPreferences.getInstance();
