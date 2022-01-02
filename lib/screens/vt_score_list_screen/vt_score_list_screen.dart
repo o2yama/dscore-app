@@ -36,7 +36,7 @@ class VTScoreSelectScreen extends StatelessWidget {
                       const SizedBox(height: 50),
                       SizedBox(
                         height: height * 0.5,
-                        child: VTTechListView(),
+                        child: const VTTechListView(),
                       ),
                     ],
                   ),
@@ -80,8 +80,7 @@ class VTScoreSelectScreen extends StatelessWidget {
           onPressed: () => _onStoreButtonPressed(context, ref),
           child: Text(
             '保存',
-            style:
-                TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+            style: TextStyle(color: Theme.of(context).primaryColor),
           ),
         ),
       ],
@@ -89,7 +88,9 @@ class VTScoreSelectScreen extends StatelessWidget {
   }
 
   Future<void> _onStoreButtonPressed(
-      BuildContext context, WidgetRef ref) async {
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     ref.watch(loadingStateProvider.notifier).startLoading();
 
     await ref.watch(scoreModelProvider).setVTScore();
@@ -97,7 +98,7 @@ class VTScoreSelectScreen extends StatelessWidget {
 
     ref.watch(loadingStateProvider.notifier).endLoading();
     await showOkAlertDialog(context: context, title: '保存しました');
-    Navigator.pop(context);
+
     Navigator.pop(context);
   }
 

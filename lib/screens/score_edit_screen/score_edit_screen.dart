@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -28,7 +29,6 @@ class ScoreEditScreen extends StatelessWidget {
       body: Consumer(
         builder: (context, ref, child) {
           final scoreModel = ref.watch(scoreModelProvider);
-          final homeModel = ref.watch(homeModelProvider);
 
           return Container(
             color: Theme.of(context).backgroundColor,
@@ -40,12 +40,7 @@ class ScoreEditScreen extends StatelessWidget {
                       children: [
                         SizedBox(
                           height: Utilities.screenHeight(context) * 0.1,
-                          child: _functionButtons(
-                            context,
-                            event,
-                            scoreModel,
-                            homeModel,
-                          ),
+                          child: _header(context, event, ref),
                         ),
                         SizedBox(
                           height: Utilities.screenHeight(context) * 0.1,
@@ -76,39 +71,32 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _functionButtons(
-    BuildContext context,
-    Event event,
-    ScoreModel scoreModel,
-    HomeModel homeModel,
-  ) {
+  Widget _header(BuildContext context, Event event, WidgetRef ref) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: () => _onBackButtonPressed(context, scoreModel),
+          onPressed: () => _onBackButtonPressed(context, ref),
           child: Platform.isIOS
-              ? Row(children: [
-                  Icon(
-                    Icons.arrow_back_ios,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  Text(
-                    '$eventスコア一覧',
-                    style: TextStyle(
+              ? Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios,
                       color: Theme.of(context).primaryColor,
                     ),
-                  ),
-                ])
+                    Text(
+                      '${Convertor.eventName[event]}スコア一覧',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                )
               : Icon(Icons.clear, color: Theme.of(context).primaryColor),
         ),
         Container(),
         TextButton(
-          onPressed: () => _onStoreButtonPressed(
-            context,
-            scoreModel,
-            homeModel,
-          ),
+          onPressed: () => _onStoreButtonPressed(context, ref),
           child: Text(
             scoreId == null ? '保存' : '更新',
             style: TextStyle(
@@ -121,50 +109,25 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  void _onBackButtonPressed(BuildContext context, ScoreModel scoreModel) {
+  void _onBackButtonPressed(BuildContext context, WidgetRef ref) {
+    final scoreModel = ref.watch(scoreModelProvider);
+
     if (scoreModel.isEdited) {
       showDialog<Dialog>(
-          context: context,
-          builder: (context) => Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: const Text('保存せずに戻ってもよろしいですか？'),
-                  content: const Text('変更した内容は破棄されます。'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('キャンセル'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        scoreModel.noEdited();
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('OK'),
-                    )
-                  ],
-                )
-              : AlertDialog(
-                  title: const Text('保存せずに戻ってもよろしいですか？'),
-                  content: const Text('計算した内容は破棄されます。'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('キャンセル'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('OK'),
-                    )
-                  ],
-                ));
+        context: context,
+        builder: (context) => OkCancelDialog(
+          onOk: () {
+            scoreModel.noEdited();
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          onCancel: () {
+            Navigator.pop(context);
+          },
+          title: '保存せずに戻ってもよろしいですか？',
+          content: '変更した内容は破棄されます。',
+        ),
+      );
     } else {
       Navigator.pop(context);
     }
@@ -172,9 +135,11 @@ class ScoreEditScreen extends StatelessWidget {
 
   Future<void> _onStoreButtonPressed(
     BuildContext context,
-    ScoreModel scoreModel,
-    HomeModel homeModel,
+    WidgetRef ref,
   ) async {
+    final loadingStateModel = ref.watch(loadingStateProvider.notifier);
+    final scoreModel = ref.watch(scoreModelProvider);
+
     if (scoreModel.currentUser == null) {
       await showOkAlertDialog(
         context: context,
@@ -190,16 +155,21 @@ class ScoreEditScreen extends StatelessWidget {
           message: 'この演技は保存できません。',
         );
       } else {
+        loadingStateModel.startLoading();
+
         scoreModel.noEdited();
         scoreId == null
             ? await scoreModel.setScore(event)
             : await scoreModel.updateScore(event, scoreId!);
         await scoreModel.getScores(event);
-        await homeModel.getFavoriteScores();
+        await ref.watch(homeModelProvider).getFavoriteScores();
+
+        loadingStateModel.endLoading();
         await showOkAlertDialog(
           context: context,
           title: '保存しました。',
         );
+
         Navigator.pop(context);
       }
     }
@@ -207,6 +177,7 @@ class ScoreEditScreen extends StatelessWidget {
 
   Widget _totalScoreDisplay(BuildContext context, ScoreModel scoreModel) {
     final difficultyOfGroup4 = scoreModel.difficultyOfGroup4;
+
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Row(
@@ -427,25 +398,29 @@ class ScoreEditScreen extends StatelessWidget {
                     onTap: () {
                       if (scoreModel.currentUser == null) {
                         Navigator.push<Object>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                              fullscreenDialog: true,
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpScreen(),
+                            fullscreenDialog: true,
+                          ),
+                        );
                       } else {
                         searchController.clear();
                         scoreModel.searchResult.clear();
                         scoreModel.selectEvent(event);
                         Navigator.push<Object>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SearchScreen(event: event),
-                              fullscreenDialog: true,
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchScreen(event: event),
+                            fullscreenDialog: true,
+                          ),
+                        );
                       }
                     },
-                    child:
-                        Icon(Icons.add, color: Theme.of(context).primaryColor),
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
               ],

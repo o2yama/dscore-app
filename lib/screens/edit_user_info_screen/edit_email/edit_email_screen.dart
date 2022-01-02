@@ -22,6 +22,7 @@ class EditEmailScreen extends StatelessWidget {
       body: Consumer(
         builder: (context, ref, child) {
           return Container(
+            height: Utilities.screenHeight(context),
             color: Theme.of(context).backgroundColor,
             child: SafeArea(
               child: Stack(
@@ -30,9 +31,9 @@ class EditEmailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: Form(
                       key: _formKey,
-                      child: InkWell(
+                      child: GestureDetector(
                         onTap: () =>
-                            FocusScope.of(context).requestFocus(FocusNode()),
+                            FocusManager.instance.primaryFocus!.unfocus(),
                         child: SingleChildScrollView(
                           child: Column(
                             children: [

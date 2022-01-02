@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
@@ -139,10 +140,7 @@ class SignUpScreen extends StatelessWidget {
 
   Widget _resisterButton(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
-      onPressed: () => _onResisterButtonPressed(
-        context,
-        ref.watch(signUpModelProvider),
-      ),
+      onPressed: () => _onResisterButtonPressed(context, ref),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
       ),
@@ -158,7 +156,12 @@ class SignUpScreen extends StatelessWidget {
   }
 
   Future<void> _onResisterButtonPressed(
-      BuildContext context, SignUpModel signUpModel) async {
+      BuildContext context, WidgetRef ref) async {
+    final signUpModel = ref.watch(signUpModelProvider);
+    final loadingStateModel = ref.watch(loadingStateProvider.notifier);
+
+    loadingStateModel.startLoading();
+
     if (!Validator().validEmail(signUpModel.email)) {
       showValidMessage(context, '登録できないメールアドレスです。');
     } else if (!Validator().validPassword(signUpModel.password)) {
@@ -183,6 +186,8 @@ class SignUpScreen extends StatelessWidget {
           title: '登録に失敗しました。',
           message: e.toString(),
         );
+      } finally {
+        loadingStateModel.endLoading();
       }
     }
   }

@@ -101,10 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      Column(children: const [
-                        Expanded(child: SizedBox()),
-                        BannerAdWidget(),
-                      ]),
+                      const BannerAdWidget(),
                       (!introModel.isIntroWatched)
                           ? const IntroScreen()
                           : Container(),
@@ -177,7 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 } else {
+                  ref.watch(loadingStateProvider.notifier).startLoading();
                   await scoreModel.getScores(event);
+                  ref.watch(loadingStateProvider.notifier).endLoading();
                   await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(

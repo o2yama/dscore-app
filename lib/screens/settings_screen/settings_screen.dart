@@ -80,14 +80,14 @@ class SettingsScreen extends StatelessWidget {
             'テーマカラー',
             Icons.color_lens,
             ref,
-            screen: ThemeColorScreen(),
+            screen: const ThemeColorScreen(),
           ),
           _settingTile(
             context,
             '使い方',
             Icons.info,
             ref,
-            screen: UsageScreen(),
+            screen: const UsageScreen(),
           ),
           _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip, ref),
           _settingTile(context, '技追加の申請', Icons.playlist_add_rounded, ref),
@@ -102,7 +102,7 @@ class SettingsScreen extends StatelessWidget {
                   'メールアドレス',
                   Icons.mail,
                   ref,
-                  screen: EditEmailScreen(),
+                  screen: const EditEmailScreen(),
                 )
               : Container(),
           ref.read(loginModelProvider).currentUser == null

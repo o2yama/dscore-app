@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
@@ -152,8 +153,7 @@ class LoginScreen extends StatelessWidget {
 
   Widget _loginButton(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
-      onPressed: () async =>
-          _onLoginButtonPressed(context, ref.read(loginModelProvider)),
+      onPressed: () async => _onLoginButtonPressed(context, ref),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
       ),
@@ -169,7 +169,14 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<void> _onLoginButtonPressed(
-      BuildContext context, LoginModel loginModel) async {
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final loginModel = ref.watch(loginModelProvider);
+    final loadingStateModel = ref.watch(loadingStateProvider.notifier);
+
+    loadingStateModel.startLoading();
+
     if (!Validator().validEmail(loginModel.email)) {
       showValidMessage(context, 'メールアドレスをご確認ください。');
     } else if (!Validator().validPassword(loginModel.password)) {
@@ -196,6 +203,8 @@ class LoginScreen extends StatelessWidget {
           title: 'ログインに失敗しました',
           message: e.toString(),
         );
+      } finally {
+        loadingStateModel.endLoading();
       }
     }
   }
@@ -204,7 +213,7 @@ class LoginScreen extends StatelessWidget {
     return TextButton(
       onPressed: () => Navigator.pushAndRemoveUntil<Object>(
           context,
-          MaterialPageRoute(builder: (context) => SignUpScreen()),
+          MaterialPageRoute(builder: (context) => const SignUpScreen()),
           (_) => false),
       child: const Text(
         'ユーザー登録がまだの方はこちら',

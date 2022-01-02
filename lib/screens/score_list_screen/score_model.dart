@@ -28,13 +28,8 @@ class ScoreModel extends ChangeNotifier {
   List<Score> pbScoreList = [];
   List<ScoreWithCV> hbScoreList = [];
 
-  bool isLoading = false;
-
   ///scoreListScreen関連
   Future<void> getScores(Event event) async {
-    isLoading = true;
-    notifyListeners();
-
     if (currentUser != null) {
       if (event == Event.fx) {
         fxScoreList = await scoreRepository.getFXScores();
@@ -52,57 +47,45 @@ class ScoreModel extends ChangeNotifier {
         hbScoreList = await scoreRepository.getHBScores();
       }
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   //お気に入り変更するため
   Future<List<String>> getScoreIds(Event event) async {
+    var scoreIds = <String>[];
     if (event == Event.fx) {
-      final scoreIds = <String>[];
       for (final fxScore in fxScoreList) {
         scoreIds.add(fxScore.scoreId);
       }
-      return scoreIds;
     }
     if (event == Event.pb) {
-      final scoreIds = <String>[];
       for (final phScore in phScoreList) {
         scoreIds.add(phScore.scoreId);
       }
-      return scoreIds;
     }
     if (event == Event.sr) {
-      final scoreIds = <String>[];
       for (final srScore in srScoreList) {
         scoreIds.add(srScore.scoreId);
       }
-      return scoreIds;
     }
     if (event == Event.pb) {
-      final scoreIds = <String>[];
       for (final pbScore in pbScoreList) {
         scoreIds.add(pbScore.scoreId);
       }
-      return scoreIds;
     }
     if (event == Event.hb) {
-      final scoreIds = <String>[];
       for (final hbScore in hbScoreList) {
         scoreIds.add(hbScore.scoreId);
       }
-      return scoreIds;
-    } else {
-      return [];
     }
+
+    return scoreIds;
   }
 
   Future<void> onFavoriteButtonTapped(
-      Event event, bool isFavorite, String scoreId) async {
-    isLoading = true;
-    notifyListeners();
-
+    Event event,
+    bool isFavorite,
+    String scoreId,
+  ) async {
     if (isFavorite) {
       await changeFavoriteState(scoreId, event, false);
     } else {
@@ -115,13 +98,13 @@ class ScoreModel extends ChangeNotifier {
     }
 
     await getScores(event);
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> changeFavoriteState(
-      String scoreId, Event event, bool isFavorite) async {
+    String scoreId,
+    Event event,
+    bool isFavorite,
+  ) async {
     if (event == Event.fx) {
       await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
     }
@@ -256,9 +239,6 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> getScore(String scoreId, Event event) async {
-    isLoading = true;
-    notifyListeners();
-
     selectEvent(event);
     if (event == Event.fx) {
       final fxScore = await scoreRepository.getFXSCore(scoreId);
@@ -289,15 +269,9 @@ class ScoreModel extends ChangeNotifier {
     }
     calculateNumberOfGroup(event);
     calculateScore(event);
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> setScore(Event event) async {
-    isLoading = true;
-    notifyListeners();
-
     var isFavorite = false;
     if (event == Event.fx) {
       if (fxScoreList.isEmpty) {
@@ -334,15 +308,9 @@ class ScoreModel extends ChangeNotifier {
       await scoreRepository.setHBScore(
           totalScore, decidedTechList, cv, isFavorite, isUnder16);
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> updateScore(Event event, String scoreId) async {
-    isLoading = true;
-    notifyListeners();
-
     if (event == Event.fx) {
       await scoreRepository.updateFXScore(
           scoreId, totalScore, decidedTechList, cv, isUnder16);
@@ -371,9 +339,6 @@ class ScoreModel extends ChangeNotifier {
       difficulty = hbDifficulty;
       group = hbGroup;
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   void onCVSelected(num value) {

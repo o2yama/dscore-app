@@ -35,9 +35,14 @@ class BannerAdWidget extends StatelessWidget {
       return bannerAd;
     }
 
-    return SizedBox(
-      height: 50,
-      child: AdWidget(ad: bannerAd()),
+    return Column(
+      children: [
+        const Expanded(child: SizedBox()),
+        SizedBox(
+          height: 50,
+          child: AdWidget(ad: bannerAd()),
+        ),
+      ],
     );
   }
 }
