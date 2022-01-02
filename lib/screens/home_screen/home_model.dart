@@ -7,18 +7,16 @@ import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TotalScoreListModel extends ChangeNotifier {
-  TotalScoreListModel({
-    required this.userRepository,
-    required this.scoreRepository,
-  });
-  UserRepository userRepository;
-  ScoreRepository scoreRepository;
+final homeModelProvider = ChangeNotifierProvider((ref) => HomeModel());
+
+class HomeModel extends ChangeNotifier {
+  final userRepository = UserRepository();
+  final scoreRepository = ScoreRepository();
 
   CurrentUser? get currentUser => UserRepository.currentUser;
-  bool isLoading = true;
   bool isFetchedScore = false;
   bool isAppReviewDialogShowed = false;
   bool isFetchedToken = false;
@@ -39,10 +37,9 @@ class TotalScoreListModel extends ChangeNotifier {
   num favoriteHbScore = 0.0;
   num totalScore = 0.0;
 
-  Future<void> getFavoriteScores() async {
-    isLoading = true;
-    notifyListeners();
+  Future init() async {}
 
+  Future<void> getFavoriteScores() async {
     if (currentUser != null) {
       favoriteFx = await scoreRepository.getFavoriteFXScore();
       favoriteFx != null
@@ -74,11 +71,6 @@ class TotalScoreListModel extends ChangeNotifier {
     }
     setTotalScore();
     isFetchedScore = true;
-    notifyListeners();
-  }
-
-  void changeLoaded() {
-    isLoading = false;
     notifyListeners();
   }
 

@@ -1,13 +1,14 @@
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final loginModelProvider = ChangeNotifierProvider((ref) => LoginModel());
 
 class LoginModel extends ChangeNotifier {
-  LoginModel({required this.userRepository});
-  final UserRepository userRepository;
+  final userRepository = UserRepository();
 
   CurrentUser? get currentUser => UserRepository.currentUser;
-  bool isLoading = false;
   String email = '';
   String password = '';
 
@@ -22,21 +23,12 @@ class LoginModel extends ChangeNotifier {
   }
 
   Future<void> logIn(String email, String password) async {
-    isLoading = true;
-    notifyListeners();
-
     try {
       await userRepository.logInWithEmailAndPassword(email, password);
       await userRepository.getCurrentUserData();
-    } on Exception catch (e) {
-      print(e);
-      isLoading = false;
-      notifyListeners();
+    } on Exception {
       rethrow;
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> signOut() async {

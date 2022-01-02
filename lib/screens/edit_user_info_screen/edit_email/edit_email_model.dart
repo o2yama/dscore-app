@@ -2,10 +2,15 @@ import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final editEmailModelProvider = ChangeNotifierProvider(
+  (ref) => EditEmailModel(),
+);
 
 class EditEmailModel extends ChangeNotifier {
-  EditEmailModel({required this.userRepository});
-  final UserRepository userRepository;
+  EditEmailModel();
+  final userRepository = UserRepository();
 
   CurrentUser? get currentUser => UserRepository.currentUser;
   bool isLoading = false;

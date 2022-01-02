@@ -1,61 +1,56 @@
 import 'dart:io';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
 
 class VTScoreSelectScreen extends StatelessWidget {
+  const VTScoreSelectScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ScoreModel>(builder: (context, model, child) {
-        final height = MediaQuery.of(context).size.height;
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Container(
-                  child: Column(
+      body: Consumer(
+        builder: (context, ref, child) {
+          final height = Utilities.screenHeight(context);
+          return Container(
+            color: Theme.of(context).backgroundColor,
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Column(
                     children: [
                       SizedBox(
                         height: height * 0.1,
-                        child: _backButton(context),
+                        child: _backButton(context, ref),
                       ),
                       SizedBox(
                         height: height * 0.2,
-                        child: _dScoreDisplay(context),
+                        child: _dScoreDisplay(context, ref),
                       ),
                       const SizedBox(height: 50),
                       SizedBox(
                         height: height * 0.5,
-                        child: VTTechListView(),
+                        child: const VTTechListView(),
                       ),
                     ],
                   ),
-                ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-              ],
+                  const LoadingView(),
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
-  Widget _backButton(BuildContext context) {
+  Widget _backButton(BuildContext context, WidgetRef ref) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -82,78 +77,43 @@ class VTScoreSelectScreen extends StatelessWidget {
                 ),
         ),
         TextButton(
-          onPressed: () {
-            _onStoreButtonPressed(context);
-          },
+          onPressed: () => _onStoreButtonPressed(context, ref),
           child: Text(
             '保存',
-            style:
-                TextStyle(color: Theme.of(context).primaryColor, fontSize: 15),
+            style: TextStyle(color: Theme.of(context).primaryColor),
           ),
         ),
       ],
     );
   }
 
-  Future<void> _onStoreButtonPressed(BuildContext context) async {
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
-    final totalScoreListModel =
-        Provider.of<TotalScoreListModel>(context, listen: false);
-    await scoreModel.setVTScore();
-    await totalScoreListModel.getFavoriteScores();
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return Consumer<ScoreModel>(builder: (context, model, child) {
-            return Platform.isIOS
-                ? CupertinoAlertDialog(
-                    title: const Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '0K',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                      ),
-                    ],
-                  )
-                : AlertDialog(
-                    title: const Text('保存しました'),
-                    actions: [
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          '0K',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                      ),
-                    ],
-                  );
-          });
-        });
+  Future<void> _onStoreButtonPressed(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    ref.watch(loadingStateProvider.notifier).startLoading();
+
+    await ref.watch(scoreModelProvider).setVTScore();
+    await ref.watch(homeModelProvider).getFavoriteScores();
+
+    ref.watch(loadingStateProvider.notifier).endLoading();
+    await showOkAlertDialog(context: context, title: '保存しました');
+
+    Navigator.pop(context);
   }
 
-  Widget _dScoreDisplay(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+  Widget _dScoreDisplay(BuildContext context, WidgetRef ref) {
+    final width = Utilities.screenWidth(context);
+    final scoreModel = ref.watch(scoreModelProvider);
     return Row(
       children: [
         Container(
           width: width * 0.5,
           margin: const EdgeInsets.only(left: 40),
           child: Text(
-            '${scoreModel.vtTechName}',
+            scoreModel.vtTechName,
             style: TextStyle(
-              fontSize: Utilities().isMobile() ? 24 : 30,
+              fontSize: Utilities.isMobile() ? 24 : 30,
             ),
           ),
         ),

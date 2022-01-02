@@ -1,24 +1,22 @@
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/current_user.dart';
 
+final introModelProvider = ChangeNotifierProvider((ref) => IntroModel());
+
 class IntroModel extends ChangeNotifier {
-  IntroModel({required this.userRepository});
-  final UserRepository userRepository;
+  final userRepository = UserRepository();
+
   bool isIntroWatched = false;
-  bool isLoading = false;
   bool isFetchedUserData = false;
 
   CurrentUser? get currentUser => UserRepository.currentUser;
 
   Future<void> checkIsIntroWatched() async {
-    isLoading = true;
-    notifyListeners();
-
     final prefs = await SharedPreferences.getInstance();
     isIntroWatched = prefs.getBool('intro') ?? false;
-    print('checkIntroWatched: $isIntroWatched');
   }
 
   Future<void> finishIntro() async {
@@ -28,20 +26,11 @@ class IntroModel extends ChangeNotifier {
   }
 
   Future<void> getCurrentUserData() async {
-    isLoading = true;
-    notifyListeners();
-
     try {
       await userRepository.getCurrentUserData();
-      print('getCurrentUser: $currentUser');
       isFetchedUserData = true;
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
+      rethrow;
     }
-  }
-
-  void changeLoaded() {
-    isLoading = false;
-    notifyListeners();
   }
 }

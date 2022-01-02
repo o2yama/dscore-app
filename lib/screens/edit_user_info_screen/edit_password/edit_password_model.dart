@@ -1,13 +1,16 @@
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final editPasswordModelProvider = ChangeNotifierProvider(
+  (ref) => EditPasswordModel(),
+);
 
 class EditPasswordModel extends ChangeNotifier {
-  EditPasswordModel({required this.userRepository});
-  final UserRepository userRepository;
+  final userRepository = UserRepository();
 
   CurrentUser? get currentUser => UserRepository.currentUser;
-  bool isLoading = false;
 
   String email = '';
   String prevPassword = '';

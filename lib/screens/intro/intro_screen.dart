@@ -1,59 +1,58 @@
 import 'dart:io';
 import 'package:dscore_app/common/att.dart';
-import 'package:dscore_app/common/loading_screen.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/intro/intro_model.dart';
 import 'package:dscore_app/common/utilities.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
-import 'package:provider/provider.dart';
 
-class IntroScreen extends StatelessWidget {
+class IntroScreen extends ConsumerWidget {
+  const IntroScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final introModel = ref.watch(introModelProvider);
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: Consumer<IntroModel>(
-        builder: (context, model, child) {
-          return SafeArea(
-            child: Stack(
-              children: [
-                IntroSlider(
-                  slides: _sliders(context),
-                  renderNextBtn: Text(
-                    '次へ',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: Utilities().isMobile() ? 14 : 20,
-                    ),
-                  ),
-                  renderDoneBtn: Text(
-                    'アプリへ',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: Utilities().isMobile() ? 14 : 20,
-                    ),
-                  ),
-                  renderSkipBtn: Text(
-                    'スキップ',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: Utilities().isMobile() ? 14 : 20,
-                    ),
-                  ),
-                  onDonePress: () async {
-                    await finishIntro(context);
-                  },
-                  onSkipPress: () async {
-                    await finishIntro(context);
-                  },
+      body: SafeArea(
+        child: Stack(
+          children: [
+            IntroSlider(
+              slides: _sliders(context),
+              renderNextBtn: Text(
+                '次へ',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: Utilities.isMobile() ? 14 : 20,
                 ),
-                model.isLoading ? LoadingScreen() : Container(),
-              ],
+              ),
+              renderDoneBtn: Text(
+                'アプリへ',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: Utilities.isMobile() ? 14 : 20,
+                ),
+              ),
+              renderSkipBtn: Text(
+                'スキップ',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: Utilities.isMobile() ? 14 : 20,
+                ),
+              ),
+              onDonePress: () async {
+                await finishIntro(context, introModel);
+              },
+              onSkipPress: () async {
+                await finishIntro(context, introModel);
+              },
             ),
-          );
-        },
+            const LoadingView(),
+          ],
+        ),
       ),
     );
   }
@@ -89,8 +88,7 @@ class IntroScreen extends StatelessWidget {
     ];
   }
 
-  Future<void> finishIntro(BuildContext context) async {
-    final introModel = Provider.of<IntroModel>(context, listen: false);
+  Future<void> finishIntro(BuildContext context, IntroModel introModel) async {
     if (Platform.isIOS) {
       await showDialog<Dialog>(
           context: context,
