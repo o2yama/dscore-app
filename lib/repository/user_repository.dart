@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UserRepository {
+  factory UserRepository() => _cache;
+  UserRepository._internal();
+  static final UserRepository _cache = UserRepository._internal();
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -21,9 +25,10 @@ class UserRepository {
           'id': user.uid,
         });
       }
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
@@ -33,8 +38,7 @@ class UserRepository {
       if (user != null) {
         await user.sendEmailVerification();
       }
-    } on Exception catch (e) {
-      print(e);
+    } on UnimplementedError {
       rethrow;
     }
   }
@@ -42,9 +46,10 @@ class UserRepository {
   Future<void> logInWithEmailAndPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
@@ -60,12 +65,12 @@ class UserRepository {
           currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
         }
       } else {
-        print('ログインしていない。');
         return;
       }
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
@@ -81,9 +86,10 @@ class UserRepository {
           EmailAuthProvider.credential(email: user!.email!, password: password);
       await user.reauthenticateWithCredential(credential);
       return true;
-    } on Exception catch (e) {
-      print(e);
-      return false;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
@@ -91,21 +97,23 @@ class UserRepository {
     try {
       final user = _auth.currentUser!;
       await user.updateEmail(newEmail);
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
   Future<void> updateEmailInDB() async {
     try {
       final user = _auth.currentUser!;
-      await _db.collection('user').doc('${user.uid}').update(<String, dynamic>{
+      await _db.collection('user').doc(user.uid).update(<String, dynamic>{
         'email': user.email,
       });
-    } on Exception catch (e) {
-      print(e);
-      rethrow;
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
     }
   }
 
@@ -116,5 +124,35 @@ class UserRepository {
       alert: true,
     );
     return settings;
+  }
+}
+
+class AuthException implements Exception {
+  AuthException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
+String _convertErrorMessage(String errorMassage) {
+  switch (errorMassage) {
+    case 'weak-password':
+      return '安全なパスワードではありません';
+    case 'email-already-in-use':
+      return 'メールアドレスがすでに使われています';
+    case 'invalid-email':
+      return 'メールアドレスを正しい形式で入力してください';
+    case 'operation-not-allowed':
+      return '登録が許可されていません';
+    case 'wrong-password':
+      return 'パスワードが間違っています';
+    case 'user-not-found':
+      return 'ユーザーが見つかりません';
+    case 'user-disabled':
+      return 'ユーザーが無効です';
+    default:
+      return '不明なエラーです';
   }
 }

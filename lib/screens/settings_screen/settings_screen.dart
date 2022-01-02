@@ -1,17 +1,18 @@
-import 'dart:io';
+import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/usage/usage_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../common/utilities.dart';
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,18 +21,24 @@ class SettingsScreen extends StatelessWidget {
         color: Theme.of(context).backgroundColor,
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  children: [
-                    _backButton(context),
-                    const SizedBox(height: 24),
-                    _settingsListView(context),
-                  ],
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      return Column(
+                        children: [
+                          _backButton(context),
+                          const SizedBox(height: 24),
+                          _settingsListView(context, ref),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ),
         ),
       ),
@@ -40,14 +47,14 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities().isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Row(children: [
           Icon(
             Icons.clear,
             color: Theme.of(context).primaryColor,
-            size: Utilities().isMobile() ? 20 : 30,
+            size: Utilities.isMobile() ? 20 : 30,
           ),
           const SizedBox(width: 24),
           Text(
@@ -55,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
             style: TextStyle(
               color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.bold,
-              fontSize: Utilities().isMobile() ? 18 : 24,
+              fontSize: Utilities.isMobile() ? 18 : 24,
             ),
           )
         ]),
@@ -63,102 +70,99 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _settingsListView(BuildContext context) {
-    final loginModel = Provider.of<LoginModel>(context, listen: false);
-    final height = MediaQuery.of(context).size.height;
+  Widget _settingsListView(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: height * 0.8,
-      child: ListView(children: [
-        _settingTile(context, 'テーマカラー', Icons.color_lens,
-            screen: ThemeColorScreen()),
-        _settingTile(context, '使い方', Icons.info, screen: UsageScreen()),
-        _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip),
-        _settingTile(context, '技追加の申請', Icons.playlist_add_rounded),
-        _settingTile(context, 'お問い合わせ', Icons.send),
-        // loginModel.currentUser != null
-        //     ? _settingTile(
-        //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
-        //     : Container(),
-        loginModel.currentUser != null
-            ? _settingTile(context, 'メールアドレス', Icons.mail,
-                screen: EditEmailScreen())
-            : Container(),
-        loginModel.currentUser == null
-            ? _settingTile(context, 'ログイン', Icons.login, screen: LoginScreen())
-            : _settingTile(context, 'ログアウト', Icons.logout),
-        Container(height: Utilities().isMobile() ? 200 : 300),
-      ]),
+      height: Utilities.screenHeight(context) * 0.8,
+      child: ListView(
+        children: [
+          _settingTile(
+            context,
+            'テーマカラー',
+            Icons.color_lens,
+            ref,
+            screen: ThemeColorScreen(),
+          ),
+          _settingTile(
+            context,
+            '使い方',
+            Icons.info,
+            ref,
+            screen: UsageScreen(),
+          ),
+          _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip, ref),
+          _settingTile(context, '技追加の申請', Icons.playlist_add_rounded, ref),
+          _settingTile(context, 'お問い合わせ', Icons.send, ref),
+          // loginModel.currentUser != null
+          //     ? _settingTile(
+          //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
+          //     : Container(),
+          ref.read(loginModelProvider).currentUser != null
+              ? _settingTile(
+                  context,
+                  'メールアドレス',
+                  Icons.mail,
+                  ref,
+                  screen: EditEmailScreen(),
+                )
+              : Container(),
+          ref.read(loginModelProvider).currentUser == null
+              ? _settingTile(
+                  context,
+                  'ログイン',
+                  Icons.login,
+                  ref,
+                  screen: const LoginScreen(),
+                )
+              : _settingTile(
+                  context,
+                  'ログアウト',
+                  Icons.logout,
+                  ref,
+                ),
+          Container(height: Utilities.isMobile() ? 200 : 300),
+        ],
+      ),
     );
   }
 
-  Widget _settingTile(BuildContext context, String title, IconData icon,
-      {Widget? screen}) {
-    final loginModel = Provider.of<LoginModel>(context, listen: false);
-    final scoreModel = Provider.of<ScoreModel>(context, listen: false);
+  Widget _settingTile(
+    BuildContext context,
+    String title,
+    IconData icon,
+    WidgetRef ref, {
+    Widget? screen,
+  }) {
     return InkWell(
       onTap: () {
         if (title == 'ログアウト') {
           showDialog<Dialog>(
-              context: context,
-              builder: (context) {
-                return Platform.isIOS
-                    ? CupertinoAlertDialog(
-                        title: const Text('ログアウトしてもよろしいですか？'),
-                        content: const Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('キャンセル'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              scoreModel.resetScores();
-                              await loginModel.signOut();
-                              await Navigator.pushAndRemoveUntil<Object>(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
-                                  (_) => false);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      )
-                    : AlertDialog(
-                        title: const Text('ログアウトしてもよろしいですか？'),
-                        content: const Text('メールアドレスとパスワードを入力すると再度ログインできます。'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('キャンセル'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              scoreModel.resetScores();
-                              await loginModel.signOut();
-                              await Navigator.pushAndRemoveUntil<Object>(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
-                                  (_) => false);
-                            },
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-              });
+            context: context,
+            builder: (context) {
+              return OkCancelDialog(
+                onOk: () async {
+                  ref.watch(scoreModelProvider).resetScores();
+                  await ref.watch(loginModelProvider).signOut();
+                  await Navigator.pushAndRemoveUntil<Object>(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()),
+                      (_) => false);
+                },
+                onCancel: () => Navigator.pop(context),
+                title: 'ログアウトしてもよろしいですか？',
+                content: 'メールアドレスとパスワードを入力すると再度ログインできます。',
+              );
+            },
+          );
         } else {
           if (title == 'ログイン') {
             Navigator.push<Object>(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => screen!,
-                  fullscreenDialog: true,
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (_) => screen!,
+                fullscreenDialog: true,
+              ),
+            );
           } else {
             if (title == 'プライバシー・ポリシー') {
               launch(
@@ -195,14 +199,16 @@ class SettingsScreen extends StatelessWidget {
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: Row(children: [
-              Icon(icon, color: Theme.of(context).primaryColor),
-              const SizedBox(width: 24),
-              Text(
-                '$title',
-                style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
-              ),
-            ]),
+            child: Row(
+              children: [
+                Icon(icon, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 24),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: Utilities.isMobile() ? 18 : 24),
+                ),
+              ],
+            ),
           ),
         ),
       ),

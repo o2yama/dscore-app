@@ -7,6 +7,10 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
 class ScoreRepository {
+  factory ScoreRepository() => _cache;
+  ScoreRepository._internal();
+  static final ScoreRepository _cache = ScoreRepository._internal();
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   CurrentUser? get currentUser => UserRepository.currentUser;
   String uuid = '';

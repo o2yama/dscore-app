@@ -1,45 +1,52 @@
 import 'dart:io';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
 
 class ThemeColorScreen extends StatelessWidget {
+  const ThemeColorScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<ThemeColorModel>(builder: (context, model, child) {
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(children: [
-                  _backButton(context),
-                  _exampleCardWidget(context),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.6,
-                    child: ListView(
-                      children: themes.keys
-                          .map((color) => _colorTile(context, color))
-                          .toList(),
-                    ),
+      body: Consumer(
+        builder: (context, ref, child) {
+          return Container(
+            color: Theme.of(context).backgroundColor,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    children: [
+                      _backButton(context),
+                      _exampleCardWidget(context),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        height: Utilities.screenHeight(context) * 0.6,
+                        child: ListView(
+                          children: themes.keys
+                              .map(
+                                (color) => _colorTile(context, color, ref),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                ]),
+                ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities().isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Platform.isIOS
@@ -47,7 +54,7 @@ class ThemeColorScreen extends StatelessWidget {
                 Icon(
                   Icons.arrow_back_ios,
                   color: Theme.of(context).primaryColor,
-                  size: Utilities().isMobile() ? 20 : 30,
+                  size: Utilities.isMobile() ? 20 : 30,
                 ),
                 const SizedBox(width: 24),
                 Text(
@@ -55,26 +62,28 @@ class ThemeColorScreen extends StatelessWidget {
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: Utilities().isMobile() ? 18 : 24,
+                    fontSize: Utilities.isMobile() ? 18 : 24,
                   ),
                 ),
               ])
-            : Row(children: [
-                Icon(
-                  Icons.clear,
-                  color: Theme.of(context).primaryColor,
-                  size: Utilities().isMobile() ? 20 : 30,
-                ),
-                const SizedBox(width: 24),
-                Text(
-                  'テーマカラー',
-                  style: TextStyle(
+            : Row(
+                children: [
+                  Icon(
+                    Icons.clear,
                     color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: Utilities().isMobile() ? 18 : 24,
+                    size: Utilities.isMobile() ? 20 : 30,
                   ),
-                ),
-              ]),
+                  const SizedBox(width: 24),
+                  Text(
+                    'テーマカラー',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Utilities.isMobile() ? 18 : 24,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -86,7 +95,7 @@ class ThemeColorScreen extends StatelessWidget {
       child: Column(children: [
         Text(
           'イメージ',
-          style: TextStyle(fontSize: Utilities().isMobile() ? 18 : 24),
+          style: TextStyle(fontSize: Utilities.isMobile() ? 18 : 24),
         ),
         SizedBox(
           height: 130,
@@ -121,40 +130,43 @@ class ThemeColorScreen extends StatelessWidget {
     );
   }
 
-  Widget _colorTile(BuildContext context, String color) {
-    final themeColorModel =
-        Provider.of<ThemeColorModel>(context, listen: false);
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-        child: InkWell(
-          onTap: () async {
-            await themeColorModel.setThemeColor(color);
-            await themeColorModel.getThemeColor();
-          },
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(children: [
-                Icon(
-                  Icons.check_circle_outline_outlined,
-                  color: themes[color],
-                  size: Utilities().isMobile() ? 20 : 30,
+  Widget _colorTile(BuildContext context, String color, WidgetRef ref) {
+    final themeColorModel = ref.watch(themeModelProvider);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+          child: InkWell(
+            onTap: () async {
+              await themeColorModel.setThemeColor(color);
+              await themeColorModel.getThemeColor();
+            },
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle_outline_outlined,
+                      color: themes[color],
+                      size: Utilities.isMobile() ? 20 : 30,
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      color,
+                      style: TextStyle(
+                        color: themes[color],
+                        fontSize: Utilities.isMobile() ? 18 : 24,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  '$color',
-                  style: TextStyle(
-                    color: themes[color],
-                    fontSize: Utilities().isMobile() ? 18 : 24,
-                  ),
-                ),
-              ]),
+              ),
             ),
           ),
         ),
-      ),
-      if (color == 'ブラック') const SizedBox(height: 250),
-    ]);
+        if (color == 'ブラック') const SizedBox(height: 250),
+      ],
+    );
   }
 }

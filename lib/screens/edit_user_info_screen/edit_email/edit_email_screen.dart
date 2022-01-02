@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/utilities.dart';
 import '../../../common/validator.dart';
 
@@ -14,81 +14,65 @@ TextEditingController confirmationNewEmailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 class EditEmailScreen extends StatelessWidget {
-  void _showValidMessage(BuildContext context, String message) {
-    Fluttertoast.showToast(
-        msg: '$message',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 2,
-        backgroundColor: Colors.pinkAccent,
-        textColor: Colors.white,
-        fontSize: 16);
-  }
+  const EditEmailScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<EditEmailModel>(builder: (context, model, child) {
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Form(
-                    key: _formKey,
-                    child: InkWell(
-                      onTap: () =>
-                          FocusScope.of(context).requestFocus(FocusNode()),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _backButton(context),
-                            const SizedBox(height: 30),
-                            _prevEmailDisplay(context),
-                            // SizedBox(height: 50),
-                            // _newEmailController(context),
-                            // SizedBox(height: 50),
-                            // _confirmationNewEmailController(context),
-                            // SizedBox(height: 50),
-                            // _passwordController(context),
-                            // SizedBox(height: 100),
-                            // _changeButton(context),
-                            const SizedBox(height: 300),
-                          ],
+      body: Consumer(
+        builder: (context, ref, child) {
+          return Container(
+            color: Theme.of(context).backgroundColor,
+            child: SafeArea(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Form(
+                      key: _formKey,
+                      child: InkWell(
+                        onTap: () =>
+                            FocusScope.of(context).requestFocus(FocusNode()),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              _backButton(context),
+                              const SizedBox(height: 30),
+                              _prevEmailDisplay(context, ref),
+                              // SizedBox(height: 50),
+                              // _newEmailController(context),
+                              // SizedBox(height: 50),
+                              // _confirmationNewEmailController(context),
+                              // SizedBox(height: 50),
+                              // _passwordController(context),
+                              // SizedBox(height: 100),
+                              // _changeButton(context),
+                              const SizedBox(height: 300),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-              ],
+                  const LoadingView(),
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities().isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: Utilities().isMobile() ? 8 : 16),
+            SizedBox(width: Utilities.isMobile() ? 8 : 16),
             Platform.isIOS
                 ? Row(
                     children: [
@@ -102,7 +86,7 @@ class EditEmailScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: Utilities().isMobile() ? 18 : 24,
+                          fontSize: Utilities.isMobile() ? 18 : 24,
                         ),
                       )
                     ],
@@ -114,15 +98,15 @@ class EditEmailScreen extends StatelessWidget {
     );
   }
 
-  Widget _prevEmailDisplay(BuildContext context) {
-    final editEmailModel = Provider.of<EditEmailModel>(context, listen: false);
+  Widget _prevEmailDisplay(BuildContext context, WidgetRef ref) {
+    final editEmailModel = ref.watch(editEmailModelProvider);
     return editEmailModel.currentUser != null
         ? Column(
             children: [
               const Text('メールアドレス'),
               const SizedBox(height: 16),
               Text(
-                '${editEmailModel.currentUser!.email}',
+                editEmailModel.currentUser!.email,
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
@@ -130,8 +114,7 @@ class EditEmailScreen extends StatelessWidget {
         : Container();
   }
 
-  Widget _newEmailController(BuildContext context) {
-    final editEmailModel = Provider.of<EditEmailModel>(context, listen: false);
+  Widget _newEmailController(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: newEmailController,
       cursorColor: Theme.of(context).primaryColor,
@@ -154,12 +137,11 @@ class EditEmailScreen extends StatelessWidget {
         ),
         hintText: '新しいメールアドレス',
       ),
-      onChanged: editEmailModel.onNewEmailFieldChanged,
+      onChanged: ref.watch(editEmailModelProvider).onNewEmailFieldChanged,
     );
   }
 
-  Widget _confirmationNewEmailController(BuildContext context) {
-    final editEmailModel = Provider.of<EditEmailModel>(context, listen: false);
+  Widget _confirmationNewEmailController(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: confirmationNewEmailController,
       cursorColor: Theme.of(context).primaryColor,
@@ -182,12 +164,12 @@ class EditEmailScreen extends StatelessWidget {
         ),
         hintText: '確認用メールアドレス',
       ),
-      onChanged: editEmailModel.onConfirmationNewEmailFieldChanged,
+      onChanged:
+          ref.watch(editEmailModelProvider).onConfirmationNewEmailFieldChanged,
     );
   }
 
-  Widget _passwordController(BuildContext context) {
-    final editEmailModel = Provider.of<EditEmailModel>(context, listen: false);
+  Widget _passwordController(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: passwordController,
       cursorColor: Theme.of(context).primaryColor,
@@ -210,14 +192,14 @@ class EditEmailScreen extends StatelessWidget {
         ),
         hintText: 'パスワード',
       ),
-      onChanged: editEmailModel.onPasswordFieldChanged,
+      onChanged: ref.watch(editEmailModelProvider).onPasswordFieldChanged,
     );
   }
 
-  Widget _changeButton(BuildContext context) {
+  Widget _changeButton(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
       onPressed: () async {
-        await _onChangeButtonPressed(context);
+        await _onChangeButtonPressed(context, ref);
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
@@ -226,23 +208,25 @@ class EditEmailScreen extends StatelessWidget {
         '変更',
         style: TextStyle(
           color: Theme.of(context).primaryColor,
-          fontSize: Utilities().isMobile() ? 18 : 24,
+          fontSize: Utilities.isMobile() ? 18 : 24,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Future<void> _onChangeButtonPressed(BuildContext context) async {
-    final editEmailModel = Provider.of<EditEmailModel>(context, listen: false);
+  Future<void> _onChangeButtonPressed(
+      BuildContext context, WidgetRef ref) async {
+    final editEmailModel = ref.watch(editEmailModelProvider);
+
     if (!Validator().validEmail(editEmailModel.newEmail)) {
-      _showValidMessage(context, '登録できないメールアドレスです。');
+      showValidMessage(context, '登録できないメールアドレスです。');
     } else {
       if (!Validator().validPassword(editEmailModel.password)) {
-        _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
+        showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
       } else {
         if (editEmailModel.currentUser!.email == editEmailModel.newEmail) {
-          _showValidMessage(context, 'メールアドレスが変更されていません');
+          showValidMessage(context, 'メールアドレスが変更されていません');
         } else {
           try {
             final result = await editEmailModel.updateEmail();
@@ -284,14 +268,13 @@ class EditEmailScreen extends StatelessWidget {
                   });
             } else {
               if (result == 'fail auth') {
-                _showValidMessage(context, 'パスワードが間違っている可能性があります。');
+                showValidMessage(context, 'パスワードが間違っている可能性があります。');
               }
               if (result == 'different confirmationEmail') {
-                _showValidMessage(context, '確認用メールアドレスが異なります。');
+                showValidMessage(context, '確認用メールアドレスが異なります。');
               }
             }
           } on Exception catch (e) {
-            print(e.toString());
             if (e.toString() ==
                 '[firebase_auth/email-already-in-use] The email address is already in use by another account.') {
               await showDialog<Dialog>(

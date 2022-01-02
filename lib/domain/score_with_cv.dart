@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ScoreWithCV {
-  ScoreWithCV(DocumentSnapshot doc) {
+  ScoreWithCV(DocumentSnapshot<Map<String, dynamic>> doc) {
     total = doc.data()!['total'] as num;
     techs = List<String>.from(doc['components'] as List<dynamic>);
     cv = doc.data()!['cv'] as num;

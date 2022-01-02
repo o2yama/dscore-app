@@ -10,13 +10,15 @@ import 'package:dscore_app/domain/score_with_cv.dart';
 import 'package:dscore_app/domain/vt_score.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
+import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final scoreModelProvider = ChangeNotifierProvider((ref) => ScoreModel());
 
 class ScoreModel extends ChangeNotifier {
-  ScoreModel({required this.scoreRepository});
-
-  final ScoreRepository scoreRepository;
+  final scoreRepository = ScoreRepository();
   CurrentUser? get currentUser => UserRepository.currentUser;
 
   List<ScoreWithCV> fxScoreList = [];
@@ -29,24 +31,24 @@ class ScoreModel extends ChangeNotifier {
   bool isLoading = false;
 
   ///scoreListScreen関連
-  Future<void> getScores(String event) async {
+  Future<void> getScores(Event event) async {
     isLoading = true;
     notifyListeners();
 
     if (currentUser != null) {
-      if (event == '床') {
+      if (event == Event.fx) {
         fxScoreList = await scoreRepository.getFXScores();
       }
-      if (event == 'あん馬') {
+      if (event == Event.ph) {
         phScoreList = await scoreRepository.getPHScores();
       }
-      if (event == '吊り輪') {
+      if (event == Event.sr) {
         srScoreList = await scoreRepository.getSRScores();
       }
-      if (event == '平行棒') {
+      if (event == Event.pb) {
         pbScoreList = await scoreRepository.getPBScores();
       }
-      if (event == '鉄棒') {
+      if (event == Event.hb) {
         hbScoreList = await scoreRepository.getHBScores();
       }
     }
@@ -56,36 +58,36 @@ class ScoreModel extends ChangeNotifier {
   }
 
   //お気に入り変更するため
-  Future<List<String>> getScoreIds(String event) async {
-    if (event == '床') {
+  Future<List<String>> getScoreIds(Event event) async {
+    if (event == Event.fx) {
       final scoreIds = <String>[];
       for (final fxScore in fxScoreList) {
         scoreIds.add(fxScore.scoreId);
       }
       return scoreIds;
     }
-    if (event == 'あん馬') {
+    if (event == Event.pb) {
       final scoreIds = <String>[];
       for (final phScore in phScoreList) {
         scoreIds.add(phScore.scoreId);
       }
       return scoreIds;
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       final scoreIds = <String>[];
       for (final srScore in srScoreList) {
         scoreIds.add(srScore.scoreId);
       }
       return scoreIds;
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       final scoreIds = <String>[];
       for (final pbScore in pbScoreList) {
         scoreIds.add(pbScore.scoreId);
       }
       return scoreIds;
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       final scoreIds = <String>[];
       for (final hbScore in hbScoreList) {
         scoreIds.add(hbScore.scoreId);
@@ -97,7 +99,7 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> onFavoriteButtonTapped(
-      String event, bool isFavorite, String scoreId) async {
+      Event event, bool isFavorite, String scoreId) async {
     isLoading = true;
     notifyListeners();
 
@@ -119,38 +121,38 @@ class ScoreModel extends ChangeNotifier {
   }
 
   Future<void> changeFavoriteState(
-      String scoreId, String event, bool isFavorite) async {
-    if (event == '床') {
+      String scoreId, Event event, bool isFavorite) async {
+    if (event == Event.fx) {
       await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       await scoreRepository.favoritePHUpdate(scoreId, isFavorite);
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       await scoreRepository.favoriteSRUpdate(scoreId, isFavorite);
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       await scoreRepository.favoritePBUpdate(scoreId, isFavorite);
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       await scoreRepository.favoriteHBUpdate(scoreId, isFavorite);
     }
   }
 
-  Future<void> deletePerformance(String event, String scoreId) async {
-    if (event == '床') {
+  Future<void> deletePerformance(Event event, String scoreId) async {
+    if (event == Event.fx) {
       await scoreRepository.deleteFXScore(scoreId);
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       await scoreRepository.deletePHScore(scoreId);
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       await scoreRepository.deleteSRScore(scoreId);
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       await scoreRepository.deletePBScore(scoreId);
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       await scoreRepository.deleteHBScore(scoreId);
     }
     await getScores(event);
@@ -188,31 +190,31 @@ class ScoreModel extends ChangeNotifier {
   Map<String, int> group = {};
 
   //どの種目かの判断を各ページで行う
-  void selectEvent(String event) {
-    if (event == '床') {
+  void selectEvent(Event event) {
+    if (event == Event.fx) {
       difficulty = fxDifficulty;
       group = fxGroup;
       searchChipWords = fxChipWords;
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       difficulty = phDifficulty;
       group = phGroup;
       searchChipWords = phChipWords;
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       difficulty = srDifficulty;
       group = srGroup;
       searchChipWords = srChipWords;
     }
-    if (event == '跳馬') {
+    if (event == Event.vt) {
       difficulty = vtTech;
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       difficulty = pbDifficulty;
       group = pbGroup;
       searchChipWords = pbChipWords;
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       difficulty = hbDifficulty;
       group = hbGroup;
       searchChipWords = hbChipWords;
@@ -238,7 +240,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteTech(int index, String event) {
+  void deleteTech(int index, Event event) {
     decidedTechList.remove(decidedTechList[index]);
     isEdited = true;
     calculateNumberOfGroup(event);
@@ -246,40 +248,40 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRule(String event, bool isUnder16) {
+  void setRule(Event event, bool isUnder16) {
     this.isUnder16 = isUnder16;
     calculateScore(event);
     isEdited = true;
     notifyListeners();
   }
 
-  Future<void> getScore(String scoreId, String event) async {
+  Future<void> getScore(String scoreId, Event event) async {
     isLoading = true;
     notifyListeners();
 
     selectEvent(event);
-    if (event == '床') {
+    if (event == Event.fx) {
       final fxScore = await scoreRepository.getFXSCore(scoreId);
       decidedTechList = fxScore.techs;
       cv = fxScore.cv;
       isUnder16 = fxScore.isUnder16;
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       final phScore = await scoreRepository.getPHScore(scoreId);
       decidedTechList = phScore.techs;
       isUnder16 = phScore.isUnder16;
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       final srScore = await scoreRepository.getSRScore(scoreId);
       decidedTechList = srScore.techs;
       isUnder16 = srScore.isUnder16;
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       final pbScore = await scoreRepository.getPBScore(scoreId);
       decidedTechList = pbScore.techs;
       isUnder16 = pbScore.isUnder16;
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       final hbScore = await scoreRepository.getHBSCore(scoreId);
       decidedTechList = hbScore.techs;
       cv = hbScore.cv;
@@ -292,40 +294,40 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setScore(String event) async {
+  Future<void> setScore(Event event) async {
     isLoading = true;
     notifyListeners();
 
     var isFavorite = false;
-    if (event == '床') {
+    if (event == Event.fx) {
       if (fxScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setFXScore(
           totalScore, decidedTechList, cv, isFavorite, isUnder16);
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       if (phScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setPHScore(
           totalScore, decidedTechList, isFavorite, isUnder16);
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       if (srScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setSRScore(
           totalScore, decidedTechList, isFavorite, isUnder16);
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       if (pbScoreList.isEmpty) {
         isFavorite = true;
       }
       await scoreRepository.setPBScore(
           totalScore, decidedTechList, isFavorite, isUnder16);
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       if (hbScoreList.isEmpty) {
         isFavorite = true;
       }
@@ -337,33 +339,33 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateScore(String event, String scoreId) async {
+  Future<void> updateScore(Event event, String scoreId) async {
     isLoading = true;
     notifyListeners();
 
-    if (event == '床') {
+    if (event == Event.fx) {
       await scoreRepository.updateFXScore(
           scoreId, totalScore, decidedTechList, cv, isUnder16);
     }
-    if (event == 'あん馬') {
+    if (event == Event.ph) {
       await scoreRepository.updatePHScore(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = phDifficulty;
       group = phGroup;
     }
-    if (event == '吊り輪') {
+    if (event == Event.sr) {
       await scoreRepository.updateSRScore(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = srDifficulty;
       group = srGroup;
     }
-    if (event == '平行棒') {
+    if (event == Event.pb) {
       await scoreRepository.updatePBScore(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = pbDifficulty;
       group = pbGroup;
     }
-    if (event == '鉄棒') {
+    if (event == Event.hb) {
       await scoreRepository.updateHBScore(
           scoreId, totalScore, decidedTechList, cv, isUnder16);
       difficulty = hbDifficulty;
@@ -380,7 +382,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void calculateNumberOfGroup(String event) {
+  void calculateNumberOfGroup(Event event) {
     numberOfGroup1 = 0;
     numberOfGroup2 = 0;
     numberOfGroup3 = 0;
@@ -394,16 +396,16 @@ class ScoreModel extends ChangeNotifier {
         numberOfGroup3++;
       }
       //床以外の種目かつ、技がグループ4だった時
-      if (event != '床' && group[tech] == 4) {
+      if (event != Event.fx && group[tech] == 4) {
         difficultyOfGroup4 = difficulty[tech]!;
       }
     }
     notifyListeners();
   }
 
-  void calculateScore(String event) {
+  void calculateScore(Event event) {
     if (decidedTechList.isNotEmpty) {
-      if (event == '床') {
+      if (event == Event.fx) {
         //床の要求点の計算
         final group1 = <String>[];
         final group2 = <String>[];
@@ -531,7 +533,7 @@ class ScoreModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onReOrder(int oldIndex, int newIndex, String event) {
+  void onReOrder(int oldIndex, int newIndex, Event event) {
     final numberChangedTech = decidedTechList.removeAt(oldIndex);
     if (oldIndex < newIndex) {
       decidedTechList.insert(newIndex - 1, numberChangedTech);
@@ -548,26 +550,26 @@ class ScoreModel extends ChangeNotifier {
   String vtTechName = '';
 
   //技検索
-  void search(String inputText, String event) {
+  void search(String inputText, Event event) {
     if (inputText.isEmpty) {
       searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
       final inputCharacters = <String>[];
       inputText.characters.forEach(inputCharacters.add);
-      if (event == '床') {
+      if (event == Event.fx) {
         searchResult = searchLogic(fxSearchWords, inputCharacters);
       }
-      if (event == 'あん馬') {
+      if (event == Event.ph) {
         searchResult = searchLogic(phSearchWords, inputCharacters);
       }
-      if (event == '吊り輪') {
+      if (event == Event.sr) {
         searchResult = searchLogic(srSearchWords, inputCharacters);
       }
-      if (event == '平行棒') {
+      if (event == Event.pb) {
         searchResult = searchLogic(pbSearchWords, inputCharacters);
       }
-      if (event == '鉄棒') {
+      if (event == Event.hb) {
         searchResult = searchLogic(hbSearchWords, inputCharacters);
       }
     }
@@ -601,7 +603,7 @@ class ScoreModel extends ChangeNotifier {
     return techsContainingFirstChar;
   }
 
-  void onTechChipSelected(String event, String searchText) {
+  void onTechChipSelected(Event event, String searchText) {
     searchController.text = searchController.text + searchText;
     search(searchController.text, event);
     notifyListeners();
@@ -629,7 +631,6 @@ class ScoreModel extends ChangeNotifier {
     } else {
       decidedTechList.add(techName);
     }
-    print(decidedTechList);
     isEdited = true;
     notifyListeners();
   }

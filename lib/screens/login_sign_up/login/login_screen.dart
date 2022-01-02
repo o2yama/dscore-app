@@ -1,13 +1,10 @@
-import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:dscore_app/common/loading_screen.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
-import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
 import 'package:dscore_app/common/validator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/utilities.dart';
 import 'login_model.dart';
 
@@ -17,16 +14,7 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 class LoginScreen extends StatelessWidget {
-  void _showValidMessage(BuildContext context, String message) {
-    Fluttertoast.showToast(
-        msg: '$message',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.pinkAccent,
-        textColor: Colors.white,
-        fontSize: 16);
-  }
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,36 +24,38 @@ class LoginScreen extends StatelessWidget {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           child: SafeArea(
-            child: Consumer<LoginModel>(builder: (context, model, child) {
-              return Stack(children: [
+            child: Stack(
+              children: [
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          _backButton(context),
-                          const SizedBox(height: 24),
-                          _description(context),
-                          const SizedBox(height: 24),
-                          _emailController(context),
-                          const SizedBox(height: 24),
-                          _passwordController(context),
-                          const SizedBox(height: 50),
-                          _loginButton(context),
-                          const SizedBox(height: 30),
-                          _toSignUpScreenButton(context),
-                          const SizedBox(height: 300),
-                        ],
-                      ),
+                      child: Consumer(builder: (context, ref, child) {
+                        return Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            _backButton(context),
+                            const SizedBox(height: 24),
+                            _description(context),
+                            const SizedBox(height: 24),
+                            _emailController(context, ref),
+                            const SizedBox(height: 24),
+                            _passwordController(context, ref),
+                            const SizedBox(height: 50),
+                            _loginButton(context, ref),
+                            const SizedBox(height: 30),
+                            _toSignUpScreenButton(context),
+                            const SizedBox(height: 300),
+                          ],
+                        );
+                      }),
                     ),
                   ),
                 ),
-                model.isLoading ? LoadingScreen() : Container(),
-              ]);
-            }),
+                const LoadingView(),
+              ],
+            ),
           ),
         ),
       ),
@@ -73,21 +63,24 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _backButton(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-      SizedBox(width: Utilities().isMobile() ? 0 : 18),
-      TextButton(
-        onPressed: () {
-          Navigator.pushAndRemoveUntil<Object>(
-              context,
-              MaterialPageRoute(builder: (context) => TotalScoreListScreen()),
-              (_) => false);
-        },
-        child: Icon(
-          Icons.clear,
-          color: Theme.of(context).primaryColor,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(width: Utilities.isMobile() ? 0 : 18),
+        TextButton(
+          onPressed: () {
+            Navigator.pushAndRemoveUntil<Object>(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (_) => false);
+          },
+          child: Icon(
+            Icons.clear,
+            color: Theme.of(context).primaryColor,
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Widget _description(BuildContext context) {
@@ -103,8 +96,7 @@ class LoginScreen extends StatelessWidget {
     ]);
   }
 
-  Widget _emailController(BuildContext context) {
-    final loginModel = Provider.of<LoginModel>(context, listen: false);
+  Widget _emailController(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: emailController,
       cursorColor: Theme.of(context).primaryColor,
@@ -127,12 +119,11 @@ class LoginScreen extends StatelessWidget {
         ),
         hintText: 'メールアドレス',
       ),
-      onChanged: loginModel.onEmailEdited,
+      onChanged: ref.read(loginModelProvider).onEmailEdited,
     );
   }
 
-  Widget _passwordController(BuildContext context) {
-    final loginModel = Provider.of<LoginModel>(context, listen: false);
+  Widget _passwordController(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: passwordController,
       cursorColor: Theme.of(context).primaryColor,
@@ -155,13 +146,14 @@ class LoginScreen extends StatelessWidget {
         ),
         hintText: 'パスワード',
       ),
-      onChanged: loginModel.onPasswordEdited,
+      onChanged: ref.read(loginModelProvider).onPasswordEdited,
     );
   }
 
-  Widget _loginButton(BuildContext context) {
+  Widget _loginButton(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
-      onPressed: () async => _onLoginButtonPressed(context),
+      onPressed: () async =>
+          _onLoginButtonPressed(context, ref.read(loginModelProvider)),
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
       ),
@@ -176,57 +168,33 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _onLoginButtonPressed(BuildContext context) async {
-    final loginModel = Provider.of<LoginModel>(context, listen: false);
+  Future<void> _onLoginButtonPressed(
+      BuildContext context, LoginModel loginModel) async {
     if (!Validator().validEmail(loginModel.email)) {
-      _showValidMessage(context, 'メールアドレスをご確認ください。');
+      showValidMessage(context, 'メールアドレスをご確認ください。');
     } else if (!Validator().validPassword(loginModel.password)) {
-      _showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
+      showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
     } else {
       try {
         await loginModel.logIn(loginModel.email, loginModel.password);
-        await showDialog<Dialog>(
-          context: context,
-          builder: (context) => Platform.isIOS
-              ? CupertinoAlertDialog(
-                  title: const Text('ログインできました。'),
-                  content: const Text('Dスコアを登録しましょう！'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil<Object>(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TotalScoreListScreen()),
-                            (_) => false);
-                      },
-                      child: const Text('OK'),
-                    )
-                  ],
-                )
-              : AlertDialog(
-                  title: const Text('ログインできました。'),
-                  content: const Text('Dスコアを登録しましょう！'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil<Object>(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TotalScoreListScreen()),
-                            (_) => false);
-                      },
-                      child: const Text('OK'),
-                    )
-                  ],
-                ),
-        );
-      } on Exception catch (e) {
-        print(e);
         await showOkAlertDialog(
+          barrierDismissible: true,
+          context: context,
+          title: 'ログインできました。',
+          message: 'Dスコアを登録しましょう！',
+        );
+        Navigator.pushAndRemoveUntil<Object>(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+            (_) => false);
+      } on Exception catch (e) {
+        await showOkAlertDialog(
+          barrierDismissible: true,
           context: context,
           title: 'ログインに失敗しました',
-          message: 'メールアドレスとパスワードをご確認ください。',
+          message: e.toString(),
         );
       }
     }

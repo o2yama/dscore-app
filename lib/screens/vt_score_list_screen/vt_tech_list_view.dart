@@ -1,19 +1,20 @@
 import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 FixedExtentScrollController vtController =
     FixedExtentScrollController(initialItem: 14); //アカピアンスタート
 
 class VTTechListView extends StatelessWidget {
+  const VTTechListView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: Consumer<ScoreModel>(
-        builder: (context, model, child) {
+      child: Consumer(
+        builder: (context, ref, child) {
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
@@ -34,9 +35,8 @@ class VTTechListView extends StatelessWidget {
                       .toList(),
                 ),
                 overAndUnderCenterOpacity: 0.4,
-                onSelectedItemChanged: (index) {
-                  model.onVTTechSelected(index);
-                },
+                onSelectedItemChanged: (index) =>
+                    ref.watch(scoreModelProvider).onVTTechSelected(index),
               ),
             ),
           );
@@ -56,7 +56,7 @@ class VTTechListView extends StatelessWidget {
             const SizedBox(width: 16),
             Flexible(
               child: Text(
-                '$techName',
+                techName,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

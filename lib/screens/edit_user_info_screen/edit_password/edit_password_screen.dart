@@ -1,72 +1,62 @@
 import 'dart:io';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../common/utilities.dart';
-import '../edit_email/edit_email_model.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 TextEditingController emailController = TextEditingController();
 
-class EditPasswordScreen extends StatelessWidget {
+class EditPasswordScreen extends ConsumerWidget {
+  const EditPasswordScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Consumer<EditEmailModel>(builder: (context, model, child) {
-        return Container(
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 50),
-                          _backButton(context),
-                          const SizedBox(height: 24),
-                          const SizedBox(height: 24),
-                          const SizedBox(height: 24),
-                          const SizedBox(height: 50),
-                          const SizedBox(height: 30),
-                          const SizedBox(height: 300),
-                        ],
-                      ),
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 50),
+                        _backButton(context),
+                        const SizedBox(height: 24),
+                        const SizedBox(height: 24),
+                        const SizedBox(height: 24),
+                        const SizedBox(height: 50),
+                        const SizedBox(height: 30),
+                        const SizedBox(height: 300),
+                      ],
                     ),
                   ),
                 ),
-                model.isLoading
-                    ? Container(
-                        color: Colors.grey.withOpacity(0.6),
-                        child: Center(
-                          child: Platform.isIOS
-                              ? const CupertinoActivityIndicator()
-                              : const CircularProgressIndicator(),
-                        ),
-                      )
-                    : Container(),
-              ],
-            ),
+              ),
+              const LoadingView(),
+            ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities().isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 70 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: Utilities().isMobile() ? 8 : 16),
+            SizedBox(width: Utilities.isMobile() ? 8 : 16),
             Platform.isIOS
                 ? Row(
                     children: [
@@ -80,7 +70,7 @@ class EditPasswordScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: Utilities().isMobile() ? 18 : 24,
+                          fontSize: Utilities.isMobile() ? 18 : 24,
                         ),
                       )
                     ],
@@ -92,9 +82,7 @@ class EditPasswordScreen extends StatelessWidget {
     );
   }
 
-  Widget _emailController(BuildContext context) {
-    final editPasswordModel =
-        Provider.of<EditPasswordModel>(context, listen: false);
+  Widget _emailField(BuildContext context, WidgetRef ref) {
     return TextField(
       controller: emailController,
       cursorColor: Theme.of(context).primaryColor,
@@ -117,7 +105,7 @@ class EditPasswordScreen extends StatelessWidget {
         ),
         hintText: 'メールアドレス',
       ),
-      onChanged: editPasswordModel.onEmailFieldChanged,
+      onChanged: ref.watch(editPasswordModelProvider).onEmailFieldChanged,
     );
   }
 }

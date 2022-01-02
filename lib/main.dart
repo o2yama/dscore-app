@@ -1,83 +1,21 @@
-import 'package:dscore_app/common/ad_state.dart';
-import 'package:dscore_app/repository/score_repository.dart';
-import 'package:dscore_app/repository/user_repository.dart';
-import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_model.dart';
-import 'package:dscore_app/screens/edit_user_info_screen/edit_password/edit_password_model.dart';
-import 'package:dscore_app/screens/intro/intro_model.dart';
-import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
-import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_model.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
-import 'package:dscore_app/screens/total_score_list_screen/total_score_list_model.dart';
-import 'package:dscore_app/screens/total_score_list_screen/total_score_list_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
-
-List<SingleChildWidget> multiProviders = [
-  ...independentModels,
-  ...viewModels,
-];
-
-List<SingleChildWidget> independentModels = [
-  Provider<UserRepository>(create: (_) => UserRepository()),
-  Provider<ScoreRepository>(create: (_) => ScoreRepository()),
-];
-
-List<SingleChildWidget> viewModels = [
-  ChangeNotifierProvider<ThemeColorModel>(
-    create: (context) => ThemeColorModel(),
-  ),
-  ChangeNotifierProvider<ScoreModel>(
-    create: (context) => ScoreModel(
-        scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<IntroModel>(
-    create: (context) => IntroModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<TotalScoreListModel>(
-    create: (context) => TotalScoreListModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false),
-        scoreRepository: Provider.of<ScoreRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<SignUpModel>(
-    create: (context) => SignUpModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<LoginModel>(
-    create: (context) => LoginModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<EditEmailModel>(
-    create: (context) => EditEmailModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false)),
-  ),
-  ChangeNotifierProvider<EditPasswordModel>(
-    create: (context) => EditPasswordModel(
-        userRepository: Provider.of<UserRepository>(context, listen: false)),
-  ),
-];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final initFuture = MobileAds.instance.initialize();
-  final adState = AdState(initFuture);
+  await MobileAds.instance.initialize();
   await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(Provider.value(
-      value: adState,
-      builder: (context, child) => MultiProvider(
-        providers: multiProviders,
-        child: const MyApp(),
-      ),
-    ));
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+  ).then((_) {
+    runApp(
+      const ProviderScope(child: MyApp()),
+    );
   });
 }
 
@@ -86,32 +24,36 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeColorModel>(builder: (context, model, child) {
-      Future(() async => model.getThemeColor());
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: model.themeColor,
-          backgroundColor: model.themeColor.withOpacity(0.1),
-          cardTheme: CardTheme(
-            color: Colors.white,
-            elevation: 3,
-            margin: const EdgeInsets.all(12),
-            shadowColor: model.themeColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+    return Consumer(
+      builder: (context, ref, child) {
+        final _themeColorModel = ref.watch(themeModelProvider);
+
+        Future(() async => _themeColorModel.getThemeColor());
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: _themeColorModel.themeColor,
+            backgroundColor: _themeColorModel.themeColor.withOpacity(0.1),
+            cardTheme: CardTheme(
+              color: Colors.white,
+              elevation: 3,
+              margin: const EdgeInsets.all(12),
+              shadowColor: _themeColorModel.themeColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            buttonTheme: ButtonThemeData(
+              shape: const RoundedRectangleBorder(),
+              buttonColor: Theme.of(context).primaryColor,
+              textTheme: ButtonTextTheme.primary,
+              focusColor: Colors.white,
+              hoverColor: Theme.of(context).primaryColor,
             ),
           ),
-          buttonTheme: ButtonThemeData(
-            shape: const RoundedRectangleBorder(),
-            buttonColor: Theme.of(context).primaryColor,
-            textTheme: ButtonTextTheme.primary,
-            focusColor: Colors.white,
-            hoverColor: Theme.of(context).primaryColor,
-          ),
-        ),
-        home: TotalScoreListScreen(),
-      );
-    });
+          home: const HomeScreen(),
+        );
+      },
+    );
   }
 }
