@@ -4,18 +4,20 @@ import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
-import 'package:dscore_app/screens/score_edit_screen/search_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
+import 'package:dscore_app/screens/search_screen/search_model.dart';
+import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../common/utilities.dart';
 
-class ScoreEditScreen extends StatelessWidget {
-  const ScoreEditScreen({
+class EditPerformanceScreen extends StatelessWidget {
+  const EditPerformanceScreen({
     Key? key,
     required this.event,
     this.scoreId,
@@ -28,8 +30,6 @@ class ScoreEditScreen extends StatelessWidget {
     return Scaffold(
       body: Consumer(
         builder: (context, ref, child) {
-          final scoreModel = ref.watch(scoreModelProvider);
-
           return Container(
             color: Theme.of(context).backgroundColor,
             child: SingleChildScrollView(
@@ -44,19 +44,19 @@ class ScoreEditScreen extends StatelessWidget {
                         ),
                         SizedBox(
                           height: Utilities.screenHeight(context) * 0.1,
-                          child: _totalScoreDisplay(context, scoreModel),
+                          child: _totalScoreDisplay(context, ref),
                         ),
                         SizedBox(
                           height: Utilities.screenHeight(context) * 0.1,
-                          child: _detailScores(context, scoreModel),
+                          child: _detailScores(context, ref),
                         ),
                         SizedBox(
                           height: 40,
-                          child: _under16SwitchButton(context, scoreModel),
+                          child: _under16SwitchButton(context, ref),
                         ),
                         SizedBox(
                           height: Utilities.screenHeight(context) * 0.7,
-                          child: _techListView(context, scoreModel),
+                          child: _techListView(context, ref),
                         ),
                       ],
                     ),
@@ -110,14 +110,14 @@ class ScoreEditScreen extends StatelessWidget {
   }
 
   void _onBackButtonPressed(BuildContext context, WidgetRef ref) {
-    final scoreModel = ref.watch(scoreModelProvider);
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    if (scoreModel.isEdited) {
+    if (editPerformanceModel.isEdited) {
       showDialog<Dialog>(
         context: context,
         builder: (context) => OkCancelDialog(
           onOk: () {
-            scoreModel.noEdited();
+            editPerformanceModel.noEdited();
             Navigator.pop(context);
             Navigator.pop(context);
           },
@@ -138,17 +138,18 @@ class ScoreEditScreen extends StatelessWidget {
     WidgetRef ref,
   ) async {
     final loadingStateModel = ref.watch(loadingStateProvider.notifier);
-    final scoreModel = ref.watch(scoreModelProvider);
+    final performanceListModel = ref.watch(performanceListModelProvider);
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    if (scoreModel.currentUser == null) {
+    if (editPerformanceModel.currentUser == null) {
       await showOkAlertDialog(
         context: context,
         title: 'ログインしてください。',
       );
     } else {
-      if (scoreModel.numberOfGroup1 > 5 ||
-          scoreModel.numberOfGroup2 > 5 ||
-          scoreModel.numberOfGroup3 > 5) {
+      if (editPerformanceModel.numberOfGroup1 > 5 ||
+          editPerformanceModel.numberOfGroup2 > 5 ||
+          editPerformanceModel.numberOfGroup3 > 5) {
         await showOkAlertDialog(
           context: context,
           title: '同一グループが6つ以上登録されています。',
@@ -157,11 +158,14 @@ class ScoreEditScreen extends StatelessWidget {
       } else {
         loadingStateModel.startLoading();
 
-        scoreModel.noEdited();
+        editPerformanceModel.noEdited();
         scoreId == null
-            ? await scoreModel.setScore(event)
-            : await scoreModel.updateScore(event, scoreId!);
-        await scoreModel.getScores(event);
+            ? await editPerformanceModel.setScore(
+                event,
+                performanceListModel.scoreList(event).isEmpty,
+              )
+            : await editPerformanceModel.updateScore(event, scoreId!);
+        await performanceListModel.getScores(event);
         await ref.watch(homeModelProvider).getFavoriteScores();
 
         loadingStateModel.endLoading();
@@ -175,8 +179,9 @@ class ScoreEditScreen extends StatelessWidget {
     }
   }
 
-  Widget _totalScoreDisplay(BuildContext context, ScoreModel scoreModel) {
-    final difficultyOfGroup4 = scoreModel.difficultyOfGroup4;
+  Widget _totalScoreDisplay(BuildContext context, WidgetRef ref) {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+    final difficultyOfGroup4 = editPerformanceModel.difficultyOfGroup4;
 
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
@@ -186,11 +191,11 @@ class ScoreEditScreen extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              'Ⅰ : ${scoreModel.numberOfGroup1}',
+              'Ⅰ : ${editPerformanceModel.numberOfGroup1}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: scoreModel.numberOfGroup1 > 5
+                color: editPerformanceModel.numberOfGroup1 > 5
                     ? Colors.redAccent
                     : Colors.grey,
               ),
@@ -199,11 +204,11 @@ class ScoreEditScreen extends StatelessWidget {
           const VerticalDivider(color: Colors.black54),
           Expanded(
             child: Text(
-              'Ⅱ : ${scoreModel.numberOfGroup2}',
+              'Ⅱ : ${editPerformanceModel.numberOfGroup2}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: scoreModel.numberOfGroup2 > 5
+                color: editPerformanceModel.numberOfGroup2 > 5
                     ? Colors.redAccent
                     : Colors.grey,
               ),
@@ -212,11 +217,11 @@ class ScoreEditScreen extends StatelessWidget {
           const VerticalDivider(color: Colors.black54),
           Expanded(
             child: Text(
-              'Ⅲ : ${scoreModel.numberOfGroup3}',
+              'Ⅲ : ${editPerformanceModel.numberOfGroup3}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: scoreModel.numberOfGroup3 > 5
+                color: editPerformanceModel.numberOfGroup3 > 5
                     ? Colors.redAccent
                     : Colors.grey,
               ),
@@ -226,7 +231,7 @@ class ScoreEditScreen extends StatelessWidget {
           event != Event.fx
               ? Expanded(
                   child: Text(
-                    scoreModel.difficultyOfGroup4 == 0
+                    editPerformanceModel.difficultyOfGroup4 == 0
                         ? 'Ⅳ : ／'
                         : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
                     textAlign: TextAlign.center,
@@ -241,7 +246,7 @@ class ScoreEditScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 15),
               child: FittedBox(
                 child: Text(
-                  '${scoreModel.totalScore}',
+                  '${editPerformanceModel.totalScore}',
                   style: const TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -255,7 +260,9 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _detailScores(BuildContext context, ScoreModel scoreModel) {
+  Widget _detailScores(BuildContext context, WidgetRef ref) {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+
     return Column(
       children: [
         Row(
@@ -294,7 +301,7 @@ class ScoreEditScreen extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  '${scoreModel.difficultyPoint}',
+                  '${editPerformanceModel.difficultyPoint}',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -305,7 +312,7 @@ class ScoreEditScreen extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  '${scoreModel.egr}',
+                  '${editPerformanceModel.egr}',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -316,7 +323,7 @@ class ScoreEditScreen extends StatelessWidget {
             event == Event.fx || event == Event.hb
                 ? Expanded(
                     child: Center(
-                      child: _cvSelectMenu(context, scoreModel),
+                      child: _cvSelectMenu(context, editPerformanceModel),
                     ),
                   )
                 : Container(),
@@ -326,14 +333,17 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _cvSelectMenu(BuildContext context, ScoreModel scoreModel) {
+  Widget _cvSelectMenu(
+    BuildContext context,
+    EditPerformanceModel editPerformanceModel,
+  ) {
     final cvs = [0.0, 0.1, 0.2, 0.3, 0.4];
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(width: 32),
         Text(
-          '${scoreModel.cv}',
+          '${editPerformanceModel.cv}',
           textAlign: TextAlign.center,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -346,7 +356,7 @@ class ScoreEditScreen extends StatelessWidget {
                   child: SizedBox(
                     child: TextButton(
                       onPressed: () {
-                        scoreModel
+                        editPerformanceModel
                           ..onCVSelected(cv)
                           ..calculateScore(event);
                         Navigator.pop(context);
@@ -366,28 +376,33 @@ class ScoreEditScreen extends StatelessWidget {
     );
   }
 
-  Widget _under16SwitchButton(BuildContext context, ScoreModel scoreModel) {
+  Widget _under16SwitchButton(BuildContext context, WidgetRef ref) {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Text(
           '高校生ルール',
           style: TextStyle(
-            color: scoreModel.isUnder16 ? Colors.black : Colors.grey,
+            color: editPerformanceModel.isUnder16 ? Colors.black : Colors.grey,
           ),
         ),
         Switch(
           activeColor: Theme.of(context).primaryColor,
-          value: scoreModel.isUnder16,
-          onChanged: (bool isUnder16) => scoreModel.setRule(event, isUnder16),
+          value: editPerformanceModel.isUnder16,
+          onChanged: (bool isUnder16) =>
+              editPerformanceModel.setRule(event, isUnder16),
         )
       ],
     );
   }
 
-  Widget _techListView(BuildContext context, ScoreModel scoreModel) {
+  Widget _techListView(BuildContext context, WidgetRef ref) {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+
     return Container(
-      child: scoreModel.totalScore == 0
+      child: editPerformanceModel.totalScore == 0
           ? Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -396,7 +411,7 @@ class ScoreEditScreen extends StatelessWidget {
                   width: 100,
                   child: InkWell(
                     onTap: () {
-                      if (scoreModel.currentUser == null) {
+                      if (editPerformanceModel.currentUser == null) {
                         Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
@@ -406,8 +421,8 @@ class ScoreEditScreen extends StatelessWidget {
                         );
                       } else {
                         searchController.clear();
-                        scoreModel.searchResult.clear();
-                        scoreModel.selectEvent(event);
+                        ref.watch(searchModelProvider).searchResult.clear();
+                        editPerformanceModel.selectEvent(event);
                         Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
@@ -427,13 +442,13 @@ class ScoreEditScreen extends StatelessWidget {
             )
           : ReorderableListView(
               onReorder: (int oldIndex, int newIndex) =>
-                  scoreModel.onReOrder(oldIndex, newIndex, event),
-              children: scoreModel.decidedTechList.map((tech) {
+                  editPerformanceModel.onReOrder(oldIndex, newIndex, event),
+              children: editPerformanceModel.decidedTechList.map((tech) {
                 return _techTile(
                   context,
                   tech,
-                  scoreModel.decidedTechList.indexOf(tech) + 1,
-                  scoreModel,
+                  editPerformanceModel.decidedTechList.indexOf(tech) + 1,
+                  ref,
                 );
               }).toList(),
             ),
@@ -444,12 +459,15 @@ class ScoreEditScreen extends StatelessWidget {
     BuildContext context,
     String techName,
     int order,
-    ScoreModel scoreModel,
+    WidgetRef ref,
   ) {
-    final group = scoreModel.group[techName];
-    final difficulty = scoreModel.difficulty[techName];
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+    final group = editPerformanceModel.group[techName];
+    final difficulty = editPerformanceModel.difficulty[techName];
+
     return Column(
-      key: Key(scoreModel.decidedTechList.indexOf(techName).toString()),
+      key: Key(
+          editPerformanceModel.decidedTechList.indexOf(techName).toString()),
       children: [
         Row(
           children: [
@@ -465,7 +483,7 @@ class ScoreEditScreen extends StatelessWidget {
                       backgroundColor: Colors.red,
                       icon: Icons.remove,
                       onPressed: (BuildContext context) {
-                        scoreModel.deleteTech(order - 1, event);
+                        editPerformanceModel.deleteTech(order - 1, event);
                       },
                     ),
                   ],
@@ -524,8 +542,8 @@ class ScoreEditScreen extends StatelessWidget {
                     ),
                     onTap: () {
                       searchController.clear();
-                      scoreModel.searchResult.clear();
-                      scoreModel.selectEvent(event);
+                      ref.watch(searchModelProvider).searchResult.clear();
+                      editPerformanceModel.selectEvent(event);
                       Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
@@ -540,8 +558,8 @@ class ScoreEditScreen extends StatelessWidget {
             ),
           ],
         ),
-        scoreModel.decidedTechList.length == order &&
-                scoreModel.decidedTechList.length < 10
+        editPerformanceModel.decidedTechList.length == order &&
+                editPerformanceModel.decidedTechList.length < 10
             ? Column(
                 children: [
                   IconButton(
@@ -549,8 +567,8 @@ class ScoreEditScreen extends StatelessWidget {
                         Icon(Icons.add, color: Theme.of(context).primaryColor),
                     onPressed: () {
                       searchController.clear();
-                      scoreModel.searchResult.clear();
-                      scoreModel.selectEvent(event);
+                      ref.watch(searchModelProvider).searchResult.clear();
+                      editPerformanceModel.selectEvent(event);
                       Navigator.push<Object>(
                           context,
                           MaterialPageRoute(
@@ -562,8 +580,8 @@ class ScoreEditScreen extends StatelessWidget {
                   const SizedBox(height: 200),
                 ],
               )
-            : scoreModel.decidedTechList.length == order &&
-                    scoreModel.decidedTechList.length == 10
+            : editPerformanceModel.decidedTechList.length == order &&
+                    editPerformanceModel.decidedTechList.length == 10
                 ? const SizedBox(height: 200)
                 : Container(),
       ],

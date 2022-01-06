@@ -2,7 +2,7 @@ import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:flutter/material.dart';
@@ -140,7 +140,7 @@ class SettingsScreen extends StatelessWidget {
             builder: (context) {
               return OkCancelDialog(
                 onOk: () async {
-                  ref.watch(scoreModelProvider).resetScores();
+                  ref.watch(performanceListModelProvider).resetScores();
                   await ref.watch(loginModelProvider).signOut();
                   await Navigator.pushAndRemoveUntil<Object>(
                       context,

@@ -77,11 +77,17 @@ class UsageScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           Padding(
-            padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 24),
+            padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
             child: Image.asset('images/tutorial_2.png'),
           ),
-          Image.asset('images/tutorial_3.png'),
-          Image.asset('images/tutorial_4.png'),
+          Padding(
+            padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+            child: Image.asset('images/tutorial_3.png'),
+          ),
+          Padding(
+            padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+            child: Image.asset('images/tutorial_4.png'),
+          ),
         ],
       ),
     );

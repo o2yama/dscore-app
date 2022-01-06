@@ -1,12 +1,15 @@
 import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
-import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_screen.dart';
 import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
@@ -153,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _eventCard(BuildContext context, Event event) {
     return Consumer(
       builder: (context, ref, child) {
-        final scoreModel = ref.watch(scoreModelProvider);
+        final scoreModel = ref.watch(performanceListModelProvider);
         final homeModel = ref.watch(homeModelProvider);
 
         return SizedBox(
@@ -164,9 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: InkWell(
               onTap: () async {
-                scoreModel.selectEvent(event);
+                ref.watch(editPerformanceModelProvider).selectEvent(event);
                 if (event == Event.vt) {
-                  await scoreModel.getVTScore();
+                  await ref.watch(vtScoreModelProvider).getVTScore();
                   await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
@@ -180,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ScoreListScreen(event: event),
+                      builder: (context) => PerformanceListScreen(event: event),
                     ),
                   );
                 }
@@ -267,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case Event.vt:
         return homeModel.vt == null
             ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.vt!.score}',
+            : Text('${vtTech[homeModel.vt!.techName]}',
                 style: Theme.of(context).textTheme.headline6);
       case Event.pb:
         return homeModel.favoritePb == null

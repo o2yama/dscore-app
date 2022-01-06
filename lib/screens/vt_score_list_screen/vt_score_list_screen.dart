@@ -3,8 +3,8 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
-import 'package:dscore_app/screens/vt_score_list_screen/vt_tech_list_view.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/widget/vt_tech_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
@@ -18,6 +18,7 @@ class VTScoreSelectScreen extends StatelessWidget {
       body: Consumer(
         builder: (context, ref, child) {
           final height = Utilities.screenHeight(context);
+
           return Container(
             color: Theme.of(context).backgroundColor,
             child: SafeArea(
@@ -93,7 +94,7 @@ class VTScoreSelectScreen extends StatelessWidget {
   ) async {
     ref.watch(loadingStateProvider.notifier).startLoading();
 
-    await ref.watch(scoreModelProvider).setVTScore();
+    await ref.watch(vtScoreModelProvider).setVTScore();
     await ref.watch(homeModelProvider).getFavoriteScores();
 
     ref.watch(loadingStateProvider.notifier).endLoading();
@@ -104,14 +105,15 @@ class VTScoreSelectScreen extends StatelessWidget {
 
   Widget _dScoreDisplay(BuildContext context, WidgetRef ref) {
     final width = Utilities.screenWidth(context);
-    final scoreModel = ref.watch(scoreModelProvider);
+    final vtScoreModel = ref.watch(vtScoreModelProvider);
+
     return Row(
       children: [
         Container(
           width: width * 0.5,
           margin: const EdgeInsets.only(left: 40),
           child: Text(
-            scoreModel.vtTechName,
+            vtScoreModel.techName,
             style: TextStyle(
               fontSize: Utilities.isMobile() ? 24 : 30,
             ),
@@ -121,7 +123,7 @@ class VTScoreSelectScreen extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(right: 16),
           child: Text(
-            '${scoreModel.totalScore}',
+            '${vtScoreModel.difficulty}',
             style: const TextStyle(fontSize: 40),
           ),
         ),

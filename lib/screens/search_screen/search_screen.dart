@@ -2,10 +2,11 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
+import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../score_list_screen/score_model.dart';
 
 final TextEditingController searchController = TextEditingController();
 
@@ -21,19 +22,18 @@ class SearchScreen extends StatelessWidget {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
         body: Container(
-          height: MediaQuery.of(context).size.height,
+          height: Utilities.screenHeight(context),
           color: Theme.of(context).backgroundColor,
           child: SafeArea(
             child: Consumer(
               builder: (context, ref, child) {
-                final scoreModel = ref.watch(scoreModelProvider);
                 return SingleChildScrollView(
                   child: Column(
                     children: [
                       _backButton(context, event),
-                      _searchBar(context, scoreModel),
-                      _searchChips(context, event, scoreModel),
-                      _searchResults(context, event, scoreModel),
+                      _searchBar(context, ref),
+                      _searchChips(context, event, ref),
+                      _searchResults(context, event, ref),
                     ],
                   ),
                 );
@@ -47,7 +47,7 @@ class SearchScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context, Event event) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: Utilities.screenHeight(context) * 0.1,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -60,9 +60,11 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget _searchBar(BuildContext context, ScoreModel scoreModel) {
+  Widget _searchBar(BuildContext context, WidgetRef ref) {
+    final searchModel = ref.watch(searchModelProvider);
+
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: Utilities.screenHeight(context) * 0.1,
       child: Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
         child: TextField(
@@ -71,7 +73,7 @@ class SearchScreen extends StatelessWidget {
           autofocus: true,
           decoration: InputDecoration(
             suffixIcon: InkWell(
-              onTap: () => scoreModel.deleteSearchBarText(searchController),
+              onTap: () => searchModel.deleteSearchBarText(searchController),
               child: Icon(
                 Icons.clear,
                 color: Theme.of(context).primaryColor,
@@ -91,27 +93,28 @@ class SearchScreen extends StatelessWidget {
             ),
             hintText: '技名を検索',
           ),
-          onChanged: (text) => scoreModel.search(text, event),
+          onChanged: (text) => searchModel.search(text, event),
         ),
       ),
     );
   }
 
-  Widget _searchChips(
-      BuildContext context, Event event, ScoreModel scoreModel) {
+  Widget _searchChips(BuildContext context, Event event, WidgetRef ref) {
     return SizedBox(
       height: 50,
       child: Padding(
         padding: const EdgeInsets.only(left: 15, right: 15),
         child: ListView(
             scrollDirection: Axis.horizontal,
-            children: scoreModel.searchChipWords
+            children: ref
+                .watch(editPerformanceModelProvider)
+                .searchChipWords
                 .map(
                   (chipsText) => _techChip(
                     context,
                     chipsText,
                     event,
-                    scoreModel,
+                    ref,
                   ),
                 )
                 .toList()),
@@ -123,7 +126,7 @@ class SearchScreen extends StatelessWidget {
     BuildContext context,
     String searchText,
     Event event,
-    ScoreModel scoreModel,
+    WidgetRef ref,
   ) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
@@ -134,7 +137,7 @@ class SearchScreen extends StatelessWidget {
         selected: false,
         onSelected: (selected) {
           FocusScope.of(context).requestFocus(FocusNode());
-          scoreModel.onTechChipSelected(event, searchText);
+          ref.watch(searchModelProvider).onTechChipSelected(event, searchText);
         },
       ),
     );
@@ -143,9 +146,11 @@ class SearchScreen extends StatelessWidget {
   Widget _searchResults(
     BuildContext context,
     Event event,
-    ScoreModel scoreModel,
+    WidgetRef ref,
   ) {
-    return scoreModel.searchResult.isEmpty
+    final searchModel = ref.watch(searchModelProvider);
+
+    return searchModel.searchResult.isEmpty
         ? Column(
             children: [
               const SizedBox(height: 24),
@@ -165,13 +170,13 @@ class SearchScreen extends StatelessWidget {
         : SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
             child: ListView(
-              children: scoreModel.searchResult
+              children: searchModel.searchResult
                   .map(
                     (score) => resultTile(
                       context,
                       score,
-                      scoreModel.searchResult.indexOf(score),
-                      scoreModel,
+                      searchModel.searchResult.indexOf(score),
+                      ref,
                     ),
                   )
                   .toList(),
@@ -183,10 +188,12 @@ class SearchScreen extends StatelessWidget {
     BuildContext context,
     String techName,
     int index,
-    ScoreModel scoreModel,
+    WidgetRef ref,
   ) {
-    final group = scoreModel.group[techName];
-    final difficulty = scoreModel.difficulty[techName];
+    final scoreEditModel = ref.watch(editPerformanceModelProvider);
+    final group = scoreEditModel.group[techName];
+    final difficulty = scoreEditModel.difficulty[techName];
+
     return Column(
       children: [
         Card(
@@ -236,10 +243,10 @@ class SearchScreen extends StatelessWidget {
               ),
             ),
             onTap: () async =>
-                _onResultTileTapped(context, techName, order, scoreModel),
+                _onResultTileTapped(context, techName, order, ref),
           ),
         ),
-        scoreModel.searchResult.length - 1 == index
+        ref.watch(searchModelProvider).searchResult.length - 1 == index
             ? Column(
                 children: [
                   const SizedBox(height: 30),
@@ -262,16 +269,28 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _onResultTileTapped(BuildContext context, String techName,
-      int? order, ScoreModel scoreModel) async {
-    if (scoreModel.isSameTechSelected(techName)) {
+  Future<void> _onResultTileTapped(
+    BuildContext context,
+    String techName,
+    int? order,
+    WidgetRef ref,
+  ) async {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+    final searchModel = ref.watch(searchModelProvider);
+
+    if (searchModel.isSameTechSelected(
+        editPerformanceModel.decidedTechList, techName)) {
       await showOkAlertDialog(
         context: context,
         title: 'すでに同じ技が登録されています。',
       );
     } else {
-      scoreModel
-        ..setTech(techName, order)
+      searchModel.setTech(
+        editPerformanceModel.decidedTechList,
+        techName,
+        order,
+      );
+      editPerformanceModel
         ..calculateNumberOfGroup(event)
         ..calculateScore(event);
     }

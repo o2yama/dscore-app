@@ -8,71 +8,64 @@ import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_screen.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
-import 'package:dscore_app/screens/score_edit_screen/score_edit_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class ScoreListScreen extends StatelessWidget {
-  const ScoreListScreen({
-    Key? key,
-    required this.event,
-  }) : super(key: key);
+class PerformanceListScreen extends ConsumerWidget {
+  const PerformanceListScreen({Key? key, required this.event})
+      : super(key: key);
   final Event event;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Consumer(
-        builder: (context, ref, child) {
-          final scoreModel = ref.watch(scoreModelProvider);
-
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.1,
-                          child: _backButton(context, event),
-                        ),
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.1,
-                          child: _eventNameDisplay(context, ref),
-                        ),
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.8,
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              ref
-                                  .watch(loadingStateProvider.notifier)
-                                  .startLoading();
-                              await scoreModel.getScores(event);
-                              ref
-                                  .watch(loadingStateProvider.notifier)
-                                  .endLoading();
-                            },
-                            child: _scoreList(context, ref),
-                          ),
-                        ),
-                      ],
+      body: Container(
+        color: Theme.of(context).backgroundColor,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: Utilities.screenHeight(context) * 0.1,
+                      child: _backButton(context, event),
                     ),
-                  ),
-                  const BannerAdWidget(),
-                  const LoadingView(),
-                ],
+                    SizedBox(
+                      height: Utilities.screenHeight(context) * 0.1,
+                      child: _eventNameDisplay(context, ref),
+                    ),
+                    SizedBox(
+                      height: Utilities.screenHeight(context) * 0.8,
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          ref
+                              .watch(loadingStateProvider.notifier)
+                              .startLoading();
+                          await ref
+                              .watch(performanceListModelProvider)
+                              .getScores(event);
+                          ref.watch(loadingStateProvider.notifier).endLoading();
+                        },
+                        child: _scoreList(context, ref),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+              const BannerAdWidget(),
+              const LoadingView(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -119,13 +112,13 @@ class ScoreListScreen extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
           onPressed: () {
-            ref.watch(scoreModelProvider)
+            ref.watch(editPerformanceModelProvider)
               ..selectEvent(event)
               ..resetScore();
             Navigator.push<Object>(
               context,
               MaterialPageRoute(
-                builder: (context) => ScoreEditScreen(event: event),
+                builder: (context) => EditPerformanceScreen(event: event),
               ),
             );
           },
@@ -139,12 +132,12 @@ class ScoreListScreen extends StatelessWidget {
     BuildContext context,
     WidgetRef ref,
   ) {
-    final scoreModel = ref.watch(scoreModelProvider);
+    final performanceListModel = ref.watch(performanceListModelProvider);
 
     switch (event) {
       case Event.fx:
         return ListView(
-          children: scoreModel.fxScoreList
+          children: performanceListModel.fxScoreList
               .map(
                 (score) => _scoreTile(
                   context,
@@ -156,7 +149,7 @@ class ScoreListScreen extends StatelessWidget {
         );
       case Event.ph:
         return ListView(
-          children: scoreModel.phScoreList
+          children: performanceListModel.phScoreList
               .map(
                 (score) => _scoreTile(
                   context,
@@ -168,7 +161,7 @@ class ScoreListScreen extends StatelessWidget {
         );
       case Event.sr:
         return ListView(
-          children: scoreModel.srScoreList
+          children: performanceListModel.srScoreList
               .map(
                 (score) => _scoreTile(
                   context,
@@ -180,7 +173,7 @@ class ScoreListScreen extends StatelessWidget {
         );
       case Event.pb:
         return ListView(
-          children: scoreModel.pbScoreList
+          children: performanceListModel.pbScoreList
               .map(
                 (score) => _scoreTile(context, ref, score: score),
               )
@@ -188,7 +181,7 @@ class ScoreListScreen extends StatelessWidget {
         );
       case Event.hb:
         return ListView(
-          children: scoreModel.hbScoreList
+          children: performanceListModel.hbScoreList
               .map(
                 (score) => _scoreTile(
                   context,
@@ -209,12 +202,12 @@ class ScoreListScreen extends StatelessWidget {
     Score? score,
     ScoreWithCV? scoreWithCV,
   }) {
-    final scoreModel = ref.watch(scoreModelProvider);
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
     return InkWell(
       onTap: () async {
         ref.watch(loadingStateProvider.notifier).startLoading();
-        await scoreModel.getScore(
+        await editPerformanceModel.getScore(
           score == null ? scoreWithCV!.scoreId : score.scoreId,
           event,
         );
@@ -222,7 +215,7 @@ class ScoreListScreen extends StatelessWidget {
         await Navigator.push<Object>(
           context,
           MaterialPageRoute(
-            builder: (context) => ScoreEditScreen(
+            builder: (context) => EditPerformanceScreen(
               event: event,
               scoreId: score == null ? scoreWithCV!.scoreId : score.scoreId,
             ),
@@ -230,12 +223,13 @@ class ScoreListScreen extends StatelessWidget {
         );
       },
       child: Slidable(
-        startActionPane: ActionPane(
+        endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
             SlidableAction(
               label: '複製',
-              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue.shade300,
               icon: CupertinoIcons.plus_square_fill_on_square_fill,
               onPressed: (context) => _onCopyButtonPressed(
                 context,
@@ -243,19 +237,15 @@ class ScoreListScreen extends StatelessWidget {
                 ref,
               ),
             ),
-          ],
-        ),
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
             SlidableAction(
               label: '削除',
-              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red.shade300,
               icon: Icons.remove,
               onPressed: (context) => _onDeleteButtonPressed(
                 context,
                 score == null ? scoreWithCV!.scoreId : score.scoreId,
-                scoreModel,
+                ref,
               ),
             ),
           ],
@@ -307,13 +297,19 @@ class ScoreListScreen extends StatelessWidget {
     String scoreId,
     WidgetRef ref,
   ) async {
-    final scoreModel = ref.watch(scoreModelProvider);
+    final performanceListModel = ref.watch(performanceListModelProvider);
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
     ref.watch(loadingStateProvider.notifier).startLoading();
-    await scoreModel.getScore(scoreId, event);
-    await scoreModel.setScore(event);
-    await scoreModel.getScores(event);
+
+    await editPerformanceModel.getScore(scoreId, event);
+    await editPerformanceModel.setScore(
+      event,
+      performanceListModel.scoreList(event).isEmpty,
+    );
+    await ref.watch(performanceListModelProvider).getScores(event);
     await ref.watch(homeModelProvider).getFavoriteScores();
+
     ref.watch(loadingStateProvider.notifier).endLoading();
     await showOkAlertDialog(
       context: context,
@@ -324,13 +320,15 @@ class ScoreListScreen extends StatelessWidget {
   Future<void> _onDeleteButtonPressed(
     BuildContext context,
     String scoreId,
-    ScoreModel scoreModel,
+    WidgetRef ref,
   ) async {
     await showDialog<Dialog>(
       context: context,
       builder: (context) => OkCancelDialog(
         onOk: () {
-          scoreModel.deletePerformance(event, scoreId);
+          ref
+              .watch(performanceListModelProvider)
+              .deletePerformance(event, scoreId);
           Navigator.pop(context);
         },
         onCancel: () => Navigator.pop(context),
@@ -356,7 +354,7 @@ class ScoreListScreen extends StatelessWidget {
         ref.watch(loadingStateProvider.notifier).startLoading();
 
         await ref
-            .watch(scoreModelProvider)
+            .watch(performanceListModelProvider)
             .onFavoriteButtonTapped(event, isFavorite, scoreId);
         await ref.watch(homeModelProvider).getFavoriteScores();
 
