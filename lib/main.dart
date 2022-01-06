@@ -36,9 +36,8 @@ class MyApp extends StatelessWidget {
             backgroundColor: _themeColorModel.themeColor.withOpacity(0.1),
             cardTheme: CardTheme(
               color: Colors.white,
-              elevation: 3,
-              margin: const EdgeInsets.all(12),
-              shadowColor: _themeColorModel.themeColor,
+              elevation: 2,
+              margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

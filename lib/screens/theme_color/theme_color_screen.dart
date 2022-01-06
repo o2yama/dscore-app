@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,34 +10,28 @@ class ThemeColorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      context: context,
       body: Consumer(
         builder: (context, ref, child) {
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      _backButton(context),
-                      _exampleCardWidget(context),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        height: Utilities.screenHeight(context) * 0.6,
-                        child: ListView(
-                          children: themes.keys
-                              .map(
-                                (color) => _colorTile(context, color, ref),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                _backButton(context),
+                _exampleCardWidget(context),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: Utilities.screenHeight(context) * 0.6,
+                  child: ListView(
+                    children: themes.keys
+                        .map(
+                          (color) => _colorTile(context, color, ref),
+                        )
+                        .toList(),
                   ),
                 ),
-              ),
+              ],
             ),
           );
         },
@@ -46,7 +41,7 @@ class ThemeColorScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities.isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 50 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Platform.isIOS

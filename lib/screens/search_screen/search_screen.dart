@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/common/utilities.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/search_screen/search_model.dart';
@@ -20,35 +21,30 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: Scaffold(
-        body: Container(
-          height: Utilities.screenHeight(context),
-          color: Theme.of(context).backgroundColor,
-          child: SafeArea(
-            child: Consumer(
-              builder: (context, ref, child) {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _backButton(context, event),
-                      _searchBar(context, ref),
-                      _searchChips(context, event, ref),
-                      _searchResults(context, event, ref),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+      child: CustomScaffold(
+        context: context,
+        body: Consumer(
+          builder: (context, ref, child) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _backButton(context, event),
+                  _searchBar(context, ref),
+                  _searchChips(context, event, ref),
+                  _searchResults(context, event, ref),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _backButton(BuildContext context, Event event) {
-    return SizedBox(
-      height: Utilities.screenHeight(context) * 0.1,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Icon(
@@ -56,45 +52,42 @@ class SearchScreen extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
         ),
-      ]),
+      ],
     );
   }
 
   Widget _searchBar(BuildContext context, WidgetRef ref) {
     final searchModel = ref.watch(searchModelProvider);
 
-    return SizedBox(
-      height: Utilities.screenHeight(context) * 0.1,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-        child: TextField(
-          controller: searchController,
-          cursorColor: Theme.of(context).primaryColor,
-          autofocus: true,
-          decoration: InputDecoration(
-            suffixIcon: InkWell(
-              onTap: () => searchModel.deleteSearchBarText(searchController),
-              child: Icon(
-                Icons.clear,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 10),
-            prefixIcon: Icon(
-              Icons.search,
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: TextField(
+        controller: searchController,
+        cursorColor: Theme.of(context).primaryColor,
+        autofocus: true,
+        decoration: InputDecoration(
+          suffixIcon: InkWell(
+            onTap: () => searchModel.deleteSearchBarText(searchController),
+            child: Icon(
+              Icons.clear,
               color: Theme.of(context).primaryColor,
             ),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            hintText: '技名を検索',
           ),
-          onChanged: (text) => searchModel.search(text, event),
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Theme.of(context).primaryColor,
+          ),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          hintText: '技名を検索',
         ),
+        onChanged: (text) => searchModel.search(text, event),
       ),
     );
   }
@@ -102,23 +95,20 @@ class SearchScreen extends StatelessWidget {
   Widget _searchChips(BuildContext context, Event event, WidgetRef ref) {
     return SizedBox(
       height: 50,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-        child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: ref
-                .watch(editPerformanceModelProvider)
-                .searchChipWords
-                .map(
-                  (chipsText) => _techChip(
-                    context,
-                    chipsText,
-                    event,
-                    ref,
-                  ),
-                )
-                .toList()),
-      ),
+      child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: ref
+              .watch(editPerformanceModelProvider)
+              .searchChipWords
+              .map(
+                (chipsText) => _techChip(
+                  context,
+                  chipsText,
+                  event,
+                  ref,
+                ),
+              )
+              .toList()),
     );
   }
 
@@ -129,57 +119,54 @@ class SearchScreen extends StatelessWidget {
     WidgetRef ref,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: ChoiceChip(
-        backgroundColor: Colors.grey[200],
-        elevation: 5,
+        backgroundColor: Colors.white,
+        elevation: 4,
         label: Text(searchText),
         selected: false,
         onSelected: (selected) {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusManager.instance.primaryFocus?.unfocus();
           ref.watch(searchModelProvider).onTechChipSelected(event, searchText);
         },
       ),
     );
   }
 
-  Widget _searchResults(
-    BuildContext context,
-    Event event,
-    WidgetRef ref,
-  ) {
+  Widget _searchResults(BuildContext context, Event event, WidgetRef ref) {
     final searchModel = ref.watch(searchModelProvider);
 
     return searchModel.searchResult.isEmpty
-        ? Column(
-            children: [
-              const SizedBox(height: 24),
-              SizedBox(
-                height: 50,
-                child: TextButton(
-                  onPressed: () => launch(
-                    'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                    forceSafariVC: true,
-                    forceWebView: true,
-                  ),
-                  child: const Text('登録したい技がない場合はこちら'),
+        ? Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: SizedBox(
+              height: 50,
+              child: TextButton(
+                onPressed: () => launch(
+                  'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                  forceSafariVC: true,
+                  forceWebView: true,
                 ),
+                child: const Text('登録したい技がない場合はこちら'),
               ),
-            ],
+            ),
           )
         : SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
-            child: ListView(
-              children: searchModel.searchResult
-                  .map(
-                    (score) => resultTile(
-                      context,
-                      score,
-                      searchModel.searchResult.indexOf(score),
-                      ref,
-                    ),
-                  )
-                  .toList(),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: ListView(
+                children: searchModel.searchResult
+                    .map(
+                      (score) => resultTile(
+                        context,
+                        score,
+                        searchModel.searchResult.indexOf(score),
+                        ref,
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           );
   }
@@ -194,78 +181,54 @@ class SearchScreen extends StatelessWidget {
     final group = scoreEditModel.group[techName];
     final difficulty = scoreEditModel.difficulty[techName];
 
-    return Column(
-      children: [
-        Card(
-          child: ListTile(
-            title: Text(
-              techName,
-              style: TextStyle(
-                fontSize: Utilities.isMobile() ? 14.0 : 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            trailing: SizedBox(
-              width: 110,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      const Expanded(
-                        child: Text('難度', style: TextStyle(fontSize: 10)),
-                      ),
-                      Expanded(
-                        child: Text(
-                          Convertor.difficulty[difficulty].toString(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 24),
-                  Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      const Expanded(
-                        child: Text(
-                          'グループ',
-                          style: TextStyle(fontSize: 10),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(Convertor.group[group].toString()),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            onTap: () async =>
-                _onResultTileTapped(context, techName, order, ref),
+    return Card(
+      child: ListTile(
+        title: Text(
+          techName,
+          style: TextStyle(
+            fontSize: Utilities.isMobile() ? 14.0 : 18.0,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        ref.watch(searchModelProvider).searchResult.length - 1 == index
-            ? Column(
+        trailing: SizedBox(
+          width: 110,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
                 children: [
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    height: 50,
-                    child: TextButton(
-                      onPressed: () => launch(
-                        'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                        forceSafariVC: true,
-                        forceWebView: true,
-                      ),
-                      child: const Text('登録したい技がない場合はこちら'),
+                  const SizedBox(height: 8),
+                  const Expanded(
+                    child: Text('難度', style: TextStyle(fontSize: 10)),
+                  ),
+                  Expanded(
+                    child: Text(
+                      Convertor.difficulty[difficulty].toString(),
                     ),
                   ),
-                  const SizedBox(height: 300),
                 ],
-              )
-            : Container(),
-      ],
+              ),
+              const SizedBox(width: 24),
+              Column(
+                children: [
+                  const SizedBox(height: 8),
+                  const Expanded(
+                    child: Text(
+                      'グループ',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(Convertor.group[group].toString()),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        onTap: () async => _onResultTileTapped(context, techName, order, ref),
+      ),
     );
   }
 

@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
-import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
-import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_screen.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
@@ -25,80 +23,46 @@ class PerformanceListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Container(
-        color: Theme.of(context).backgroundColor,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: Utilities.screenHeight(context) * 0.1,
-                      child: _backButton(context, event),
-                    ),
-                    SizedBox(
-                      height: Utilities.screenHeight(context) * 0.1,
-                      child: _eventNameDisplay(context, ref),
-                    ),
-                    SizedBox(
-                      height: Utilities.screenHeight(context) * 0.8,
-                      child: RefreshIndicator(
-                        onRefresh: () async {
-                          ref
-                              .watch(loadingStateProvider.notifier)
-                              .startLoading();
-                          await ref
-                              .watch(performanceListModelProvider)
-                              .getScores(event);
-                          ref.watch(loadingStateProvider.notifier).endLoading();
-                        },
-                        child: _scoreList(context, ref),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const BannerAdWidget(),
-              const LoadingView(),
-            ],
-          ),
+    return CustomScaffold(
+      context: context,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _backButton(context, event, ref),
+            _scoreList(context, ref),
+          ],
         ),
       ),
     );
   }
 
-  Widget _backButton(BuildContext context, Event event) {
-    return TextButton(
-      onPressed: () => Navigator.pop(context),
-      child: Platform.isIOS
-          ? Row(
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
+  Widget _backButton(BuildContext context, Event event, WidgetRef ref) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Platform.isIOS
+              ? Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    Text(
+                      '6種目',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                )
+              : Icon(
+                  Icons.clear,
                   color: Theme.of(context).primaryColor,
                 ),
-                Text(
-                  '6種目',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ],
-            )
-          : Icon(
-              Icons.clear,
-              color: Theme.of(context).primaryColor,
-            ),
-    );
-  }
-
-  Widget _eventNameDisplay(BuildContext context, WidgetRef ref) {
-    return Row(
-      children: [
-        SizedBox(width: Utilities.screenWidth(context) * 0.15),
+        ),
         Text(
           Convertor.eventName[event]!,
           style: TextStyle(
@@ -108,7 +72,6 @@ class PerformanceListScreen extends ConsumerWidget {
             color: Colors.black.withOpacity(0.7),
           ),
         ),
-        Expanded(child: Container()),
         IconButton(
           icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
           onPressed: () {
@@ -123,56 +86,40 @@ class PerformanceListScreen extends ConsumerWidget {
             );
           },
         ),
-        SizedBox(width: Utilities.screenWidth(context) * 0.1),
       ],
     );
   }
 
-  Widget _scoreList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _scoreList(BuildContext context, WidgetRef ref) {
     final performanceListModel = ref.watch(performanceListModelProvider);
 
     switch (event) {
       case Event.fx:
-        return ListView(
+        return Column(
           children: performanceListModel.fxScoreList
               .map(
-                (score) => _scoreTile(
-                  context,
-                  ref,
-                  scoreWithCV: score,
-                ),
+                (score) => _scoreTile(context, ref, scoreWithCV: score),
               )
               .toList(),
         );
       case Event.ph:
-        return ListView(
+        return Column(
           children: performanceListModel.phScoreList
               .map(
-                (score) => _scoreTile(
-                  context,
-                  ref,
-                  score: score,
-                ),
+                (score) => _scoreTile(context, ref, score: score),
               )
               .toList(),
         );
       case Event.sr:
-        return ListView(
+        return Column(
           children: performanceListModel.srScoreList
               .map(
-                (score) => _scoreTile(
-                  context,
-                  ref,
-                  score: score,
-                ),
+                (score) => _scoreTile(context, ref, score: score),
               )
               .toList(),
         );
       case Event.pb:
-        return ListView(
+        return Column(
           children: performanceListModel.pbScoreList
               .map(
                 (score) => _scoreTile(context, ref, score: score),
@@ -180,7 +127,7 @@ class PerformanceListScreen extends ConsumerWidget {
               .toList(),
         );
       case Event.hb:
-        return ListView(
+        return Column(
           children: performanceListModel.hbScoreList
               .map(
                 (score) => _scoreTile(
@@ -192,7 +139,7 @@ class PerformanceListScreen extends ConsumerWidget {
               .toList(),
         );
       default:
-        return ListView();
+        return const SizedBox();
     }
   }
 
@@ -202,15 +149,13 @@ class PerformanceListScreen extends ConsumerWidget {
     Score? score,
     ScoreWithCV? scoreWithCV,
   }) {
-    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
-
     return InkWell(
       onTap: () async {
         ref.watch(loadingStateProvider.notifier).startLoading();
-        await editPerformanceModel.getScore(
-          score == null ? scoreWithCV!.scoreId : score.scoreId,
-          event,
-        );
+        await ref.watch(editPerformanceModelProvider).getScore(
+              score == null ? scoreWithCV!.scoreId : score.scoreId,
+              event,
+            );
         ref.watch(loadingStateProvider.notifier).endLoading();
         await Navigator.push<Object>(
           context,
@@ -222,76 +167,74 @@ class PerformanceListScreen extends ConsumerWidget {
           ),
         );
       },
-      child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              label: '複製',
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.blue.shade300,
-              icon: CupertinoIcons.plus_square_fill_on_square_fill,
-              onPressed: (context) => _onCopyButtonPressed(
-                context,
-                score == null ? scoreWithCV!.scoreId : score.scoreId,
-                ref,
+      child: Row(
+        children: [
+          Expanded(
+            child: Slidable(
+              endActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    label: '複製',
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue.shade300,
+                    icon: CupertinoIcons.plus_square_fill_on_square_fill,
+                    onPressed: (context) => _onCopyButtonPressed(
+                      context,
+                      score == null ? scoreWithCV!.scoreId : score.scoreId,
+                      ref,
+                    ),
+                  ),
+                  SlidableAction(
+                    label: '削除',
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red.shade300,
+                    icon: Icons.remove,
+                    onPressed: (context) => _onDeleteButtonPressed(
+                      context,
+                      score == null ? scoreWithCV!.scoreId : score.scoreId,
+                      ref,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            SlidableAction(
-              label: '削除',
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red.shade300,
-              icon: Icons.remove,
-              onPressed: (context) => _onDeleteButtonPressed(
-                context,
-                score == null ? scoreWithCV!.scoreId : score.scoreId,
-                ref,
-              ),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: _favoriteButton(
-                context,
-                score == null ? scoreWithCV!.isFavorite : score.isFavorite,
-                score == null ? scoreWithCV!.scoreId : score.scoreId,
-                ref,
-              ),
-            ),
-            Expanded(
-              flex: 9,
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(width: Utilities.screenWidth(context) * 0.05),
                       Text(
                         '${score == null ? scoreWithCV!.total : score.total}',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headline5,
                       ),
-                      SizedBox(width: Utilities.screenWidth(context) * 0.05),
+                      const SizedBox(width: 16),
                       _techsListView(
                         context,
                         score == null ? scoreWithCV!.techs : score.techs,
                       ),
-                      SizedBox(width: Utilities.screenWidth(context) * 0.05),
                     ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          _favoriteButton(
+            context,
+            score == null ? scoreWithCV!.isFavorite : score.isFavorite,
+            score == null ? scoreWithCV!.scoreId : score.scoreId,
+            ref,
+          ),
+        ],
       ),
     );
   }
 
-  ///選択した演技を複製する
+  //選択した演技を複製する
   Future<void> _onCopyButtonPressed(
     BuildContext context,
     String scoreId,
@@ -345,9 +288,9 @@ class PerformanceListScreen extends ConsumerWidget {
     WidgetRef ref,
   ) {
     return IconButton(
+      padding: EdgeInsets.zero,
       icon: Icon(
         Icons.star,
-        size: 30,
         color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
       ),
       onPressed: () async {
@@ -355,7 +298,7 @@ class PerformanceListScreen extends ConsumerWidget {
 
         await ref
             .watch(performanceListModelProvider)
-            .onFavoriteButtonTapped(event, isFavorite, scoreId);
+            .onStarTapped(event, isFavorite, scoreId);
         await ref.watch(homeModelProvider).getFavoriteScores();
 
         ref.watch(loadingStateProvider.notifier).endLoading();
@@ -365,26 +308,23 @@ class PerformanceListScreen extends ConsumerWidget {
 
   //演技の内容が見れるところ
   Widget _techsListView(BuildContext context, List<String> techs) {
-    return Container(
-      height: 80,
-      width: MediaQuery.of(context).size.width * 0.5,
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: ListView(
-        children: techs
-            .map(
-              (tech) => Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Flexible(child: Text(tech)),
-                  ],
+    return Expanded(
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).primaryColor),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: ListView(
+          children: techs
+              .map(
+                (tech) => Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 8),
+                  child: Text(tech, overflow: TextOverflow.ellipsis),
                 ),
-              ),
-            )
-            .toList(),
+              )
+              .toList(),
+        ),
       ),
     );
   }

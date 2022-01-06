@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
@@ -27,43 +27,19 @@ class EditPerformanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      context: context,
       body: Consumer(
         builder: (context, ref, child) {
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  SafeArea(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.1,
-                          child: _header(context, event, ref),
-                        ),
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.1,
-                          child: _totalScoreDisplay(context, ref),
-                        ),
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.1,
-                          child: _detailScores(context, ref),
-                        ),
-                        SizedBox(
-                          height: 40,
-                          child: _under16SwitchButton(context, ref),
-                        ),
-                        SizedBox(
-                          height: Utilities.screenHeight(context) * 0.7,
-                          child: _techListView(context, ref),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const LoadingView(),
-                ],
-              ),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _header(context, event, ref),
+                _totalScoreDisplay(context, ref),
+                _detailScores(context, ref),
+                _under16SwitchButton(context, ref),
+                _techListView(context, ref),
+              ],
             ),
           );
         },
@@ -72,40 +48,43 @@ class EditPerformanceScreen extends StatelessWidget {
   }
 
   Widget _header(BuildContext context, Event event, WidgetRef ref) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton(
-          onPressed: () => _onBackButtonPressed(context, ref),
-          child: Platform.isIOS
-              ? Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_back_ios,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    Text(
-                      '${Convertor.eventName[event]}スコア一覧',
-                      style: TextStyle(
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            onPressed: () => _onBackButtonPressed(context, ref),
+            child: Platform.isIOS
+                ? Row(
+                    children: [
+                      Icon(
+                        Icons.arrow_back_ios,
                         color: Theme.of(context).primaryColor,
                       ),
-                    ),
-                  ],
-                )
-              : Icon(Icons.clear, color: Theme.of(context).primaryColor),
-        ),
-        Container(),
-        TextButton(
-          onPressed: () => _onStoreButtonPressed(context, ref),
-          child: Text(
-            scoreId == null ? '保存' : '更新',
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: 15,
+                      Text(
+                        '${Convertor.eventName[event]}スコア一覧',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ],
+                  )
+                : Icon(Icons.clear, color: Theme.of(context).primaryColor),
+          ),
+          Container(),
+          TextButton(
+            onPressed: () => _onStoreButtonPressed(context, ref),
+            child: Text(
+              scoreId == null ? '保存' : '更新',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 15,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -183,79 +162,82 @@ class EditPerformanceScreen extends StatelessWidget {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
     final difficultyOfGroup4 = editPerformanceModel.difficultyOfGroup4;
 
-    return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              'Ⅰ : ${editPerformanceModel.numberOfGroup1}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: editPerformanceModel.numberOfGroup1 > 5
-                    ? Colors.redAccent
-                    : Colors.grey,
-              ),
-            ),
-          ),
-          const VerticalDivider(color: Colors.black54),
-          Expanded(
-            child: Text(
-              'Ⅱ : ${editPerformanceModel.numberOfGroup2}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: editPerformanceModel.numberOfGroup2 > 5
-                    ? Colors.redAccent
-                    : Colors.grey,
-              ),
-            ),
-          ),
-          const VerticalDivider(color: Colors.black54),
-          Expanded(
-            child: Text(
-              'Ⅲ : ${editPerformanceModel.numberOfGroup3}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: editPerformanceModel.numberOfGroup3 > 5
-                    ? Colors.redAccent
-                    : Colors.grey,
-              ),
-            ),
-          ),
-          const VerticalDivider(color: Colors.black54),
-          event != Event.fx
-              ? Expanded(
-                  child: Text(
-                    editPerformanceModel.difficultyOfGroup4 == 0
-                        ? 'Ⅳ : ／'
-                        : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                )
-              : Container(),
-          const SizedBox(width: 16),
-          Expanded(
-            flex: 2,
-            child: Container(
-              padding: const EdgeInsets.only(right: 15),
-              child: FittedBox(
-                child: Text(
-                  '${editPerformanceModel.totalScore}',
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return SizedBox(
+      height: Utilities.screenHeight(context) * 0.1,
+      child: Container(
+        padding: const EdgeInsets.only(top: 10, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                'Ⅰ : ${editPerformanceModel.numberOfGroup1}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: editPerformanceModel.numberOfGroup1 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
                 ),
               ),
             ),
-          )
-        ],
+            const VerticalDivider(color: Colors.black54),
+            Expanded(
+              child: Text(
+                'Ⅱ : ${editPerformanceModel.numberOfGroup2}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: editPerformanceModel.numberOfGroup2 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
+                ),
+              ),
+            ),
+            const VerticalDivider(color: Colors.black54),
+            Expanded(
+              child: Text(
+                'Ⅲ : ${editPerformanceModel.numberOfGroup3}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: editPerformanceModel.numberOfGroup3 > 5
+                      ? Colors.redAccent
+                      : Colors.grey,
+                ),
+              ),
+            ),
+            const VerticalDivider(color: Colors.black54),
+            event != Event.fx
+                ? Expanded(
+                    child: Text(
+                      editPerformanceModel.difficultyOfGroup4 == 0
+                          ? 'Ⅳ : ／'
+                          : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                : Container(),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.only(right: 15),
+                child: FittedBox(
+                  child: Text(
+                    '${editPerformanceModel.totalScore}',
+                    style: const TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -263,73 +245,76 @@ class EditPerformanceScreen extends StatelessWidget {
   Widget _detailScores(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            const Expanded(
-              child: Center(
-                child: Text(
-                  '難度点',
-                  style: TextStyle(fontSize: 18),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    '難度点',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
-            ),
-            const Expanded(
-              child: Center(
-                child: Text(
-                  '要求点',
-                  style: TextStyle(fontSize: 18),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    '要求点',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
-            ),
-            event == Event.fx || event == Event.hb
-                ? const Expanded(
-                    child: Center(
-                      child: Text(
-                        '組み合わせ',
-                        style: TextStyle(fontSize: 18),
+              event == Event.fx || event == Event.hb
+                  ? const Expanded(
+                      child: Center(
+                        child: Text(
+                          '組み合わせ',
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ),
+                    )
+                  : Container(),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    '${editPerformanceModel.difficultyPoint}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
-                  )
-                : Container(),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  '${editPerformanceModel.difficultyPoint}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  '${editPerformanceModel.egr}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+              Expanded(
+                child: Center(
+                  child: Text(
+                    '${editPerformanceModel.egr}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-            event == Event.fx || event == Event.hb
-                ? Expanded(
-                    child: Center(
-                      child: _cvSelectMenu(context, editPerformanceModel),
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
-      ],
+              event == Event.fx || event == Event.hb
+                  ? Expanded(
+                      child: Center(
+                        child: _cvSelectMenu(context, editPerformanceModel),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -401,46 +386,38 @@ class EditPerformanceScreen extends StatelessWidget {
   Widget _techListView(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    return Container(
-      child: editPerformanceModel.totalScore == 0
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 50,
-                  width: 100,
-                  child: InkWell(
-                    onTap: () {
-                      if (editPerformanceModel.currentUser == null) {
-                        Navigator.push<Object>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpScreen(),
-                            fullscreenDialog: true,
-                          ),
-                        );
-                      } else {
-                        searchController.clear();
-                        ref.watch(searchModelProvider).searchResult.clear();
-                        editPerformanceModel.selectEvent(event);
-                        Navigator.push<Object>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchScreen(event: event),
-                            fullscreenDialog: true,
-                          ),
-                        );
-                      }
-                    },
-                    child: Icon(
-                      Icons.add,
-                      color: Theme.of(context).primaryColor,
-                    ),
+    return editPerformanceModel.totalScore == 0
+        ? IconButton(
+            onPressed: () {
+              if (editPerformanceModel.currentUser == null) {
+                Navigator.push<Object>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SignUpScreen(),
+                    fullscreenDialog: true,
                   ),
-                ),
-              ],
-            )
-          : ReorderableListView(
+                );
+              } else {
+                searchController.clear();
+                ref.watch(searchModelProvider).searchResult.clear();
+                editPerformanceModel.selectEvent(event);
+                Navigator.push<Object>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchScreen(event: event),
+                    fullscreenDialog: true,
+                  ),
+                );
+              }
+            },
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).primaryColor,
+            ),
+          )
+        : SizedBox(
+            height: Utilities.screenHeight(context) * 0.6,
+            child: ReorderableListView(
               onReorder: (int oldIndex, int newIndex) =>
                   editPerformanceModel.onReOrder(oldIndex, newIndex, event),
               children: editPerformanceModel.decidedTechList.map((tech) {
@@ -452,7 +429,7 @@ class EditPerformanceScreen extends StatelessWidget {
                 );
               }).toList(),
             ),
-    );
+          );
   }
 
   Widget _techTile(
@@ -467,12 +444,15 @@ class EditPerformanceScreen extends StatelessWidget {
 
     return Column(
       key: Key(
-          editPerformanceModel.decidedTechList.indexOf(techName).toString()),
+        editPerformanceModel.decidedTechList.indexOf(techName).toString(),
+      ),
       children: [
         Row(
           children: [
-            const SizedBox(width: 16),
-            Text('$order', textAlign: TextAlign.center),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(order.toString()),
+            ),
             Expanded(
               child: Slidable(
                 endActionPane: ActionPane(
@@ -545,12 +525,13 @@ class EditPerformanceScreen extends StatelessWidget {
                       ref.watch(searchModelProvider).searchResult.clear();
                       editPerformanceModel.selectEvent(event);
                       Navigator.push<Object>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SearchScreen(order: order, event: event),
-                            fullscreenDialog: true,
-                          ));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SearchScreen(order: order, event: event),
+                          fullscreenDialog: true,
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -560,25 +541,21 @@ class EditPerformanceScreen extends StatelessWidget {
         ),
         editPerformanceModel.decidedTechList.length == order &&
                 editPerformanceModel.decidedTechList.length < 10
-            ? Column(
-                children: [
-                  IconButton(
-                    icon:
-                        Icon(Icons.add, color: Theme.of(context).primaryColor),
-                    onPressed: () {
-                      searchController.clear();
-                      ref.watch(searchModelProvider).searchResult.clear();
-                      editPerformanceModel.selectEvent(event);
-                      Navigator.push<Object>(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchScreen(event: event),
-                            fullscreenDialog: true,
-                          ));
-                    },
-                  ),
-                  const SizedBox(height: 200),
-                ],
+            ? IconButton(
+                padding: const EdgeInsets.only(top: 40, bottom: 200),
+                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                onPressed: () {
+                  searchController.clear();
+                  ref.watch(searchModelProvider).searchResult.clear();
+                  editPerformanceModel.selectEvent(event);
+                  Navigator.push<Object>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(event: event),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                },
               )
             : editPerformanceModel.decidedTechList.length == order &&
                     editPerformanceModel.decidedTechList.length == 10

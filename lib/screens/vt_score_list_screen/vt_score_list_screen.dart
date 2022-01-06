@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
@@ -14,37 +15,28 @@ class VTScoreSelectScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      context: context,
       body: Consumer(
         builder: (context, ref, child) {
           final height = Utilities.screenHeight(context);
 
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: height * 0.1,
-                        child: _backButton(context, ref),
-                      ),
-                      SizedBox(
-                        height: height * 0.2,
-                        child: _dScoreDisplay(context, ref),
-                      ),
-                      const SizedBox(height: 50),
-                      SizedBox(
-                        height: height * 0.5,
-                        child: const VTTechListView(),
-                      ),
-                    ],
-                  ),
-                  const LoadingView(),
-                ],
+          return Column(
+            children: [
+              SizedBox(
+                height: height * 0.1,
+                child: _backButton(context, ref),
               ),
-            ),
+              SizedBox(
+                height: height * 0.2,
+                child: _dScoreDisplay(context, ref),
+              ),
+              const SizedBox(height: 50),
+              SizedBox(
+                height: height * 0.5,
+                child: const VTTechListView(),
+              ),
+            ],
           );
         },
       ),

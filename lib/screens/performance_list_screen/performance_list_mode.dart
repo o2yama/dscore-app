@@ -91,7 +91,7 @@ class PerformanceListModel extends ChangeNotifier {
     return scoreIds;
   }
 
-  Future<void> onFavoriteButtonTapped(
+  Future<void> onStarTapped(
     Event event,
     bool isFavorite,
     String scoreId,
