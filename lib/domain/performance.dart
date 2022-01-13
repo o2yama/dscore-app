@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//床、鉄棒
-class Score {
-  Score(DocumentSnapshot<Map<String, dynamic>> doc) {
+class Performance {
+  Performance(DocumentSnapshot<Map<String, dynamic>> doc) {
     total = doc.data()!['total'] as num;
     techs = List<String>.from(doc['components'] as List<dynamic>);
     scoreId = doc.data()!['scoreId'] as String;

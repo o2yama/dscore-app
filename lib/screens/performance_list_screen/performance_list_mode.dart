@@ -1,113 +1,107 @@
-import 'package:dscore_app/domain/current_user.dart';
-import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/domain/score_with_cv.dart';
-import 'package:dscore_app/domain/vt_score.dart';
-import 'package:dscore_app/repository/score_repository.dart';
-import 'package:dscore_app/repository/user_repository.dart';
+import 'package:dscore_app/domain/performance.dart';
+import 'package:dscore_app/domain/performance_with_cv.dart';
+import 'package:dscore_app/domain/vt_tech.dart';
+import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final performanceListModelProvider =
-    ChangeNotifierProvider((ref) => PerformanceListModel());
+final performanceListModelProvider = ChangeNotifierProvider(
+  (ref) => PerformanceListModel(),
+);
 
 class PerformanceListModel extends ChangeNotifier {
-  final scoreRepository = ScoreRepository();
-  CurrentUser? get currentUser => UserRepository.currentUser;
+  final performanceRepository = PerformanceRepository();
 
-  List<ScoreWithCV> fxScoreList = [];
-  List<Score> phScoreList = [];
-  List<Score> srScoreList = [];
-  VTScore? vtScore;
-  List<Score> pbScoreList = [];
-  List<ScoreWithCV> hbScoreList = [];
+  List<PerformanceWithCV> fxPerformanceList = <PerformanceWithCV>[];
+  List<Performance> phPerformanceList = <Performance>[];
+  List<Performance> srPerformanceList = <Performance>[];
+  VTTech? vtTech;
+  List<Performance> pbPerformanceList = <Performance>[];
+  List<PerformanceWithCV> hbPerformanceList = <PerformanceWithCV>[];
 
-  Future<void> getScores(Event event) async {
-    if (currentUser != null) {
-      if (event == Event.fx) {
-        fxScoreList = await scoreRepository.getFXScores();
-      }
-      if (event == Event.ph) {
-        phScoreList = await scoreRepository.getPHScores();
-      }
-      if (event == Event.sr) {
-        srScoreList = await scoreRepository.getSRScores();
-      }
-      if (event == Event.pb) {
-        pbScoreList = await scoreRepository.getPBScores();
-      }
-      if (event == Event.hb) {
-        hbScoreList = await scoreRepository.getHBScores();
-      }
+  Future<void> getPerformances(Event event) async {
+    switch (event) {
+      case Event.fx:
+        fxPerformanceList = await performanceRepository.getFxPerformances();
+        break;
+      case Event.ph:
+        phPerformanceList = await performanceRepository.getPhPerformances();
+        break;
+      case Event.sr:
+        srPerformanceList = await performanceRepository.getSrPerformances();
+        break;
+      case Event.vt:
+        break;
+      case Event.pb:
+        pbPerformanceList = await performanceRepository.getPBPerformances();
+        break;
+      case Event.hb:
+        hbPerformanceList = await performanceRepository.getHBPerformances();
+        break;
     }
   }
 
-  List scoreList(Event event) {
+  List performanceList(Event event) {
     switch (event) {
       case Event.fx:
-        return fxScoreList;
+        return fxPerformanceList;
       case Event.ph:
-        return phScoreList;
+        return phPerformanceList;
       case Event.sr:
-        return srScoreList;
+        return srPerformanceList;
       case Event.pb:
-        return pbScoreList;
+        return pbPerformanceList;
       case Event.hb:
-        return hbScoreList;
+        return hbPerformanceList;
       case Event.vt:
         return [];
     }
   }
 
-  //お気に入り変更するため
-  Future<List<String>> getScoreIds(Event event) async {
-    var scoreIds = <String>[];
+  ///お気に入り変更
+  Future<void> onStarTapped(
+      Event event, bool isFavorite, String scoreId) async {
+    if (!isFavorite) {
+      //1度全てのスコアをのisFavoriteをfalseにする
+      await changeAllFavoriteToFalse(event);
+    }
+
+    await changeFavoriteState(scoreId, event, !isFavorite);
+
+    notifyListeners();
+  }
+
+  Future<void> changeAllFavoriteToFalse(Event event) async {
     if (event == Event.fx) {
-      for (final fxScore in fxScoreList) {
-        scoreIds.add(fxScore.scoreId);
+      for (final fxScore in fxPerformanceList) {
+        await performanceRepository.updateFxFavorite(fxScore.scoreId, false);
       }
     }
-    if (event == Event.pb) {
-      for (final phScore in phScoreList) {
-        scoreIds.add(phScore.scoreId);
+    if (event == Event.ph) {
+      for (final phScore in phPerformanceList) {
+        await performanceRepository.updatePhFavorite(phScore.scoreId, false);
       }
     }
     if (event == Event.sr) {
-      for (final srScore in srScoreList) {
-        scoreIds.add(srScore.scoreId);
+      for (final srScore in srPerformanceList) {
+        await performanceRepository.updateSrFavorite(srScore.scoreId, false);
       }
     }
     if (event == Event.pb) {
-      for (final pbScore in pbScoreList) {
-        scoreIds.add(pbScore.scoreId);
+      for (final pbScore in pbPerformanceList) {
+        await performanceRepository.updatePbFavorite(pbScore.scoreId, false);
       }
     }
     if (event == Event.hb) {
-      for (final hbScore in hbScoreList) {
-        scoreIds.add(hbScore.scoreId);
+      for (final hbScore in hbPerformanceList) {
+        await performanceRepository.updateHbFavorite(hbScore.scoreId, false);
       }
     }
 
-    return scoreIds;
-  }
+    await getPerformances(event);
 
-  Future<void> onStarTapped(
-    Event event,
-    bool isFavorite,
-    String scoreId,
-  ) async {
-    if (isFavorite) {
-      await changeFavoriteState(scoreId, event, false);
-    } else {
-      final scoreIdList = await getScoreIds(event);
-      //全てのスコアをのisFavoriteをfalseにしてから、選択されたものをtrueにする。
-      for (final scoreId in scoreIdList) {
-        await changeFavoriteState(scoreId, event, false);
-      }
-      await changeFavoriteState(scoreId, event, true);
-    }
-
-    await getScores(event);
+    notifyListeners();
   }
 
   Future<void> changeFavoriteState(
@@ -116,50 +110,50 @@ class PerformanceListModel extends ChangeNotifier {
     bool isFavorite,
   ) async {
     if (event == Event.fx) {
-      await scoreRepository.favoriteFXUpdate(scoreId, isFavorite);
+      await performanceRepository.updateFxFavorite(scoreId, isFavorite);
     }
     if (event == Event.ph) {
-      await scoreRepository.favoritePHUpdate(scoreId, isFavorite);
+      await performanceRepository.updatePhFavorite(scoreId, isFavorite);
     }
     if (event == Event.sr) {
-      await scoreRepository.favoriteSRUpdate(scoreId, isFavorite);
+      await performanceRepository.updateSrFavorite(scoreId, isFavorite);
     }
     if (event == Event.pb) {
-      await scoreRepository.favoritePBUpdate(scoreId, isFavorite);
+      await performanceRepository.updatePbFavorite(scoreId, isFavorite);
     }
     if (event == Event.hb) {
-      await scoreRepository.favoriteHBUpdate(scoreId, isFavorite);
+      await performanceRepository.updateHbFavorite(scoreId, isFavorite);
     }
   }
 
   Future<void> deletePerformance(Event event, String scoreId) async {
     if (event == Event.fx) {
-      await scoreRepository.deleteFXScore(scoreId);
+      await performanceRepository.deleteFxPerformance(scoreId);
     }
     if (event == Event.ph) {
-      await scoreRepository.deletePHScore(scoreId);
+      await performanceRepository.deletePhPerformance(scoreId);
     }
     if (event == Event.sr) {
-      await scoreRepository.deleteSRScore(scoreId);
+      await performanceRepository.deleteSrPerformance(scoreId);
     }
     if (event == Event.pb) {
-      await scoreRepository.deletePBScore(scoreId);
+      await performanceRepository.deletePbPerformance(scoreId);
     }
     if (event == Event.hb) {
-      await scoreRepository.deleteHBScore(scoreId);
+      await performanceRepository.deleteHbPerformance(scoreId);
     }
-    await getScores(event);
+    await getPerformances(event);
     notifyListeners();
   }
 
   //ログアウト時
   void resetScores() {
-    fxScoreList = [];
-    phScoreList = [];
-    srScoreList = [];
-    vtScore = null;
-    pbScoreList = [];
-    hbScoreList = [];
+    fxPerformanceList = [];
+    phPerformanceList = [];
+    srPerformanceList = [];
+    vtTech = null;
+    pbPerformanceList = [];
+    hbPerformanceList = [];
     notifyListeners();
   }
 }

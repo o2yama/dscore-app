@@ -88,18 +88,16 @@ class EditEmailScreen extends StatelessWidget {
 
   Widget _prevEmailDisplay(BuildContext context, WidgetRef ref) {
     final editEmailModel = ref.watch(editEmailModelProvider);
-    return editEmailModel.currentUser != null
-        ? Column(
-            children: [
-              const Text('メールアドレス'),
-              const SizedBox(height: 16),
-              Text(
-                editEmailModel.currentUser!.email,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          )
-        : Container();
+    return Column(
+      children: [
+        const Text('メールアドレス'),
+        const SizedBox(height: 16),
+        Text(
+          editEmailModel.userRepository.appUser!.email,
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ],
+    );
   }
 
   Widget _newEmailController(BuildContext context, WidgetRef ref) {
@@ -213,7 +211,8 @@ class EditEmailScreen extends StatelessWidget {
       if (!Validator().validPassword(editEmailModel.password)) {
         showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
       } else {
-        if (editEmailModel.currentUser!.email == editEmailModel.newEmail) {
+        if (editEmailModel.userRepository.appUser!.email ==
+            editEmailModel.newEmail) {
           showValidMessage(context, 'メールアドレスが変更されていません');
         } else {
           try {

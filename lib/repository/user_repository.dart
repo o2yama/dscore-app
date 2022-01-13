@@ -8,11 +8,12 @@ class UserRepository {
   UserRepository._internal();
   static final UserRepository _cache = UserRepository._internal();
 
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final _db = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+  final _firebaseMessaging = FirebaseMessaging.instance;
 
-  static CurrentUser? currentUser;
+  User? get authUser => _auth.currentUser;
+  AppUser? appUser;
 
   Future<void> signUpWithEmailAndPassWord(String email, String password) async {
     try {
@@ -62,7 +63,7 @@ class UserRepository {
             .where('id', isEqualTo: user.uid)
             .get();
         if (query.size == 1) {
-          currentUser = query.docs.map((doc) => CurrentUser(doc)).toList()[0];
+          appUser = query.docs.map((doc) => AppUser(doc)).toList()[0];
         }
       } else {
         return;
@@ -76,7 +77,7 @@ class UserRepository {
 
   Future<void> signOut() async {
     await _auth.signOut();
-    currentUser = null;
+    appUser = null;
   }
 
   Future<bool> reAuthenticate(String password) async {

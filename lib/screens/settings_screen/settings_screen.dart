@@ -34,14 +34,14 @@ class SettingsScreen extends StatelessWidget {
                     'テーマカラー',
                     Icons.color_lens,
                     ref,
-                    screen: const ThemeColorScreen(),
+                    nextScreen: const ThemeColorScreen(),
                   ),
                   _settingTile(
                     context,
                     '使い方',
                     Icons.info,
                     ref,
-                    screen: const UsageScreen(),
+                    nextScreen: const UsageScreen(),
                   ),
                   _settingTile(
                     context,
@@ -60,29 +60,19 @@ class SettingsScreen extends StatelessWidget {
                   //     ? _settingTile(
                   //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
                   //     : Container(),
-                  ref.read(loginModelProvider).currentUser == null
-                      ? Container()
-                      : _settingTile(
-                          context,
-                          'メールアドレス',
-                          Icons.mail,
-                          ref,
-                          screen: const EditEmailScreen(),
-                        ),
-                  ref.read(loginModelProvider).currentUser == null
-                      ? _settingTile(
-                          context,
-                          'ログイン',
-                          Icons.login,
-                          ref,
-                          screen: const LoginScreen(),
-                        )
-                      : _settingTile(
-                          context,
-                          'ログアウト',
-                          Icons.logout,
-                          ref,
-                        ),
+                  _settingTile(
+                    context,
+                    'メールアドレス',
+                    Icons.mail,
+                    ref,
+                    nextScreen: const EditEmailScreen(),
+                  ),
+                  _settingTile(
+                    context,
+                    'ログアウト',
+                    Icons.logout,
+                    ref,
+                  ),
                 ],
               ),
             );
@@ -122,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
     String title,
     IconData icon,
     WidgetRef ref, {
-    Widget? screen,
+    Widget? nextScreen,
   }) {
     return InkWell(
       onTap: () {
@@ -149,15 +139,6 @@ class SettingsScreen extends StatelessWidget {
               },
             );
             break;
-          case 'ログイン':
-            Navigator.push<Object>(
-              context,
-              MaterialPageRoute(
-                builder: (_) => screen!,
-                fullscreenDialog: true,
-              ),
-            );
-            break;
           case 'プライバシー・ポリシー':
             launch(
               'https://dscore-app-a72cf.firebaseapp.com/',
@@ -182,7 +163,7 @@ class SettingsScreen extends StatelessWidget {
           default:
             Navigator.push<Object>(
               context,
-              MaterialPageRoute(builder: (_) => screen!),
+              MaterialPageRoute(builder: (_) => nextScreen!),
             );
         }
       },

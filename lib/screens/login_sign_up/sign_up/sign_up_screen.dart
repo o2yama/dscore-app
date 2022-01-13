@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_model.dart';
-import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/common/validator.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -32,8 +31,6 @@ class SignUpScreen extends StatelessWidget {
                 child: Consumer(builder: (context, ref, child) {
                   return Column(
                     children: [
-                      const SizedBox(height: 16),
-                      _backButton(context),
                       const SizedBox(height: 24),
                       _description(context),
                       const SizedBox(height: 24),
@@ -54,22 +51,6 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _backButton(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-      SizedBox(width: Utilities.isMobile() ? 0 : 18),
-      TextButton(
-        onPressed: () => Navigator.pushAndRemoveUntil<Object>(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-            (_) => false),
-        child: Icon(
-          Icons.clear,
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
-    ]);
   }
 
   Widget _description(BuildContext context) {
