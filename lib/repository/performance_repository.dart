@@ -6,10 +6,10 @@ import 'package:dscore_app/domain/vt_tech.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:uuid/uuid.dart';
 
-class ScoreRepository {
-  factory ScoreRepository() => _cache;
-  ScoreRepository._internal();
-  static final ScoreRepository _cache = ScoreRepository._internal();
+class PerformanceRepository {
+  factory PerformanceRepository() => _cache;
+  PerformanceRepository._internal();
+  static final PerformanceRepository _cache = PerformanceRepository._internal();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   AppUser? get currentUser => UserRepository().appUser;
@@ -19,122 +19,126 @@ class ScoreRepository {
     uuid = const Uuid().v4();
   }
 
-  ///FavoriteScoreの取得
-  Future<PerformanceWithCV?> getFavoriteFXScore() async {
-    final scoreList = await _db
+  ///FavoritePerformanceの取得
+  Future<PerformanceWithCV?> getStarFxPerformance() async {
+    final performanceList = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
         .where('isFavorite', isEqualTo: true)
         .get();
 
-    if (scoreList.size > 0) {
-      return scoreList.docs.map((doc) => PerformanceWithCV(doc)).toList()[0];
+    if (performanceList.size > 0) {
+      return performanceList.docs
+          .map((doc) => PerformanceWithCV(doc))
+          .toList()[0];
     }
   }
 
-  Future<Performance?> getFavoritePHScore() async {
-    final scoreList = await _db
+  Future<Performance?> getStarPhPerformance() async {
+    final performanceList = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
         .where('isFavorite', isEqualTo: true)
         .get();
-    if (scoreList.size > 0) {
-      return scoreList.docs.map((doc) => Performance(doc)).toList()[0];
+    if (performanceList.size > 0) {
+      return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
   }
 
-  Future<Performance?> getFavoriteSRScore() async {
-    final scoreList = await _db
+  Future<Performance?> getStarSrPerformance() async {
+    final performanceList = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
         .where('isFavorite', isEqualTo: true)
         .get();
-    if (scoreList.size > 0) {
-      return scoreList.docs.map((doc) => Performance(doc)).toList()[0];
+    if (performanceList.size > 0) {
+      return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
   }
 
-  Future<VTTech?> getVTScore() async {
-    final scores = await _db
+  Future<VTTech?> getVTPerformance() async {
+    final techs = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('vt')
         .get();
-    if (scores.size > 0) {
-      return scores.docs.map((doc) => VTTech(doc)).toList()[0];
+    if (techs.size > 0) {
+      return techs.docs.map((doc) => VTTech(doc)).toList()[0];
     }
   }
 
-  Future<Performance?> getFavoritePBScore() async {
-    final scoreList = await _db
+  Future<Performance?> getStarPbPerformance() async {
+    final performanceList = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
         .where('isFavorite', isEqualTo: true)
         .get();
-    if (scoreList.size > 0) {
-      return scoreList.docs.map((doc) => Performance(doc)).toList()[0];
+    if (performanceList.size > 0) {
+      return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
   }
 
-  Future<PerformanceWithCV?> getFavoriteHBScore() async {
-    final scoreList = await _db
+  Future<PerformanceWithCV?> getStarHbPerformance() async {
+    final performanceList = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
         .where('isFavorite', isEqualTo: true)
         .get();
-    if (scoreList.size > 0) {
-      return scoreList.docs.map((doc) => PerformanceWithCV(doc)).toList()[0];
+    if (performanceList.size > 0) {
+      return performanceList.docs
+          .map((doc) => PerformanceWithCV(doc))
+          .toList()[0];
     }
   }
 
   ///FavoriteScoreの更新
-  Future<void> favoriteFXUpdate(String scoreId, bool isFavorite) async {
+  Future<void> updateFxFavorite(String performanceId, bool isFavorite) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
-  Future<void> favoritePHUpdate(String scoreId, bool isFavorite) async {
+  Future<void> updatePhFavorite(String performanceId, bool isFavorite) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
-  Future<void> favoriteSRUpdate(String scoreId, bool isFavorite) async {
+  Future<void> updateSrFavorite(String performanceId, bool isFavorite) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
-  Future<void> favoritePBUpdate(String scoreId, bool isFavorite) async {
+  Future<void> updatePbFavorite(String performanceId, bool isFavorite) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
-  Future<void> favoriteHBUpdate(String scoreId, bool isFavorite) async {
+  Future<void> updateHbFavorite(String performanceId, bool isFavorite) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{'isFavorite': isFavorite});
   }
 
@@ -216,9 +220,7 @@ class ScoreRepository {
 
   ///各種目の演技の取得
   Future<List<PerformanceWithCV>> getFxPerformances() async {
-    var scoreList = <PerformanceWithCV>[];
-
-    final scores = await _db
+    final performances = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
@@ -227,21 +229,12 @@ class ScoreRepository {
           (query) => query.docs.map((doc) => PerformanceWithCV(doc)).toList(),
         );
 
-    //お気に入りの演技を0番目にする
-    scoreList.add(scores.where((score) => score.isFavorite).toList()[0]);
-
-    final otherScores = scores.where((score) => !score.isFavorite).toList();
-    for (var score in otherScores) {
-      scoreList.add(score);
-    }
-
-    return scoreList;
+    //お気に入りの演技を0番目にする処理
+    return sortPWithCvList(performances);
   }
 
   Future<List<Performance>> getPhPerformances() async {
-    var scoreList = <Performance>[];
-
-    final scores = await _db
+    final performances = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
@@ -250,21 +243,12 @@ class ScoreRepository {
           (query) => query.docs.map((doc) => Performance(doc)).toList(),
         );
 
-    //お気に入りの演技を0番目にする
-    scoreList.add(scores.where((score) => score.isFavorite).toList()[0]);
-
-    final otherScores = scores.where((score) => !score.isFavorite).toList();
-    for (var score in otherScores) {
-      scoreList.add(score);
-    }
-
-    return scoreList;
+    //お気に入りの演技を0番目にする処理
+    return sortPList(performances);
   }
 
   Future<List<Performance>> getSrPerformances() async {
-    var scoreList = <Performance>[];
-
-    final scores = await _db
+    final performances = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
@@ -273,21 +257,12 @@ class ScoreRepository {
           (query) => query.docs.map((doc) => Performance(doc)).toList(),
         );
 
-    //お気に入りの演技を0番目にする
-    scoreList.add(scores.where((score) => score.isFavorite).toList()[0]);
-
-    final otherScores = scores.where((score) => !score.isFavorite).toList();
-    for (var score in otherScores) {
-      scoreList.add(score);
-    }
-
-    return scoreList;
+    //お気に入りの演技を0番目にする処理
+    return sortPList(performances);
   }
 
   Future<List<Performance>> getPBPerformances() async {
-    var scoreList = <Performance>[];
-
-    final scores = await _db
+    final performances = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
@@ -296,21 +271,12 @@ class ScoreRepository {
           (query) => query.docs.map((doc) => Performance(doc)).toList(),
         );
 
-    //お気に入りの演技を0番目にする
-    scoreList.add(scores.where((score) => score.isFavorite).toList()[0]);
-
-    final otherScores = scores.where((score) => !score.isFavorite).toList();
-    for (var score in otherScores) {
-      scoreList.add(score);
-    }
-
-    return scoreList;
+    //お気に入りの演技を0番目にする処理
+    return sortPList(performances);
   }
 
   Future<List<PerformanceWithCV>> getHBPerformances() async {
-    var scoreList = <PerformanceWithCV>[];
-
-    final scores = await _db
+    final performances = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
@@ -319,75 +285,105 @@ class ScoreRepository {
           (query) => query.docs.map((doc) => PerformanceWithCV(doc)).toList(),
         );
 
-    //お気に入りの演技を0番目にする
-    scoreList.add(scores.where((score) => score.isFavorite).toList()[0]);
+    //お気に入りの演技を0番目にする処理
+    return sortPWithCvList(performances);
+  }
 
-    final otherScores = scores.where((score) => !score.isFavorite).toList();
-    for (var score in otherScores) {
-      scoreList.add(score);
+  List<Performance> sortPList(List<Performance> performances) {
+    var performanceList = <Performance>[];
+
+    final favoritePerformance =
+        performances.where((score) => score.isFavorite).toList();
+    if (favoritePerformance.isNotEmpty) {
+      performanceList.add(favoritePerformance[0]);
     }
 
-    return scoreList;
+    final otherScores =
+        performances.where((score) => !score.isFavorite).toList();
+    for (var score in otherScores) {
+      performanceList.add(score);
+    }
+
+    return performanceList;
+  }
+
+  List<PerformanceWithCV> sortPWithCvList(
+      List<PerformanceWithCV> performances) {
+    var performanceList = <PerformanceWithCV>[];
+
+    final favoritePerformance =
+        performances.where((score) => score.isFavorite).toList();
+    if (favoritePerformance.isNotEmpty) {
+      performanceList.add(favoritePerformance[0]);
+    }
+
+    final otherScores =
+        performances.where((score) => !score.isFavorite).toList();
+    for (var score in otherScores) {
+      performanceList.add(score);
+    }
+
+    return performanceList;
   }
 
   ///演技単体の取得
-  Future<PerformanceWithCV> getFxPerformance(String scoreId) async {
+  Future<PerformanceWithCV> getFxPerformance(String performanceId) async {
     final fxScore = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
-        .doc(scoreId)
+        .doc(performanceId)
         .get()
         .then((doc) => PerformanceWithCV(doc));
     return fxScore;
   }
 
-  Future<Performance> getPHPerformance(String scoreId) async {
+  Future<Performance> getPHPerformance(String performanceId) async {
     final phScore = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
-        .doc(scoreId)
+        .doc(performanceId)
         .get()
         .then((doc) => Performance(doc));
     return phScore;
   }
 
-  Future<Performance> getSRPerformance(String scoreId) async {
+  Future<Performance> getSRPerformance(String performanceId) async {
     final srScore = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
-        .doc(scoreId)
+        .doc(performanceId)
         .get()
         .then((doc) => Performance(doc));
     return srScore;
   }
 
-  Future<Performance> getPBPerformance(String scoreId) async {
+  Future<Performance> getPBPerformance(String performanceId) async {
     final pbScore = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
-        .doc(scoreId)
+        .doc(performanceId)
         .get()
         .then((doc) => Performance(doc));
     return pbScore;
   }
 
-  Future<PerformanceWithCV> getHBPerformance(String scoreId) async {
+  Future<PerformanceWithCV> getHBPerformance(String performanceId) async {
     final hbScore = await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
-        .doc(scoreId)
+        .doc(performanceId)
         .get()
         .then((doc) => PerformanceWithCV(doc));
     return hbScore;
   }
 
   ///演技の登録
-  Future<void> setFXScore(
+  Future<void> setFxPerformance(
     num total,
     List<String> techList,
     num cv,
@@ -410,7 +406,7 @@ class ScoreRepository {
     });
   }
 
-  Future<void> setPHScore(
+  Future<void> setPhPerformance(
     num total,
     List<String> techs,
     bool isFavorite,
@@ -431,7 +427,7 @@ class ScoreRepository {
     });
   }
 
-  Future<void> setSRScore(
+  Future<void> setSrPerformance(
     num total,
     List<String> techs,
     bool isFavorite,
@@ -452,7 +448,7 @@ class ScoreRepository {
     });
   }
 
-  Future<void> setPBScore(
+  Future<void> setPbPerformance(
     num total,
     List<String> techs,
     bool isFavorite,
@@ -473,7 +469,7 @@ class ScoreRepository {
     });
   }
 
-  Future<void> setHBScore(
+  Future<void> setHbPerformance(
     num total,
     List<String> techs,
     num cv,
@@ -497,8 +493,8 @@ class ScoreRepository {
   }
 
   ///演技の更新
-  Future<void> updateFXScore(
-    String scoreId,
+  Future<void> updateFxPerformance(
+    String performanceId,
     num total,
     List<String> techs,
     num cv,
@@ -508,7 +504,7 @@ class ScoreRepository {
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
@@ -517,8 +513,8 @@ class ScoreRepository {
     });
   }
 
-  Future<void> updatePHScore(
-    String scoreId,
+  Future<void> updatePhPerformance(
+    String performanceId,
     num total,
     List<String> techs,
     bool? isUnder16,
@@ -527,7 +523,7 @@ class ScoreRepository {
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
@@ -535,8 +531,8 @@ class ScoreRepository {
     });
   }
 
-  Future<void> updateSRScore(
-    String scoreId,
+  Future<void> updateSrPerformance(
+    String performanceId,
     num total,
     List<String> techs,
     bool? isUnder16,
@@ -545,7 +541,7 @@ class ScoreRepository {
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
@@ -553,8 +549,8 @@ class ScoreRepository {
     });
   }
 
-  Future<void> updatePBScore(
-    String scoreId,
+  Future<void> updatePbPerformance(
+    String performanceId,
     num total,
     List<String> techs,
     bool? isUnder16,
@@ -563,7 +559,7 @@ class ScoreRepository {
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
@@ -571,8 +567,8 @@ class ScoreRepository {
     });
   }
 
-  Future<void> updateHBScore(
-    String scoreId,
+  Future<void> updateHbPerformance(
+    String performanceId,
     num total,
     List<String> techs,
     num cv,
@@ -582,7 +578,7 @@ class ScoreRepository {
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
-        .doc(scoreId)
+        .doc(performanceId)
         .update(<String, dynamic>{
       'total': total,
       'components': techs,
@@ -593,56 +589,56 @@ class ScoreRepository {
 
   ///演技の削除
 
-  Future<void> deleteFXScore(String scoreId) async {
+  Future<void> deleteFxPerformance(String performanceId) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('fx')
-        .doc(scoreId)
+        .doc(performanceId)
         .delete();
   }
 
-  Future<void> deletePHScore(String scoreId) async {
+  Future<void> deletePhPerformance(String performanceId) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('ph')
-        .doc(scoreId)
+        .doc(performanceId)
         .delete();
   }
 
-  Future<void> deleteSRScore(String scoreId) async {
+  Future<void> deleteSrPerformance(String performanceId) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('sr')
-        .doc(scoreId)
+        .doc(performanceId)
         .delete();
   }
 
-  Future<void> deletePBScore(String scoreId) async {
+  Future<void> deletePbPerformance(String performanceId) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('pb')
-        .doc(scoreId)
+        .doc(performanceId)
         .delete();
   }
 
-  Future<void> deleteHBScore(String scoreId) async {
+  Future<void> deleteHbPerformance(String performanceId) async {
     await _db
         .collection('users')
         .doc(currentUser!.id)
         .collection('hb')
-        .doc(scoreId)
+        .doc(performanceId)
         .delete();
   }
 
   ///跳馬の演技
   //初めてならset,それ以外はupdate
   //Userごとに1つでいいから、Userと同じidでOK
-  Future<void> setVTScore(String techName, num score) async {
-    final vtScore = await getVTScore();
+  Future<void> setVt(String techName, num score) async {
+    final vtScore = await getVTPerformance();
     if (vtScore == null) {
       await _db
           .collection('users')

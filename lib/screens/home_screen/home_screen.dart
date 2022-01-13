@@ -23,12 +23,12 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final homeModel = ref.watch(homeModelProvider);
 
-    if (homeModel.isFetchedScore) {
+    if (!homeModel.isFetched) {
       Future(() async {
         ref.watch(loadingStateProvider.notifier).startLoading();
 
         await homeModel.getUserData();
-        await homeModel.getFavoriteScores();
+        await homeModel.getFavoritePerformances();
 
         //プッシュ通知の許可ダイアログ
         if (homeModel.settings == null) {

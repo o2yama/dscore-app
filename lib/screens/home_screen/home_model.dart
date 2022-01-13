@@ -3,7 +3,7 @@ import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/domain/vt_tech.dart';
-import 'package:dscore_app/repository/score_repository.dart';
+import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,9 +14,9 @@ final homeModelProvider = ChangeNotifierProvider((ref) => HomeModel());
 
 class HomeModel extends ChangeNotifier {
   final userRepository = UserRepository();
-  final scoreRepository = ScoreRepository();
+  final performanceRepository = PerformanceRepository();
 
-  bool isFetchedScore = false;
+  bool isFetched = false;
   bool isAppReviewDialogShowed = false;
   bool isFetchedToken = false;
   NotificationSettings? settings;
@@ -39,36 +39,36 @@ class HomeModel extends ChangeNotifier {
     await userRepository.getCurrentUserData();
   }
 
-  Future<void> getFavoriteScores() async {
-    favoriteFx = await scoreRepository.getFavoriteFXScore();
+  Future<void> getFavoritePerformances() async {
+    favoriteFx = await performanceRepository.getStarFxPerformance();
     favoriteFx != null
         ? favoriteFxScore = favoriteFx!.total
         : favoriteFxScore = 0.0;
 
-    favoritePh = await scoreRepository.getFavoritePHScore();
+    favoritePh = await performanceRepository.getStarPhPerformance();
     favoritePh != null
         ? favoritePhScore = favoritePh!.total
         : favoritePhScore = 0.0;
 
-    favoriteSr = await scoreRepository.getFavoriteSRScore();
+    favoriteSr = await performanceRepository.getStarSrPerformance();
     favoriteSr != null
         ? favoriteSrScore = favoriteSr!.total
         : favoriteSrScore = 0.0;
 
-    vt = await scoreRepository.getVTScore();
+    vt = await performanceRepository.getVTPerformance();
 
-    favoritePb = await scoreRepository.getFavoritePBScore();
+    favoritePb = await performanceRepository.getStarPbPerformance();
     favoritePb != null
         ? favoritePbScore = favoritePb!.total
         : favoritePbScore = 0.0;
 
-    favoriteHb = await scoreRepository.getFavoriteHBScore();
+    favoriteHb = await performanceRepository.getStarHbPerformance();
     favoriteHb != null
         ? favoriteHbScore = favoriteHb!.total
         : favoriteHbScore = 0.0;
 
     setTotalScore();
-    isFetchedScore = true;
+    isFetched = true;
     notifyListeners();
   }
 
@@ -80,6 +80,7 @@ class HomeModel extends ChangeNotifier {
         favoritePbScore * 10 +
         favoriteHbScore * 10;
     totalScore = totalScoreTimes10 / 10;
+
     notifyListeners();
   }
 

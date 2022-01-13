@@ -3,7 +3,7 @@ import 'package:dscore_app/data/hb.dart';
 import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
-import 'package:dscore_app/repository/score_repository.dart';
+import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final searchModelProvider = ChangeNotifierProvider((ref) => SearchModel());
 
 class SearchModel extends ChangeNotifier {
-  final scoreRepository = ScoreRepository();
+  final performanceRepository = PerformanceRepository();
   List<String> searchResult = [];
   String vtTechName = '';
 

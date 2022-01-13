@@ -79,7 +79,7 @@ class VTScoreSelectScreen extends StatelessWidget {
     ref.watch(loadingStateProvider.notifier).startLoading();
 
     await ref.watch(vtScoreModelProvider).setVTScore();
-    await ref.watch(homeModelProvider).getFavoriteScores();
+    await ref.watch(homeModelProvider).getFavoritePerformances();
 
     ref.watch(loadingStateProvider.notifier).endLoading();
     await showOkAlertDialog(context: context, title: '保存しました');

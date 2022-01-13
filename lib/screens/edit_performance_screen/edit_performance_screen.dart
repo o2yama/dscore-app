@@ -122,13 +122,13 @@ class EditPerformanceScreen extends ConsumerWidget {
 
       editPerformanceModel.noEdited();
       scoreId == null
-          ? await editPerformanceModel.setScore(
+          ? await editPerformanceModel.setPerformance(
               event,
               performanceListModel.performanceList(event).isEmpty,
             )
-          : await editPerformanceModel.updateScore(event, scoreId!);
-      // await performanceListModel.getScores(event);
-      await ref.watch(homeModelProvider).getFavoriteScores();
+          : await editPerformanceModel.updatePerformance(event, scoreId!);
+      await performanceListModel.getPerformances(event);
+      await ref.watch(homeModelProvider).getFavoritePerformances();
 
       loadingStateModel.endLoading();
       await showOkAlertDialog(

@@ -4,7 +4,7 @@ import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/data/vt.dart';
-import 'package:dscore_app/repository/score_repository.dart';
+import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +14,7 @@ final editPerformanceModelProvider = ChangeNotifierProvider(
 );
 
 class EditPerformanceModel extends ChangeNotifier {
-  final scoreRepository = ScoreRepository();
+  final performanceRepository = PerformanceRepository();
 
   bool isEdited = false;
   List<String> decidedTechList = [];
@@ -100,31 +100,31 @@ class EditPerformanceModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getScore(String scoreId, Event event) async {
+  Future<void> getPerformanceData(String scoreId, Event event) async {
     selectEvent(event);
     if (event == Event.fx) {
-      final fxScore = await scoreRepository.getFxPerformance(scoreId);
+      final fxScore = await performanceRepository.getFxPerformance(scoreId);
       decidedTechList = fxScore.techs;
       cv = fxScore.cv;
       isUnder16 = fxScore.isUnder16;
     }
     if (event == Event.ph) {
-      final phScore = await scoreRepository.getPHPerformance(scoreId);
+      final phScore = await performanceRepository.getPHPerformance(scoreId);
       decidedTechList = phScore.techs;
       isUnder16 = phScore.isUnder16;
     }
     if (event == Event.sr) {
-      final srScore = await scoreRepository.getSRPerformance(scoreId);
+      final srScore = await performanceRepository.getSRPerformance(scoreId);
       decidedTechList = srScore.techs;
       isUnder16 = srScore.isUnder16;
     }
     if (event == Event.pb) {
-      final pbScore = await scoreRepository.getPBPerformance(scoreId);
+      final pbScore = await performanceRepository.getPBPerformance(scoreId);
       decidedTechList = pbScore.techs;
       isUnder16 = pbScore.isUnder16;
     }
     if (event == Event.hb) {
-      final hbScore = await scoreRepository.getHBPerformance(scoreId);
+      final hbScore = await performanceRepository.getHBPerformance(scoreId);
       decidedTechList = hbScore.techs;
       cv = hbScore.cv;
       isUnder16 = hbScore.isUnder16;
@@ -133,54 +133,54 @@ class EditPerformanceModel extends ChangeNotifier {
     calculateScore(event);
   }
 
-  Future<void> setScore(Event event, bool isFirst) async {
+  Future<void> setPerformance(Event event, bool isFirst) async {
     if (event == Event.fx) {
-      await scoreRepository.setFXScore(
+      await performanceRepository.setFxPerformance(
           totalScore, decidedTechList, cv, isFirst, isUnder16);
     }
     if (event == Event.ph) {
-      await scoreRepository.setPHScore(
+      await performanceRepository.setPhPerformance(
           totalScore, decidedTechList, isFirst, isUnder16);
     }
     if (event == Event.sr) {
-      await scoreRepository.setSRScore(
+      await performanceRepository.setSrPerformance(
           totalScore, decidedTechList, isFirst, isUnder16);
     }
     if (event == Event.pb) {
-      await scoreRepository.setPBScore(
+      await performanceRepository.setPbPerformance(
           totalScore, decidedTechList, isFirst, isUnder16);
     }
     if (event == Event.hb) {
-      await scoreRepository.setHBScore(
+      await performanceRepository.setHbPerformance(
           totalScore, decidedTechList, cv, isFirst, isUnder16);
     }
   }
 
-  Future<void> updateScore(Event event, String scoreId) async {
+  Future<void> updatePerformance(Event event, String scoreId) async {
     if (event == Event.fx) {
-      await scoreRepository.updateFXScore(
+      await performanceRepository.updateFxPerformance(
           scoreId, totalScore, decidedTechList, cv, isUnder16);
     }
     if (event == Event.ph) {
-      await scoreRepository.updatePHScore(
+      await performanceRepository.updatePhPerformance(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = phDifficulty;
       group = phGroup;
     }
     if (event == Event.sr) {
-      await scoreRepository.updateSRScore(
+      await performanceRepository.updateSrPerformance(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = srDifficulty;
       group = srGroup;
     }
     if (event == Event.pb) {
-      await scoreRepository.updatePBScore(
+      await performanceRepository.updatePbPerformance(
           scoreId, totalScore, decidedTechList, isUnder16);
       difficulty = pbDifficulty;
       group = pbGroup;
     }
     if (event == Event.hb) {
-      await scoreRepository.updateHBScore(
+      await performanceRepository.updateHbPerformance(
           scoreId, totalScore, decidedTechList, cv, isUnder16);
       difficulty = hbDifficulty;
       group = hbGroup;
@@ -211,6 +211,7 @@ class EditPerformanceModel extends ChangeNotifier {
         difficultyOfGroup4 = difficulty[tech]!;
       }
     }
+
     notifyListeners();
   }
 
@@ -218,7 +219,9 @@ class EditPerformanceModel extends ChangeNotifier {
   num calculateEGR(List<String> techList, Event event) {
     var egr = 0.0;
 
-    if (techList.isNotEmpty) {
+    if (techList.isEmpty) {
+      egr = 0;
+    } else {
       if (event == Event.fx) {
         //床の要求点の計算
         final group1 = <String>[];
@@ -332,11 +335,6 @@ class EditPerformanceModel extends ChangeNotifier {
           }
         }
       }
-    } else {
-      difficultyPoint = 0;
-      egr = 0;
-      cv = 0;
-      totalScore = 0;
     }
 
     return egr;
@@ -362,6 +360,8 @@ class EditPerformanceModel extends ChangeNotifier {
 
     totalScore = difficultyPoint * 10 + egr * 10 + cv * 10;
     totalScore /= 10;
+
+    notifyListeners();
   }
 
   void onReOrder(int oldIndex, int newIndex, Event event) {
@@ -373,6 +373,7 @@ class EditPerformanceModel extends ChangeNotifier {
     }
     calculateScore(event);
     isEdited = true;
+
     notifyListeners();
   }
 }

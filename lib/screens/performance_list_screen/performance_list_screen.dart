@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
@@ -153,56 +152,60 @@ class PerformanceListScreen extends ConsumerWidget {
     Performance? score,
     PerformanceWithCV? scoreWithCV,
   }) {
-    return InkWell(
-      onTap: () async {
-        ref.watch(loadingStateProvider.notifier).startLoading();
-        await ref.watch(editPerformanceModelProvider).getScore(
-              score == null ? scoreWithCV!.scoreId : score.scoreId,
-              event,
-            );
-        ref.watch(loadingStateProvider.notifier).endLoading();
-        await Navigator.push<Object>(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditPerformanceScreen(
-              event: event,
-              scoreId: score == null ? scoreWithCV!.scoreId : score.scoreId,
+    return Row(
+      children: [
+        Expanded(
+          child: Slidable(
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              children: [
+                SlidableAction(
+                  label: '複製',
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue.shade300,
+                  icon: CupertinoIcons.plus_square_fill_on_square_fill,
+                  onPressed: (context) => _onCopyButtonPressed(
+                    context,
+                    score == null ? scoreWithCV!.scoreId : score.scoreId,
+                    ref,
+                  ),
+                ),
+                SlidableAction(
+                  label: '削除',
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red.shade300,
+                  icon: Icons.remove,
+                  onPressed: (context) => _onDeleteButtonPressed(
+                    context,
+                    score == null ? scoreWithCV!.scoreId : score.scoreId,
+                    ref,
+                  ),
+                ),
+              ],
             ),
-          ),
-        );
-      },
-      child: Row(
-        children: [
-          Expanded(
-            child: Slidable(
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    label: '複製',
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue.shade300,
-                    icon: CupertinoIcons.plus_square_fill_on_square_fill,
-                    onPressed: (context) => _onCopyButtonPressed(
-                      context,
-                      score == null ? scoreWithCV!.scoreId : score.scoreId,
-                      ref,
+            child: Card(
+              child: InkWell(
+                onTap: () async {
+                  ref.watch(loadingStateProvider.notifier).startLoading();
+                  await ref
+                      .watch(editPerformanceModelProvider)
+                      .getPerformanceData(
+                        score == null ? scoreWithCV!.scoreId : score.scoreId,
+                        event,
+                      );
+                  ref.watch(loadingStateProvider.notifier).endLoading();
+                  await Navigator.push<Object>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPerformanceScreen(
+                        event: event,
+                        scoreId: score == null
+                            ? scoreWithCV!.scoreId
+                            : score.scoreId,
+                      ),
                     ),
-                  ),
-                  SlidableAction(
-                    label: '削除',
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.red.shade300,
-                    icon: Icons.remove,
-                    onPressed: (context) => _onDeleteButtonPressed(
-                      context,
-                      score == null ? scoreWithCV!.scoreId : score.scoreId,
-                      ref,
-                    ),
-                  ),
-                ],
-              ),
-              child: Card(
+                  );
+                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
@@ -227,18 +230,18 @@ class PerformanceListScreen extends ConsumerWidget {
               ),
             ),
           ),
-          _favoriteButton(
-            context,
-            score == null ? scoreWithCV!.isFavorite : score.isFavorite,
-            score == null ? scoreWithCV!.scoreId : score.scoreId,
-            ref,
-          ),
-        ],
-      ),
+        ),
+        _star(
+          context,
+          score == null ? scoreWithCV!.isFavorite : score.isFavorite,
+          score == null ? scoreWithCV!.scoreId : score.scoreId,
+          ref,
+        ),
+      ],
     );
   }
 
-  //選択した演技を複製する
+  //演技を複製する
   Future<void> _onCopyButtonPressed(
     BuildContext context,
     String scoreId,
@@ -249,19 +252,16 @@ class PerformanceListScreen extends ConsumerWidget {
 
     ref.watch(loadingStateProvider.notifier).startLoading();
 
-    await editPerformanceModel.getScore(scoreId, event);
-    await editPerformanceModel.setScore(
+    await editPerformanceModel.getPerformanceData(scoreId, event);
+    await editPerformanceModel.setPerformance(
       event,
       performanceListModel.performanceList(event).isEmpty,
     );
-    // await performanceListModel.getScores(event);
-    await ref.watch(homeModelProvider).getFavoriteScores();
+
+    await performanceListModel.getPerformances(event);
+    await ref.watch(homeModelProvider).getFavoritePerformances();
 
     ref.watch(loadingStateProvider.notifier).endLoading();
-    await showOkAlertDialog(
-      context: context,
-      title: '複製が完了しました。',
-    );
   }
 
   Future<void> _onDeleteButtonPressed(
@@ -272,10 +272,11 @@ class PerformanceListScreen extends ConsumerWidget {
     await showDialog<Dialog>(
       context: context,
       builder: (context) => OkCancelDialog(
-        onOk: () {
-          ref
+        onOk: () async {
+          await ref
               .watch(performanceListModelProvider)
               .deletePerformance(event, scoreId);
+          await ref.watch(homeModelProvider).getFavoritePerformances();
           Navigator.pop(context);
         },
         onCancel: () => Navigator.pop(context),
@@ -285,12 +286,8 @@ class PerformanceListScreen extends ConsumerWidget {
     );
   }
 
-  Widget _favoriteButton(
-    BuildContext context,
-    bool isFavorite,
-    String scoreId,
-    WidgetRef ref,
-  ) {
+  Widget _star(
+      BuildContext context, bool isFavorite, String scoreId, WidgetRef ref) {
     return IconButton(
       padding: EdgeInsets.zero,
       icon: Icon(
@@ -303,7 +300,8 @@ class PerformanceListScreen extends ConsumerWidget {
         await ref
             .watch(performanceListModelProvider)
             .onStarTapped(event, isFavorite, scoreId);
-        await ref.watch(homeModelProvider).getFavoriteScores();
+        await ref.watch(performanceListModelProvider).getPerformances(event);
+        await ref.watch(homeModelProvider).getFavoritePerformances();
 
         ref.watch(loadingStateProvider.notifier).endLoading();
       },
