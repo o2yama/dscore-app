@@ -1,8 +1,8 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_model.dart';
@@ -19,43 +19,36 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Theme.of(context).backgroundColor,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-          child: SafeArea(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Consumer(builder: (context, ref, child) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 16),
-                            _backButton(context),
-                            const SizedBox(height: 24),
-                            _description(context),
-                            const SizedBox(height: 24),
-                            _emailController(context, ref),
-                            const SizedBox(height: 24),
-                            _passwordController(context, ref),
-                            const SizedBox(height: 50),
-                            _resisterButton(context, ref),
-                            const SizedBox(height: 30),
-                            _toLoginScreenButton(context),
-                            const SizedBox(height: 300),
-                          ],
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-                const LoadingView(),
-              ],
+    return CustomScaffold(
+      context: context,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Consumer(builder: (context, ref, child) {
+                  return Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      _backButton(context),
+                      const SizedBox(height: 24),
+                      _description(context),
+                      const SizedBox(height: 24),
+                      _emailController(context, ref),
+                      const SizedBox(height: 24),
+                      _passwordController(context, ref),
+                      const SizedBox(height: 50),
+                      _resisterButton(context, ref),
+                      const SizedBox(height: 30),
+                      _toLoginScreenButton(context),
+                      const SizedBox(height: 300),
+                    ],
+                  );
+                }),
+              ),
             ),
           ),
         ),

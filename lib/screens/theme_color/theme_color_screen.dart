@@ -1,71 +1,62 @@
 import 'dart:io';
+import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
 
-class ThemeColorScreen extends StatelessWidget {
+class ThemeColorScreen extends ConsumerWidget {
   const ThemeColorScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer(
-        builder: (context, ref, child) {
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      _backButton(context),
-                      _exampleCardWidget(context),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        height: Utilities.screenHeight(context) * 0.6,
-                        child: ListView(
-                          children: themes.keys
-                              .map(
-                                (color) => _colorTile(context, color, ref),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return CustomScaffold(
+      context: context,
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ListView(
+          children: [
+            const BannerAdWidget(),
+            _backButton(context),
+            const SizedBox(height: 24),
+            Column(
+              children: themes.keys
+                  .map(
+                    (color) => _colorTile(context, color, ref),
+                  )
+                  .toList(),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities.isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 50 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Platform.isIOS
-            ? Row(children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Theme.of(context).primaryColor,
-                  size: Utilities.isMobile() ? 20 : 30,
-                ),
-                const SizedBox(width: 24),
-                Text(
-                  'テーマカラー',
-                  style: TextStyle(
+            ? Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back_ios,
                     color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: Utilities.isMobile() ? 18 : 24,
+                    size: Utilities.isMobile() ? 20 : 30,
                   ),
-                ),
-              ])
+                  const SizedBox(width: 24),
+                  Text(
+                    'テーマカラー',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Utilities.isMobile() ? 18 : 24,
+                    ),
+                  ),
+                ],
+              )
             : Row(
                 children: [
                   Icon(
@@ -85,48 +76,6 @@ class ThemeColorScreen extends StatelessWidget {
                 ],
               ),
       ),
-    );
-  }
-
-  Widget _exampleCardWidget(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(children: [
-        Text(
-          'イメージ',
-          style: TextStyle(fontSize: Utilities.isMobile() ? 18 : 24),
-        ),
-        SizedBox(
-          height: 130,
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: width * 0.1),
-                  Text(
-                    '5.2',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                  Expanded(child: Container()),
-                  Container(
-                    height: 130,
-                    width: width * 0.4,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ]),
     );
   }
 

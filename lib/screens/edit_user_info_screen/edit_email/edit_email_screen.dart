@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/common/utilities.dart';
+import 'package:dscore_app/common/validator.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/edit_user_info_screen/edit_email/edit_email_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../common/utilities.dart';
-import '../../../common/validator.dart';
 
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -18,45 +18,32 @@ class EditEmailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      context: context,
       body: Consumer(
         builder: (context, ref, child) {
-          return Container(
-            height: Utilities.screenHeight(context),
-            color: Theme.of(context).backgroundColor,
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Form(
-                      key: _formKey,
-                      child: GestureDetector(
-                        onTap: () =>
-                            FocusManager.instance.primaryFocus!.unfocus(),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              _backButton(context),
-                              const SizedBox(height: 30),
-                              _prevEmailDisplay(context, ref),
-                              // SizedBox(height: 50),
-                              // _newEmailController(context),
-                              // SizedBox(height: 50),
-                              // _confirmationNewEmailController(context),
-                              // SizedBox(height: 50),
-                              // _passwordController(context),
-                              // SizedBox(height: 100),
-                              // _changeButton(context),
-                              const SizedBox(height: 300),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const LoadingView(),
-                ],
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Form(
+              key: _formKey,
+              child: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+                child: Column(
+                  children: [
+                    _backButton(context),
+                    const SizedBox(height: 30),
+                    _prevEmailDisplay(context, ref),
+                    // SizedBox(height: 50),
+                    // _newEmailController(context),
+                    // SizedBox(height: 50),
+                    // _confirmationNewEmailController(context),
+                    // SizedBox(height: 50),
+                    // _passwordController(context),
+                    // SizedBox(height: 100),
+                    // _changeButton(context),
+                    // const SizedBox(height: 300),
+                  ],
+                ),
               ),
             ),
           );
@@ -67,7 +54,7 @@ class EditEmailScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities.isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 50 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Row(

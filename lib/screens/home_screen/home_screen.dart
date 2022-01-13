@@ -1,22 +1,21 @@
 import 'package:dscore_app/common/convertor.dart';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
-import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
-import 'package:dscore_app/screens/score_list_screen/score_list_screen.dart';
-import 'package:dscore_app/screens/score_list_screen/score_model.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
+import 'package:dscore_app/screens/performance_list_screen/performance_list_screen.dart';
 import 'package:dscore_app/screens/settings_screen/settings_screen.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dart';
+import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/utilities.dart';
 import '../intro/intro_model.dart';
-import '../intro/intro_screen.dart';
 
 enum Event { fx, ph, sr, vt, pb, hb }
-
-final List<String> event = ['床', 'あん馬', '吊り輪', '跳馬', '平行棒', '鉄棒'];
-final List<String> eventEng = ['FX', 'PH', 'SR', 'VT', 'PB', 'HB'];
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -44,8 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             //currentUserがnullならユーザーデータ取得
-            if (introModel.currentUser == null &&
-                !introModel.isFetchedUserData) {
+            if (introModel.currentUser == null) {
               await introModel.getCurrentUserData();
             } else {
               if (introModel.isIntroWatched && !homeModel.isFetchedScore) {
@@ -69,43 +67,16 @@ class _HomeScreenState extends State<HomeScreen> {
             loadingStateModel.endLoading();
           }),
           builder: (context, snapshot) {
-            return Scaffold(
-              body: Container(
-                color: Theme.of(context).backgroundColor,
-                child: SafeArea(
-                  child: Stack(
+            return CustomScaffold(
+              context: context,
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
                     children: [
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              RefreshIndicator(
-                                onRefresh: () async {
-                                  loadingStateModel.startLoading();
-                                  await introModel.getCurrentUserData();
-                                  await homeModel.getFavoriteScores();
-                                  loadingStateModel.endLoading();
-                                },
-                                child: Column(
-                                  children: [
-                                    _settingButtons(context),
-                                    _eventsListView(
-                                      context,
-                                      homeModel,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       const BannerAdWidget(),
-                      (!introModel.isIntroWatched)
-                          ? const IntroScreen()
-                          : Container(),
-                      const LoadingView(),
+                      _settingButtons(context),
+                      _eventsList(context, homeModel),
                     ],
                   ),
                 ),
@@ -118,26 +89,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _settingButtons(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      IconButton(
-        icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
-        onPressed: () {
-          Navigator.push<Object>(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+          icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
+          onPressed: () => Navigator.push<Object>(
             context,
             MaterialPageRoute(
               builder: (context) => const SettingsScreen(),
               fullscreenDialog: true,
             ),
-          );
-        },
-      )
-    ]);
+          ),
+        )
+      ],
+    );
   }
 
-  Widget _eventsListView(BuildContext context, HomeModel homeModel) {
-    return SizedBox(
-      height: Utilities.screenHeight(context) * 0.9,
-      child: ListView(children: [
+  Widget _eventsList(BuildContext context, HomeModel homeModel) {
+    return Column(
+      children: [
         _eventCard(context, Event.fx),
         _eventCard(context, Event.ph),
         _eventCard(context, Event.sr),
@@ -146,27 +117,24 @@ class _HomeScreenState extends State<HomeScreen> {
         _eventCard(context, Event.hb),
         _totalScore(homeModel),
         Container(height: 100),
-      ]),
+      ],
     );
   }
 
   Widget _eventCard(BuildContext context, Event event) {
     return Consumer(
       builder: (context, ref, child) {
-        final scoreModel = ref.watch(scoreModelProvider);
+        final scoreModel = ref.watch(performanceListModelProvider);
         final homeModel = ref.watch(homeModelProvider);
 
         return SizedBox(
           height: 130,
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
             child: InkWell(
               onTap: () async {
-                scoreModel.selectEvent(event);
+                ref.watch(editPerformanceModelProvider).selectEvent(event);
                 if (event == Event.vt) {
-                  await scoreModel.getVTScore();
+                  await ref.watch(vtScoreModelProvider).getVTScore();
                   await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
@@ -180,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   await Navigator.push<Object>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ScoreListScreen(event: event),
+                      builder: (context) => PerformanceListScreen(event: event),
                     ),
                   );
                 }
@@ -222,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     flex: 2,
                     child: Container(
                       padding: const EdgeInsets.only(left: 30),
-                      child: _scoreDisplay(context, homeModel, event),
+                      child: _score(context, homeModel, event),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -243,11 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _scoreDisplay(
-    BuildContext context,
-    HomeModel homeModel,
-    Event event,
-  ) {
+  Widget _score(BuildContext context, HomeModel homeModel, Event event) {
     switch (event) {
       case Event.fx:
         return homeModel.favoriteFx == null
@@ -267,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case Event.vt:
         return homeModel.vt == null
             ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.vt!.score}',
+            : Text('${vtTech[homeModel.vt!.techName]}',
                 style: Theme.of(context).textTheme.headline6);
       case Event.pb:
         return homeModel.favoritePb == null
@@ -329,16 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : ListView(
                   children: homeModel.favoriteFx!.techs
-                      .map(
-                        (tech) => Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(child: Text(tech)),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((tech) => _techText(tech))
                       .toList(),
                 ),
         );
@@ -348,16 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : ListView(
                   children: homeModel.favoritePh!.techs
-                      .map(
-                        (tech) => Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(child: Text(tech)),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((tech) => _techText(tech))
                       .toList(),
                 ),
         );
@@ -367,16 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : ListView(
                   children: homeModel.favoriteSr!.techs
-                      .map(
-                        (tech) => Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(child: Text(tech)),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((tech) => _techText(tech))
                       .toList(),
                 ),
         );
@@ -392,16 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : ListView(
                   children: homeModel.favoritePb!.techs
-                      .map(
-                        (tech) => Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(child: Text(tech)),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((tech) => _techText(tech))
                       .toList(),
                 ),
         );
@@ -411,16 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ? Container()
               : ListView(
                   children: homeModel.favoriteHb!.techs
-                      .map(
-                        (tech) => Card(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(child: Text(tech)),
-                            ],
-                          ),
-                        ),
-                      )
+                      .map((tech) => _techText(tech))
                       .toList(),
                 ),
         );
@@ -432,11 +351,17 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).primaryColor, width: 1),
-          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: Theme.of(context).primaryColor),
         ),
         child: child,
       ),
+    );
+  }
+
+  Widget _techText(String tech) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 8),
+      child: Text(tech, overflow: TextOverflow.ellipsis),
     );
   }
 }

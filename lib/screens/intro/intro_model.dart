@@ -10,8 +10,6 @@ class IntroModel extends ChangeNotifier {
   final userRepository = UserRepository();
 
   bool isIntroWatched = false;
-  bool isFetchedUserData = false;
-
   CurrentUser? get currentUser => UserRepository.currentUser;
 
   Future<void> checkIsIntroWatched() async {
@@ -28,7 +26,6 @@ class IntroModel extends ChangeNotifier {
   Future<void> getCurrentUserData() async {
     try {
       await userRepository.getCurrentUserData();
-      isFetchedUserData = true;
     } on Exception {
       rethrow;
     }

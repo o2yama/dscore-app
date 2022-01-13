@@ -1,4 +1,5 @@
 import 'package:app_review/app_review.dart';
+import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
@@ -32,12 +33,9 @@ class HomeModel extends ChangeNotifier {
   num favoriteFxScore = 0.0;
   num favoritePhScore = 0.0;
   num favoriteSrScore = 0.0;
-  num vtScore = 0.0;
   num favoritePbScore = 0.0;
   num favoriteHbScore = 0.0;
   num totalScore = 0.0;
-
-  Future init() async {}
 
   Future<void> getFavoriteScores() async {
     if (currentUser != null) {
@@ -57,7 +55,6 @@ class HomeModel extends ChangeNotifier {
           : favoriteSrScore = 0.0;
 
       vt = await scoreRepository.getVTScore();
-      vt != null ? vtScore = vt!.score : vtScore = 0.0;
 
       favoritePb = await scoreRepository.getFavoritePBScore();
       favoritePb != null
@@ -75,13 +72,13 @@ class HomeModel extends ChangeNotifier {
   }
 
   void setTotalScore() {
-    totalScore = favoriteFxScore * 10 +
+    final totalScoreTimes10 = favoriteFxScore * 10 +
         favoritePhScore * 10 +
         favoriteSrScore * 10 +
-        vtScore * 10 +
+        (vt == null ? 0 : vtTech[vt!.techName]!) * 10 +
         favoritePbScore * 10 +
         favoriteHbScore * 10;
-    totalScore /= 10;
+    totalScore = totalScoreTimes10 / 10;
     notifyListeners();
   }
 

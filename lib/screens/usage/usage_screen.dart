@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:dscore_app/common/utilities.dart';
+import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
+import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class UsageScreen extends StatelessWidget {
@@ -7,18 +9,29 @@ class UsageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Theme.of(context).backgroundColor,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                _backButton(context),
-                _usageImages(),
-              ],
-            ),
+    return CustomScaffold(
+      context: context,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const BannerAdWidget(),
+              _backButton(context),
+              const SizedBox(height: 16),
+              Padding(
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                child: Image.asset('images/tutorial_2.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                child: Image.asset('images/tutorial_3.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                child: Image.asset('images/tutorial_4.png'),
+              ),
+            ],
           ),
         ),
       ),
@@ -27,7 +40,7 @@ class UsageScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities.isMobile() ? 70 : 90,
+      height: Utilities.isMobile() ? 50 : 90,
       child: InkWell(
         onTap: () => Navigator.pop(context),
         child: Platform.isIOS
@@ -67,22 +80,6 @@ class UsageScreen extends StatelessWidget {
                   )
                 ],
               ),
-      ),
-    );
-  }
-
-  Widget _usageImages() {
-    return Expanded(
-      child: ListView(
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 24),
-            child: Image.asset('images/tutorial_2.png'),
-          ),
-          Image.asset('images/tutorial_3.png'),
-          Image.asset('images/tutorial_4.png'),
-        ],
       ),
     );
   }
