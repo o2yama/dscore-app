@@ -141,7 +141,7 @@ class SettingsScreen extends StatelessWidget {
             break;
           case 'プライバシー・ポリシー':
             launch(
-              'https://dscore-app-a72cf.firebaseapp.com/',
+              ' https://dscore-app-a72cf.web.app',
               forceSafariVC: true,
               forceWebView: true,
             );
