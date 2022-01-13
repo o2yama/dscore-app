@@ -1,4 +1,5 @@
 import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/data/vt.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
@@ -12,79 +13,53 @@ import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dar
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common/utilities.dart';
-import '../intro/intro_model.dart';
 
 enum Event { fx, ph, sr, vt, pb, hb }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final homeModel = ref.watch(homeModelProvider);
 
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final loadingStateModel = ref.watch(loadingStateProvider.notifier);
-        final introModel = ref.watch(introModelProvider);
-        final homeModel = ref.watch(homeModelProvider);
+    if (homeModel.isFetchedScore) {
+      Future(() async {
+        ref.watch(loadingStateProvider.notifier).startLoading();
 
-        return FutureBuilder(
-          future: Future(() async {
-            loadingStateModel.startLoading();
+        await homeModel.getUserData();
+        await homeModel.getFavoriteScores();
 
-            //イントロを見たか確認
-            if (!introModel.isIntroWatched) {
-              await introModel.checkIsIntroWatched();
-            }
+        //プッシュ通知の許可ダイアログ
+        if (homeModel.settings == null) {
+          await homeModel.requestNotificationPermission();
+        }
 
-            //currentUserがnullならユーザーデータ取得
-            if (introModel.currentUser == null) {
-              await introModel.getCurrentUserData();
-            } else {
-              if (introModel.isIntroWatched && !homeModel.isFetchedScore) {
-                await homeModel.getFavoriteScores();
-              }
-            }
+        //トータルが20点超えたら、レビュー用のダイアログ
+        await homeModel.getIsAppReviewDialogShowed();
+        if (!homeModel.isAppReviewDialogShowed && homeModel.totalScore >= 20) {
+          await homeModel.showAppReviewDialog();
+          await homeModel.setAppReviewDialogShowed();
+        }
 
-            //プッシュ通知の許可ダイアログ
-            if (homeModel.settings == null) {
-              await homeModel.requestNotificationPermission();
-            }
+        ref.watch(loadingStateProvider.notifier).endLoading();
+      });
+    }
 
-            //トータルが20点超えたら、レビュー用のダイアログ
-            await homeModel.getIsAppReviewDialogShowed();
-            if (!homeModel.isAppReviewDialogShowed &&
-                homeModel.totalScore >= 20) {
-              await homeModel.showAppReviewDialog();
-              await homeModel.setAppReviewDialogShowed();
-            }
-
-            loadingStateModel.endLoading();
-          }),
-          builder: (context, snapshot) {
-            return CustomScaffold(
-              context: context,
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      const BannerAdWidget(),
-                      _settingButtons(context),
-                      _eventsList(context, homeModel),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
+    return CustomScaffold(
+      context: context,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              const BannerAdWidget(),
+              _settingButtons(context),
+              _eventsList(context, homeModel),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -115,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _eventCard(context, Event.vt),
         _eventCard(context, Event.pb),
         _eventCard(context, Event.hb),
-        _totalScore(homeModel),
+        _totalScore(context, homeModel),
         Container(height: 100),
       ],
     );
@@ -124,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _eventCard(BuildContext context, Event event) {
     return Consumer(
       builder: (context, ref, child) {
-        final scoreModel = ref.watch(performanceListModelProvider);
+        final performanceListModel = ref.watch(performanceListModelProvider);
         final homeModel = ref.watch(homeModelProvider);
 
         return SizedBox(
@@ -143,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 } else {
                   ref.watch(loadingStateProvider.notifier).startLoading();
-                  await scoreModel.getScores(event);
+                  await performanceListModel.getPerformances(event);
                   ref.watch(loadingStateProvider.notifier).endLoading();
                   await Navigator.push<Object>(
                     context,
@@ -214,40 +189,40 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _score(BuildContext context, HomeModel homeModel, Event event) {
     switch (event) {
       case Event.fx:
-        return homeModel.favoriteFx == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.favoriteFxScore}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text(
+          '${homeModel.favoriteFxScore}',
+          style: Theme.of(context).textTheme.headline6,
+        );
       case Event.ph:
-        return homeModel.favoritePh == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.favoritePhScore}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text(
+          '${homeModel.favoritePhScore}',
+          style: Theme.of(context).textTheme.headline6,
+        );
       case Event.sr:
-        return homeModel.favoriteSr == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.favoriteSrScore}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text(
+          '${homeModel.favoriteSrScore}',
+          style: Theme.of(context).textTheme.headline6,
+        );
       case Event.vt:
-        return homeModel.vt == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${vtTech[homeModel.vt!.techName]}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text(
+          homeModel.vt == null
+              ? '0.0'
+              : vtTech[homeModel.vt!.techName].toString(),
+          style: Theme.of(context).textTheme.headline6,
+        );
       case Event.pb:
-        return homeModel.favoritePb == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.favoritePbScore}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text('${homeModel.favoritePbScore}',
+            style: Theme.of(context).textTheme.headline6);
       case Event.hb:
-        return homeModel.favoriteHb == null
-            ? Text('0.0', style: Theme.of(context).textTheme.headline6)
-            : Text('${homeModel.favoriteHbScore}',
-                style: Theme.of(context).textTheme.headline6);
+        return Text(
+          '${homeModel.favoriteHbScore}',
+          style: Theme.of(context).textTheme.headline6,
+        );
     }
   }
 
   //  6種目の合計
-  Widget _totalScore(HomeModel homeModel) {
+  Widget _totalScore(BuildContext context, HomeModel homeModel) {
     return Column(
       children: [
         Container(
@@ -289,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (event) {
       case Event.fx:
         return _customListView(
+          context,
           homeModel.favoriteFx == null
               ? Container()
               : ListView(
@@ -299,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case Event.ph:
         return _customListView(
+          context,
           homeModel.favoritePh == null
               ? Container()
               : ListView(
@@ -309,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case Event.sr:
         return _customListView(
+          context,
           homeModel.favoriteSr == null
               ? Container()
               : ListView(
@@ -319,12 +297,14 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case Event.vt:
         return _customListView(
+          context,
           homeModel.vt == null
               ? Container()
               : Center(child: Text(homeModel.vt!.techName)),
         );
       case Event.pb:
         return _customListView(
+          context,
           homeModel.favoritePb == null
               ? Container()
               : ListView(
@@ -335,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case Event.hb:
         return _customListView(
+          context,
           homeModel.favoriteHb == null
               ? Container()
               : ListView(
@@ -346,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _customListView(Widget child) {
+  Widget _customListView(BuildContext context, Widget child) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
-import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/domain/score_with_cv.dart';
+import 'package:dscore_app/domain/performance.dart';
+import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
@@ -100,7 +100,7 @@ class PerformanceListScreen extends ConsumerWidget {
     switch (event) {
       case Event.fx:
         return Column(
-          children: performanceListModel.fxScoreList
+          children: performanceListModel.fxPerformanceList
               .map(
                 (score) => _scoreTile(context, ref, scoreWithCV: score),
               )
@@ -108,7 +108,7 @@ class PerformanceListScreen extends ConsumerWidget {
         );
       case Event.ph:
         return Column(
-          children: performanceListModel.phScoreList
+          children: performanceListModel.phPerformanceList
               .map(
                 (score) => _scoreTile(context, ref, score: score),
               )
@@ -116,7 +116,7 @@ class PerformanceListScreen extends ConsumerWidget {
         );
       case Event.sr:
         return Column(
-          children: performanceListModel.srScoreList
+          children: performanceListModel.srPerformanceList
               .map(
                 (score) => _scoreTile(context, ref, score: score),
               )
@@ -124,7 +124,7 @@ class PerformanceListScreen extends ConsumerWidget {
         );
       case Event.pb:
         return Column(
-          children: performanceListModel.pbScoreList
+          children: performanceListModel.pbPerformanceList
               .map(
                 (score) => _scoreTile(context, ref, score: score),
               )
@@ -132,7 +132,7 @@ class PerformanceListScreen extends ConsumerWidget {
         );
       case Event.hb:
         return Column(
-          children: performanceListModel.hbScoreList
+          children: performanceListModel.hbPerformanceList
               .map(
                 (score) => _scoreTile(
                   context,
@@ -150,8 +150,8 @@ class PerformanceListScreen extends ConsumerWidget {
   Widget _scoreTile(
     BuildContext context,
     WidgetRef ref, {
-    Score? score,
-    ScoreWithCV? scoreWithCV,
+    Performance? score,
+    PerformanceWithCV? scoreWithCV,
   }) {
     return InkWell(
       onTap: () async {
@@ -252,9 +252,9 @@ class PerformanceListScreen extends ConsumerWidget {
     await editPerformanceModel.getScore(scoreId, event);
     await editPerformanceModel.setScore(
       event,
-      performanceListModel.scoreList(event).isEmpty,
+      performanceListModel.performanceList(event).isEmpty,
     );
-    await ref.watch(performanceListModelProvider).getScores(event);
+    // await performanceListModel.getScores(event);
     await ref.watch(homeModelProvider).getFavoriteScores();
 
     ref.watch(loadingStateProvider.notifier).endLoading();

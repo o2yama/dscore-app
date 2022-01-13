@@ -1,59 +1,59 @@
-import 'package:dscore_app/domain/current_user.dart';
-import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/domain/score_with_cv.dart';
-import 'package:dscore_app/domain/vt_score.dart';
+import 'package:dscore_app/domain/performance.dart';
+import 'package:dscore_app/domain/performance_with_cv.dart';
+import 'package:dscore_app/domain/vt_tech.dart';
 import 'package:dscore_app/repository/score_repository.dart';
-import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final performanceListModelProvider =
-    ChangeNotifierProvider((ref) => PerformanceListModel());
+final performanceListModelProvider = ChangeNotifierProvider(
+  (ref) => PerformanceListModel(),
+);
 
 class PerformanceListModel extends ChangeNotifier {
   final scoreRepository = ScoreRepository();
-  CurrentUser? get currentUser => UserRepository.currentUser;
 
-  List<ScoreWithCV> fxScoreList = [];
-  List<Score> phScoreList = [];
-  List<Score> srScoreList = [];
-  VTScore? vtScore;
-  List<Score> pbScoreList = [];
-  List<ScoreWithCV> hbScoreList = [];
+  List<PerformanceWithCV> fxPerformanceList = [];
+  List<Performance> phPerformanceList = [];
+  List<Performance> srPerformanceList = [];
+  VTTech? vtTech;
+  List<Performance> pbPerformanceList = [];
+  List<PerformanceWithCV> hbPerformanceList = [];
 
-  Future<void> getScores(Event event) async {
-    if (currentUser != null) {
-      if (event == Event.fx) {
-        fxScoreList = await scoreRepository.getFXScores();
-      }
-      if (event == Event.ph) {
-        phScoreList = await scoreRepository.getPHScores();
-      }
-      if (event == Event.sr) {
-        srScoreList = await scoreRepository.getSRScores();
-      }
-      if (event == Event.pb) {
-        pbScoreList = await scoreRepository.getPBScores();
-      }
-      if (event == Event.hb) {
-        hbScoreList = await scoreRepository.getHBScores();
-      }
+  Future<void> getPerformances(Event event) async {
+    switch (event) {
+      case Event.fx:
+        fxPerformanceList = await scoreRepository.getFxPerformances();
+        break;
+      case Event.ph:
+        phPerformanceList = await scoreRepository.getPhPerformances();
+        break;
+      case Event.sr:
+        srPerformanceList = await scoreRepository.getSrPerformances();
+        break;
+      case Event.vt:
+        break;
+      case Event.pb:
+        pbPerformanceList = await scoreRepository.getPBPerformances();
+        break;
+      case Event.hb:
+        hbPerformanceList = await scoreRepository.getHBPerformances();
+        break;
     }
   }
 
-  List scoreList(Event event) {
+  List performanceList(Event event) {
     switch (event) {
       case Event.fx:
-        return fxScoreList;
+        return fxPerformanceList;
       case Event.ph:
-        return phScoreList;
+        return phPerformanceList;
       case Event.sr:
-        return srScoreList;
+        return srPerformanceList;
       case Event.pb:
-        return pbScoreList;
+        return pbPerformanceList;
       case Event.hb:
-        return hbScoreList;
+        return hbPerformanceList;
       case Event.vt:
         return [];
     }
@@ -63,27 +63,27 @@ class PerformanceListModel extends ChangeNotifier {
   Future<List<String>> getScoreIds(Event event) async {
     var scoreIds = <String>[];
     if (event == Event.fx) {
-      for (final fxScore in fxScoreList) {
+      for (final fxScore in fxPerformanceList) {
         scoreIds.add(fxScore.scoreId);
       }
     }
     if (event == Event.pb) {
-      for (final phScore in phScoreList) {
+      for (final phScore in phPerformanceList) {
         scoreIds.add(phScore.scoreId);
       }
     }
     if (event == Event.sr) {
-      for (final srScore in srScoreList) {
+      for (final srScore in srPerformanceList) {
         scoreIds.add(srScore.scoreId);
       }
     }
     if (event == Event.pb) {
-      for (final pbScore in pbScoreList) {
+      for (final pbScore in pbPerformanceList) {
         scoreIds.add(pbScore.scoreId);
       }
     }
     if (event == Event.hb) {
-      for (final hbScore in hbScoreList) {
+      for (final hbScore in hbPerformanceList) {
         scoreIds.add(hbScore.scoreId);
       }
     }
@@ -107,7 +107,7 @@ class PerformanceListModel extends ChangeNotifier {
       await changeFavoriteState(scoreId, event, true);
     }
 
-    await getScores(event);
+    // await getScores(event);
   }
 
   Future<void> changeFavoriteState(
@@ -148,18 +148,18 @@ class PerformanceListModel extends ChangeNotifier {
     if (event == Event.hb) {
       await scoreRepository.deleteHBScore(scoreId);
     }
-    await getScores(event);
+    // await getScores(event);
     notifyListeners();
   }
 
   //ログアウト時
   void resetScores() {
-    fxScoreList = [];
-    phScoreList = [];
-    srScoreList = [];
-    vtScore = null;
-    pbScoreList = [];
-    hbScoreList = [];
+    fxPerformanceList = [];
+    phPerformanceList = [];
+    srPerformanceList = [];
+    vtTech = null;
+    pbPerformanceList = [];
+    hbPerformanceList = [];
     notifyListeners();
   }
 }

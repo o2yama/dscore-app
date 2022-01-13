@@ -4,9 +4,7 @@ import 'package:dscore_app/data/pb.dart';
 import 'package:dscore_app/data/ph.dart';
 import 'package:dscore_app/data/sr.dart';
 import 'package:dscore_app/data/vt.dart';
-import 'package:dscore_app/domain/current_user.dart';
 import 'package:dscore_app/repository/score_repository.dart';
-import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +15,6 @@ final editPerformanceModelProvider = ChangeNotifierProvider(
 
 class EditPerformanceModel extends ChangeNotifier {
   final scoreRepository = ScoreRepository();
-  CurrentUser? get currentUser => UserRepository.currentUser;
 
   bool isEdited = false;
   List<String> decidedTechList = [];
@@ -106,28 +103,28 @@ class EditPerformanceModel extends ChangeNotifier {
   Future<void> getScore(String scoreId, Event event) async {
     selectEvent(event);
     if (event == Event.fx) {
-      final fxScore = await scoreRepository.getFXSCore(scoreId);
+      final fxScore = await scoreRepository.getFxPerformance(scoreId);
       decidedTechList = fxScore.techs;
       cv = fxScore.cv;
       isUnder16 = fxScore.isUnder16;
     }
     if (event == Event.ph) {
-      final phScore = await scoreRepository.getPHScore(scoreId);
+      final phScore = await scoreRepository.getPHPerformance(scoreId);
       decidedTechList = phScore.techs;
       isUnder16 = phScore.isUnder16;
     }
     if (event == Event.sr) {
-      final srScore = await scoreRepository.getSRScore(scoreId);
+      final srScore = await scoreRepository.getSRPerformance(scoreId);
       decidedTechList = srScore.techs;
       isUnder16 = srScore.isUnder16;
     }
     if (event == Event.pb) {
-      final pbScore = await scoreRepository.getPBScore(scoreId);
+      final pbScore = await scoreRepository.getPBPerformance(scoreId);
       decidedTechList = pbScore.techs;
       isUnder16 = pbScore.isUnder16;
     }
     if (event == Event.hb) {
-      final hbScore = await scoreRepository.getHBSCore(scoreId);
+      final hbScore = await scoreRepository.getHBPerformance(scoreId);
       decidedTechList = hbScore.techs;
       cv = hbScore.cv;
       isUnder16 = hbScore.isUnder16;
@@ -228,47 +225,52 @@ class EditPerformanceModel extends ChangeNotifier {
         final group2 = <String>[];
         final group3 = <String>[];
         for (final tech in decidedTechList) {
-          if (group[tech] == 1) {
-            group1.add(tech);
-          }
-          if (group[tech] == 2) {
-            group2.add(tech);
-          }
-          if (group[tech] == 3) {
-            group3.add(tech);
+          switch (group[tech]) {
+            case 1:
+              group1.add(tech);
+              break;
+            case 2:
+              group2.add(tech);
+              break;
+            case 3:
+              group3.add(tech);
+              break;
           }
         }
         if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
-        } else {
-          if (group1.isNotEmpty && group2.isNotEmpty ||
-              group1.isNotEmpty && group3.isNotEmpty ||
-              group2.isNotEmpty && group3.isNotEmpty) {
-            egr = 1.0;
-          } else {
-            if (group1.isNotEmpty || group2.isNotEmpty || group3.isNotEmpty) {
-              egr = 0.5;
-            }
-          }
+        } else if (group1.isNotEmpty && group2.isNotEmpty ||
+            group1.isNotEmpty && group3.isNotEmpty ||
+            group2.isNotEmpty && group3.isNotEmpty) {
+          egr = 1.0;
+        } else if (group1.isNotEmpty ||
+            group2.isNotEmpty ||
+            group3.isNotEmpty) {
+          egr = 0.5;
         }
         //終末技
         if (group[decidedTechList.last]! != 1) {
-          if (difficulty[decidedTechList.last]! >= 4) {
-            egr = egr * 10 + 5;
-            egr /= 10;
-          } else {
-            if (difficulty[decidedTechList.last]! == 3) {
+          switch (difficulty[decidedTechList.last]!) {
+            case 4:
+              egr = egr * 10 + 5;
+              egr /= 10;
+              break;
+            case 3:
               egr = egr * 10 + 3;
               egr /= 10;
-            }
+              break;
           }
+
           if (isUnder16) {
-            if (difficulty[decidedTechList.last]! == 2) {
-              egr = egr * 10 + 2;
-              egr /= 10;
-            } else if (difficulty[decidedTechList.last]! == 1) {
-              egr = egr * 10 + 1;
-              egr /= 10;
+            switch (difficulty[decidedTechList.last]!) {
+              case 2:
+                egr = egr * 10 + 2;
+                egr /= 10;
+                break;
+              case 1:
+                egr = egr * 10 + 1;
+                egr /= 10;
+                break;
             }
           }
         }

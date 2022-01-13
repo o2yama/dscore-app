@@ -8,14 +8,12 @@ import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dar
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
-import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import '../../common/utilities.dart';
 
 class EditPerformanceScreen extends ConsumerWidget {
   const EditPerformanceScreen({Key? key, required this.event, this.scoreId})
@@ -106,48 +104,39 @@ class EditPerformanceScreen extends ConsumerWidget {
   }
 
   Future<void> _onStoreButtonPressed(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+      BuildContext context, WidgetRef ref) async {
     final loadingStateModel = ref.watch(loadingStateProvider.notifier);
     final performanceListModel = ref.watch(performanceListModelProvider);
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    if (editPerformanceModel.currentUser == null) {
+    if (editPerformanceModel.numberOfGroup1 > 5 ||
+        editPerformanceModel.numberOfGroup2 > 5 ||
+        editPerformanceModel.numberOfGroup3 > 5) {
       await showOkAlertDialog(
         context: context,
-        title: 'ログインしてください。',
+        title: '同一グループが6つ以上登録されています。',
+        message: 'この演技は保存できません。',
       );
     } else {
-      if (editPerformanceModel.numberOfGroup1 > 5 ||
-          editPerformanceModel.numberOfGroup2 > 5 ||
-          editPerformanceModel.numberOfGroup3 > 5) {
-        await showOkAlertDialog(
-          context: context,
-          title: '同一グループが6つ以上登録されています。',
-          message: 'この演技は保存できません。',
-        );
-      } else {
-        loadingStateModel.startLoading();
+      loadingStateModel.startLoading();
 
-        editPerformanceModel.noEdited();
-        scoreId == null
-            ? await editPerformanceModel.setScore(
-                event,
-                performanceListModel.scoreList(event).isEmpty,
-              )
-            : await editPerformanceModel.updateScore(event, scoreId!);
-        await performanceListModel.getScores(event);
-        await ref.watch(homeModelProvider).getFavoriteScores();
+      editPerformanceModel.noEdited();
+      scoreId == null
+          ? await editPerformanceModel.setScore(
+              event,
+              performanceListModel.performanceList(event).isEmpty,
+            )
+          : await editPerformanceModel.updateScore(event, scoreId!);
+      // await performanceListModel.getScores(event);
+      await ref.watch(homeModelProvider).getFavoriteScores();
 
-        loadingStateModel.endLoading();
-        await showOkAlertDialog(
-          context: context,
-          title: '保存しました。',
-        );
+      loadingStateModel.endLoading();
+      await showOkAlertDialog(
+        context: context,
+        title: '保存しました。',
+      );
 
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     }
   }
 
@@ -333,26 +322,16 @@ class EditPerformanceScreen extends ConsumerWidget {
     return editPerformanceModel.totalScore == 0
         ? IconButton(
             onPressed: () {
-              if (editPerformanceModel.currentUser == null) {
-                Navigator.push<Object>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SignUpScreen(),
-                    fullscreenDialog: true,
-                  ),
-                );
-              } else {
-                searchController.clear();
-                ref.watch(searchModelProvider).searchResult.clear();
-                editPerformanceModel.selectEvent(event);
-                Navigator.push<Object>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchScreen(event: event),
-                    fullscreenDialog: true,
-                  ),
-                );
-              }
+              searchController.clear();
+              ref.watch(searchModelProvider).searchResult.clear();
+              editPerformanceModel.selectEvent(event);
+              Navigator.push<Object>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchScreen(event: event),
+                  fullscreenDialog: true,
+                ),
+              );
             },
             icon: Icon(
               Icons.add,
@@ -419,8 +398,8 @@ class EditPerformanceScreen extends ConsumerWidget {
                         Flexible(
                           child: Text(
                             techName,
-                            style: TextStyle(
-                              fontSize: Utilities.isMobile() ? 15.0 : 18.0,
+                            style: const TextStyle(
+                              fontSize: 15.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

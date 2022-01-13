@@ -1,9 +1,7 @@
-import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final editPerformanceModel = EditPerformanceModel();
+  // final editPerformanceModel = EditPerformanceModel();
 
   final phTechList = [
     'バックセアー',

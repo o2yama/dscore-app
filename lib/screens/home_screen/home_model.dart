@@ -1,9 +1,8 @@
 import 'package:app_review/app_review.dart';
 import 'package:dscore_app/data/vt.dart';
-import 'package:dscore_app/domain/current_user.dart';
-import 'package:dscore_app/domain/score.dart';
-import 'package:dscore_app/domain/score_with_cv.dart';
-import 'package:dscore_app/domain/vt_score.dart';
+import 'package:dscore_app/domain/performance.dart';
+import 'package:dscore_app/domain/performance_with_cv.dart';
+import 'package:dscore_app/domain/vt_tech.dart';
 import 'package:dscore_app/repository/score_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,18 +16,17 @@ class HomeModel extends ChangeNotifier {
   final userRepository = UserRepository();
   final scoreRepository = ScoreRepository();
 
-  CurrentUser? get currentUser => UserRepository.currentUser;
   bool isFetchedScore = false;
   bool isAppReviewDialogShowed = false;
   bool isFetchedToken = false;
   NotificationSettings? settings;
 
-  ScoreWithCV? favoriteFx;
-  Score? favoritePh;
-  Score? favoriteSr;
-  VTScore? vt;
-  Score? favoritePb;
-  ScoreWithCV? favoriteHb;
+  PerformanceWithCV? favoriteFx;
+  Performance? favoritePh;
+  Performance? favoriteSr;
+  VTTech? vt;
+  Performance? favoritePb;
+  PerformanceWithCV? favoriteHb;
 
   num favoriteFxScore = 0.0;
   num favoritePhScore = 0.0;
@@ -37,35 +35,38 @@ class HomeModel extends ChangeNotifier {
   num favoriteHbScore = 0.0;
   num totalScore = 0.0;
 
+  Future<void> getUserData() async {
+    await userRepository.getCurrentUserData();
+  }
+
   Future<void> getFavoriteScores() async {
-    if (currentUser != null) {
-      favoriteFx = await scoreRepository.getFavoriteFXScore();
-      favoriteFx != null
-          ? favoriteFxScore = favoriteFx!.total
-          : favoriteFxScore = 0.0;
+    favoriteFx = await scoreRepository.getFavoriteFXScore();
+    favoriteFx != null
+        ? favoriteFxScore = favoriteFx!.total
+        : favoriteFxScore = 0.0;
 
-      favoritePh = await scoreRepository.getFavoritePHScore();
-      favoritePh != null
-          ? favoritePhScore = favoritePh!.total
-          : favoritePhScore = 0.0;
+    favoritePh = await scoreRepository.getFavoritePHScore();
+    favoritePh != null
+        ? favoritePhScore = favoritePh!.total
+        : favoritePhScore = 0.0;
 
-      favoriteSr = await scoreRepository.getFavoriteSRScore();
-      favoriteSr != null
-          ? favoriteSrScore = favoriteSr!.total
-          : favoriteSrScore = 0.0;
+    favoriteSr = await scoreRepository.getFavoriteSRScore();
+    favoriteSr != null
+        ? favoriteSrScore = favoriteSr!.total
+        : favoriteSrScore = 0.0;
 
-      vt = await scoreRepository.getVTScore();
+    vt = await scoreRepository.getVTScore();
 
-      favoritePb = await scoreRepository.getFavoritePBScore();
-      favoritePb != null
-          ? favoritePbScore = favoritePb!.total
-          : favoritePbScore = 0.0;
+    favoritePb = await scoreRepository.getFavoritePBScore();
+    favoritePb != null
+        ? favoritePbScore = favoritePb!.total
+        : favoritePbScore = 0.0;
 
-      favoriteHb = await scoreRepository.getFavoriteHBScore();
-      favoriteHb != null
-          ? favoriteHbScore = favoriteHb!.total
-          : favoriteHbScore = 0.0;
-    }
+    favoriteHb = await scoreRepository.getFavoriteHBScore();
+    favoriteHb != null
+        ? favoriteHbScore = favoriteHb!.total
+        : favoriteHbScore = 0.0;
+
     setTotalScore();
     isFetchedScore = true;
     notifyListeners();
