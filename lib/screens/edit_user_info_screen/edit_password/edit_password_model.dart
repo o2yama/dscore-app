@@ -10,8 +10,6 @@ final editPasswordModelProvider = ChangeNotifierProvider(
 class EditPasswordModel extends ChangeNotifier {
   final userRepository = UserRepository();
 
-  CurrentUser? get currentUser => UserRepository.currentUser;
-
   String email = '';
   String prevPassword = '';
   String conFirmingPassword = '';

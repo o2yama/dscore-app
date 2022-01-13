@@ -1,4 +1,6 @@
+import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
+import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +52,9 @@ class MyApp extends StatelessWidget {
               hoverColor: Theme.of(context).primaryColor,
             ),
           ),
-          home: const HomeScreen(),
+          home: UserRepository().authUser == null
+              ? const SignUpScreen()
+              : const HomeScreen(),
         );
       },
     );
