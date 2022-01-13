@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
@@ -16,33 +17,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../common/utilities.dart';
 
-class EditPerformanceScreen extends StatelessWidget {
-  const EditPerformanceScreen({
-    Key? key,
-    required this.event,
-    this.scoreId,
-  }) : super(key: key);
+class EditPerformanceScreen extends ConsumerWidget {
+  const EditPerformanceScreen({Key? key, required this.event, this.scoreId})
+      : super(key: key);
   final Event event;
   final String? scoreId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return CustomScaffold(
       context: context,
-      body: Consumer(
-        builder: (context, ref, child) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _header(context, event, ref),
-                _totalScoreDisplay(context, ref),
-                _detailScores(context, ref),
-                _under16SwitchButton(context, ref),
-                _techListView(context, ref),
-              ],
-            ),
-          );
-        },
+      body: Column(
+        children: [
+          const BannerAdWidget(),
+          _header(context, event, ref),
+          _totalScore(context, ref),
+          _scoreDetails(context, ref),
+          _under16Switch(context, ref),
+          _techList(context, ref),
+        ],
       ),
     );
   }
@@ -158,163 +151,111 @@ class EditPerformanceScreen extends StatelessWidget {
     }
   }
 
-  Widget _totalScoreDisplay(BuildContext context, WidgetRef ref) {
+  Widget _totalScore(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
     final difficultyOfGroup4 = editPerformanceModel.difficultyOfGroup4;
 
     return SizedBox(
-      height: Utilities.screenHeight(context) * 0.1,
+      height: 100,
       child: Container(
-        padding: const EdgeInsets.only(top: 10, bottom: 20),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                'Ⅰ : ${editPerformanceModel.numberOfGroup1}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: editPerformanceModel.numberOfGroup1 > 5
-                      ? Colors.redAccent
-                      : Colors.grey,
-                ),
+            const VerticalDivider(color: Colors.black54),
+            Text(
+              'Ⅰ : ${editPerformanceModel.numberOfGroup1}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: editPerformanceModel.numberOfGroup1 > 5
+                    ? Colors.redAccent
+                    : Colors.grey,
               ),
             ),
             const VerticalDivider(color: Colors.black54),
-            Expanded(
-              child: Text(
-                'Ⅱ : ${editPerformanceModel.numberOfGroup2}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: editPerformanceModel.numberOfGroup2 > 5
-                      ? Colors.redAccent
-                      : Colors.grey,
-                ),
+            Text(
+              'Ⅱ : ${editPerformanceModel.numberOfGroup2}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: editPerformanceModel.numberOfGroup2 > 5
+                    ? Colors.redAccent
+                    : Colors.grey,
               ),
             ),
             const VerticalDivider(color: Colors.black54),
-            Expanded(
-              child: Text(
-                'Ⅲ : ${editPerformanceModel.numberOfGroup3}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: editPerformanceModel.numberOfGroup3 > 5
-                      ? Colors.redAccent
-                      : Colors.grey,
-                ),
+            Text(
+              'Ⅲ : ${editPerformanceModel.numberOfGroup3}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: editPerformanceModel.numberOfGroup3 > 5
+                    ? Colors.redAccent
+                    : Colors.grey,
               ),
             ),
             const VerticalDivider(color: Colors.black54),
             event != Event.fx
-                ? Expanded(
-                    child: Text(
-                      editPerformanceModel.difficultyOfGroup4 == 0
-                          ? 'Ⅳ : ／'
-                          : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                ? Text(
+                    editPerformanceModel.difficultyOfGroup4 == 0
+                        ? 'Ⅳ : -'
+                        : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   )
                 : Container(),
-            const SizedBox(width: 16),
-            Expanded(
-              flex: 2,
-              child: Container(
-                padding: const EdgeInsets.only(right: 15),
-                child: FittedBox(
-                  child: Text(
-                    '${editPerformanceModel.totalScore}',
-                    style: const TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            const VerticalDivider(color: Colors.black54),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.only(right: 15),
+              child: Text(
+                '${editPerformanceModel.totalScore}',
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _detailScores(BuildContext context, WidgetRef ref) {
+  Widget _scoreDetails(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    '難度点',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    '要求点',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-              event == Event.fx || event == Event.hb
-                  ? const Expanded(
-                      child: Center(
-                        child: Text(
-                          '組み合わせ',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: Center(
-                  child: Text(
-                    '${editPerformanceModel.difficultyPoint}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    '${editPerformanceModel.egr}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              event == Event.fx || event == Event.hb
-                  ? Expanded(
-                      child: Center(
-                        child: _cvSelectMenu(context, editPerformanceModel),
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Column(
+          children: [
+            const Text('難度点'),
+            Text(
+              '${editPerformanceModel.difficultyPoint}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            const Text('要求点'),
+            Text(
+              '${editPerformanceModel.egr}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+            ),
+          ],
+        ),
+        event == Event.fx || event == Event.hb
+            ? Column(
+                children: [
+                  const Text('組み合わせ'),
+                  _cvSelectMenu(context, editPerformanceModel),
+                ],
+              )
+            : const SizedBox(),
+      ],
     );
   }
 
@@ -330,7 +271,10 @@ class EditPerformanceScreen extends StatelessWidget {
         Text(
           '${editPerformanceModel.cv}',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 21,
+          ),
         ),
         const SizedBox(width: 16),
         PopupMenuButton(
@@ -361,7 +305,7 @@ class EditPerformanceScreen extends StatelessWidget {
     );
   }
 
-  Widget _under16SwitchButton(BuildContext context, WidgetRef ref) {
+  Widget _under16Switch(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
     return Row(
@@ -383,7 +327,7 @@ class EditPerformanceScreen extends StatelessWidget {
     );
   }
 
-  Widget _techListView(BuildContext context, WidgetRef ref) {
+  Widget _techList(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
     return editPerformanceModel.totalScore == 0
@@ -415,19 +359,18 @@ class EditPerformanceScreen extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
           )
-        : SizedBox(
-            height: Utilities.screenHeight(context) * 0.6,
+        : Expanded(
             child: ReorderableListView(
               onReorder: (int oldIndex, int newIndex) =>
                   editPerformanceModel.onReOrder(oldIndex, newIndex, event),
-              children: editPerformanceModel.decidedTechList.map((tech) {
-                return _techTile(
-                  context,
-                  tech,
-                  editPerformanceModel.decidedTechList.indexOf(tech) + 1,
-                  ref,
-                );
-              }).toList(),
+              children: editPerformanceModel.decidedTechList
+                  .map((tech) => _techTile(
+                        context,
+                        tech,
+                        editPerformanceModel.decidedTechList.indexOf(tech) + 1,
+                        ref,
+                      ))
+                  .toList(),
             ),
           );
   }

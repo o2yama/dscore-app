@@ -43,7 +43,7 @@ class SearchScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context, Event event) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -51,6 +51,10 @@ class SearchScreen extends StatelessWidget {
             Icons.clear,
             color: Theme.of(context).primaryColor,
           ),
+        ),
+        Text(
+          '技検索',
+          style: TextStyle(color: Theme.of(context).primaryColor),
         ),
       ],
     );

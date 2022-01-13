@@ -17,43 +17,76 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Theme.of(context).backgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Consumer(
-            builder: (context, ref, child) {
-              return ListView(
+    return CustomScaffold(
+      context: context,
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Consumer(
+          builder: (context, ref, child) {
+            return SingleChildScrollView(
+              child: Column(
                 children: [
                   const BannerAdWidget(),
                   _backButton(context),
                   const SizedBox(height: 24),
-                  _settingTile(context, 'テーマカラー', Icons.color_lens, ref,
-                      screen: const ThemeColorScreen()),
-                  _settingTile(context, '使い方', Icons.info, ref,
-                      screen: const UsageScreen()),
-                  _settingTile(context, 'プライバシー・ポリシー', Icons.privacy_tip, ref),
                   _settingTile(
-                      context, '技追加の申請', Icons.playlist_add_rounded, ref),
+                    context,
+                    'テーマカラー',
+                    Icons.color_lens,
+                    ref,
+                    screen: const ThemeColorScreen(),
+                  ),
+                  _settingTile(
+                    context,
+                    '使い方',
+                    Icons.info,
+                    ref,
+                    screen: const UsageScreen(),
+                  ),
+                  _settingTile(
+                    context,
+                    'プライバシー・ポリシー',
+                    Icons.privacy_tip,
+                    ref,
+                  ),
+                  _settingTile(
+                    context,
+                    '技追加の申請',
+                    Icons.playlist_add_rounded,
+                    ref,
+                  ),
                   _settingTile(context, 'お問い合わせ', Icons.send, ref),
                   // loginModel.currentUser != null
                   //     ? _settingTile(
                   //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
                   //     : Container(),
-                  ref.read(loginModelProvider).currentUser != null
-                      ? _settingTile(context, 'メールアドレス', Icons.mail, ref,
-                          screen: const EditEmailScreen())
-                      : Container(),
                   ref.read(loginModelProvider).currentUser == null
-                      ? _settingTile(context, 'ログイン', Icons.login, ref,
-                          screen: const LoginScreen())
-                      : _settingTile(context, 'ログアウト', Icons.logout, ref),
-                  Container(height: Utilities.isMobile() ? 200 : 300),
+                      ? Container()
+                      : _settingTile(
+                          context,
+                          'メールアドレス',
+                          Icons.mail,
+                          ref,
+                          screen: const EditEmailScreen(),
+                        ),
+                  ref.read(loginModelProvider).currentUser == null
+                      ? _settingTile(
+                          context,
+                          'ログイン',
+                          Icons.login,
+                          ref,
+                          screen: const LoginScreen(),
+                        )
+                      : _settingTile(
+                          context,
+                          'ログアウト',
+                          Icons.logout,
+                          ref,
+                        ),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

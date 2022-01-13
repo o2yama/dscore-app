@@ -3,6 +3,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/domain/score.dart';
 import 'package:dscore_app/domain/score_with_cv.dart';
+import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
@@ -25,13 +26,16 @@ class PerformanceListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CustomScaffold(
       context: context,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _backButton(context, event, ref),
-            _scoreList(context, ref),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              const BannerAdWidget(),
+              _backButton(context, event, ref),
+              _scoreList(context, ref),
+            ],
+          ),
         ),
       ),
     );

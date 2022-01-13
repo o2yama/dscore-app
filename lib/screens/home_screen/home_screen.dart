@@ -1,5 +1,6 @@
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
@@ -68,17 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, snapshot) {
             return CustomScaffold(
               context: context,
-              body: RefreshIndicator(
-                onRefresh: () async {
-                  loadingStateModel.startLoading();
-                  await introModel.getCurrentUserData();
-                  await homeModel.getFavoriteScores();
-                  loadingStateModel.endLoading();
-                },
+              body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
+                      const BannerAdWidget(),
                       _settingButtons(context),
                       _eventsList(context, homeModel),
                     ],
