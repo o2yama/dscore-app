@@ -103,7 +103,7 @@ class SearchScreen extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           children: ref
               .watch(editPerformanceModelProvider)
-              .searchChipWords
+              .searchWords(event)
               .map(
                 (chipsText) => _techChip(
                   context,
@@ -182,8 +182,8 @@ class SearchScreen extends StatelessWidget {
     WidgetRef ref,
   ) {
     final scoreEditModel = ref.watch(editPerformanceModelProvider);
-    final group = scoreEditModel.group[techName];
-    final difficulty = scoreEditModel.difficulty[techName];
+    final group = scoreEditModel.groupData(event)[techName];
+    final difficulty = scoreEditModel.difficultyData(event)[techName];
 
     return Card(
       child: ListTile(
@@ -257,9 +257,11 @@ class SearchScreen extends StatelessWidget {
         techName,
         order,
       );
-      editPerformanceModel
-        ..calculateNumberOfGroup(event)
-        ..calculateScore(event);
+      editPerformanceModel.calculateScore(
+        editPerformanceModel.decidedTechList,
+        editPerformanceModel.isUnder16,
+        event,
+      );
     }
     Navigator.pop(context);
   }

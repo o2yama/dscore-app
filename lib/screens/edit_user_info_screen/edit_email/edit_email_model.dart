@@ -4,15 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final editEmailModelProvider = ChangeNotifierProvider(
-  (ref) => EditEmailModel(),
+  (ref) => EditEmailModel()..init(),
 );
 
 class EditEmailModel extends ChangeNotifier {
   EditEmailModel();
-  final userRepository = UserRepository();
+  late final UserRepository userRepository;
   String newEmail = '';
   String confirmationNewEmail = '';
   String password = '';
+
+  init() {
+    userRepository = UserRepository();
+  }
 
   void onNewEmailFieldChanged(String text) {
     newEmail = text;

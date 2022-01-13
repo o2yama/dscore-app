@@ -28,7 +28,7 @@ class VTTechListView extends StatelessWidget {
             itemExtent: 100,
             perspective: 0.001,
             childDelegate: ListWheelChildListDelegate(
-              children: vtTech.keys
+              children: vtTechs.keys
                   .map((techName) => _vtTile(context, techName))
                   .toList(),
             ),
@@ -46,7 +46,7 @@ class VTTechListView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Text('${vtTech[techName]}'),
+          Text('${vtTechs[techName]}'),
           const SizedBox(width: 16),
           Flexible(
             child: Text(

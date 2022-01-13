@@ -9,12 +9,16 @@ import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final searchModelProvider = ChangeNotifierProvider((ref) => SearchModel());
+final searchModelProvider = ChangeNotifierProvider(
+  (ref) => SearchModel()..init(),
+);
 
 class SearchModel extends ChangeNotifier {
-  final performanceRepository = PerformanceRepository();
+  late final PerformanceRepository performanceRepository;
   List<String> searchResult = [];
   String vtTechName = '';
+
+  init() => performanceRepository = PerformanceRepository();
 
   //技検索
   void search(String inputText, Event event) {

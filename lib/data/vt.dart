@@ -1,4 +1,4 @@
-Map<String, num> vtTech = {
+Map<String, num> vtTechs = {
   'ツカハラ': 2.2,
   '屈伸ツカハラ': 2.4,
   '伸身ツカハラ': 3.2,
