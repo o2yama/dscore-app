@@ -22,7 +22,8 @@ service cloud.firestore {
     }
 
     function isValidScoreWithCV(score) {
-      return score.size() == 5 || 6
+      return score.size() == 5 
+      	|| score.size() == 6
         && 'components' in score && score.components is list
         && 'cv' in score && score.cv is number
         && 'isFavorite' in score  && score.isFavorite is bool
@@ -31,7 +32,8 @@ service cloud.firestore {
     }
 
     function isValidScore(score) {
-      return score.size() == 4 || 5
+      return score.size() == 4 
+      	|| score.size() == 5
         && 'components' in score && score.components is list
         && 'isFavorite' in score && score.isFavorite is bool 
         && 'scoreId' in score && score.scoreId is string 
@@ -39,10 +41,10 @@ service cloud.firestore {
     }
 
     function isValidVTScore(vtScore) {
-      return vtScore.size() == 3 
-        && 'score' in vtScore && vtScore.score is number 
-        && 'scoreId' in vtScore && vtScore.scoreId is string 
-        && 'techName' in vtScore && vtScore.techName is string;
+      return vtScore.size() == 3 ||  vtScore.size() == 2
+        && 'scoreId' in vtScore && vtScore.scoreId is string
+        && 'techName' in vtScore && vtScore.techName is string
+        && vtScore.score is number || vtScore.score is null;
     }
 
     match /users/{userId} {
