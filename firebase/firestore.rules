@@ -42,9 +42,9 @@ service cloud.firestore {
 
     function isValidVTScore(vtScore) {
       return vtScore.size() == 3 ||  vtScore.size() == 2
-        && vtScore.score is number || null
-        && 'scoreId' in vtScore && vtScore.scoreId is string 
-        && 'techName' in vtScore && vtScore.techName is string;
+        && 'scoreId' in vtScore && vtScore.scoreId is string
+        && 'techName' in vtScore && vtScore.techName is string
+        && vtScore.score is number || vtScore.score is null;
     }
 
     match /users/{userId} {
