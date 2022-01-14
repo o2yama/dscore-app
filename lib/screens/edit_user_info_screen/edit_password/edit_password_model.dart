@@ -3,15 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final editPasswordModelProvider = ChangeNotifierProvider(
-  (ref) => EditPasswordModel(),
+  (ref) => EditPasswordModel()..init(),
 );
 
 class EditPasswordModel extends ChangeNotifier {
-  final userRepository = UserRepository();
+  late final UserRepository userRepository;
 
   String email = '';
   String prevPassword = '';
   String conFirmingPassword = '';
+
+  init() {
+    userRepository = UserRepository();
+  }
 
   void onEmailFieldChanged(String text) {
     email = text;

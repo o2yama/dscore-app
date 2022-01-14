@@ -1,28 +1,34 @@
-import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final vtScoreModelProvider = ChangeNotifierProvider((ref) => VtScoreModel());
+final vtScoreModelProvider = ChangeNotifierProvider(
+  (ref) => VtScoreModel()..init(),
+);
 
 class VtScoreModel extends ChangeNotifier {
-  final performanceRepository = PerformanceRepository();
+  late final PerformanceRepository performanceRepository;
 
   String techName = '';
   num difficulty = 0.0;
+
+  init() {
+    performanceRepository = PerformanceRepository();
+  }
 
   Future<void> getVTScore() async {
     final vtScore = await performanceRepository.getVTPerformance();
     if (vtScore != null) {
       techName = vtScore.techName;
-      difficulty = vtTech[techName]!;
+      difficulty = vtTechs[techName]!;
     }
   }
 
   void onVTTechSelected(int index) {
-    final vtTechList = vtTech.keys.map((tech) => tech.toString()).toList();
+    final vtTechList = vtTechs.keys.map((tech) => tech.toString()).toList();
     techName = vtTechList[index];
-    difficulty = vtTech[techName]!;
+    difficulty = vtTechs[techName]!;
     notifyListeners();
   }
 

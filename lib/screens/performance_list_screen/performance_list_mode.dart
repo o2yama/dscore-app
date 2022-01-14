@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final performanceListModelProvider = ChangeNotifierProvider(
-  (ref) => PerformanceListModel(),
+  (ref) => PerformanceListModel()..init(),
 );
 
 class PerformanceListModel extends ChangeNotifier {
-  final performanceRepository = PerformanceRepository();
+  late final PerformanceRepository performanceRepository;
 
   List<PerformanceWithCV> fxPerformanceList = <PerformanceWithCV>[];
   List<Performance> phPerformanceList = <Performance>[];
@@ -19,6 +19,10 @@ class PerformanceListModel extends ChangeNotifier {
   VTTech? vtTech;
   List<Performance> pbPerformanceList = <Performance>[];
   List<PerformanceWithCV> hbPerformanceList = <PerformanceWithCV>[];
+
+  init() {
+    performanceRepository = PerformanceRepository();
+  }
 
   Future<void> getPerformances(Event event) async {
     switch (event) {

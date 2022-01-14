@@ -10,7 +10,6 @@ import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../common/utilities.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -84,25 +83,27 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _backButton(BuildContext context) {
     return SizedBox(
-      height: Utilities.isMobile() ? 50 : 90,
+      height: 50,
       child: InkWell(
         onTap: () => Navigator.pop(context),
-        child: Row(children: [
-          Icon(
-            Icons.clear,
-            color: Theme.of(context).primaryColor,
-            size: Utilities.isMobile() ? 20 : 30,
-          ),
-          const SizedBox(width: 24),
-          Text(
-            '設定',
-            style: TextStyle(
+        child: Row(
+          children: [
+            Icon(
+              Icons.clear,
               color: Theme.of(context).primaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: Utilities.isMobile() ? 18 : 24,
+              size: 20,
             ),
-          )
-        ]),
+            const SizedBox(width: 24),
+            Text(
+              '設定',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -114,60 +115,60 @@ class SettingsScreen extends StatelessWidget {
     WidgetRef ref, {
     Widget? nextScreen,
   }) {
-    return InkWell(
-      onTap: () {
-        switch (title) {
-          case 'ログアウト':
-            showDialog<Dialog>(
-              context: context,
-              builder: (context) {
-                return OkCancelDialog(
-                  onOk: () async {
-                    ref.watch(performanceListModelProvider).resetScores();
-                    await ref.watch(loginModelProvider).signOut();
-                    await Navigator.pushAndRemoveUntil<Object>(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                        (_) => false);
-                  },
-                  onCancel: () => Navigator.pop(context),
-                  title: 'ログアウトしてもよろしいですか？',
-                  content: 'メールアドレスとパスワードを入力すると再度ログインできます。',
-                );
-              },
-            );
-            break;
-          case 'プライバシー・ポリシー':
-            launch(
-              ' https://dscore-app-a72cf.web.app',
-              forceSafariVC: true,
-              forceWebView: true,
-            );
-            break;
-          case 'お問い合わせ':
-            launch(
-              'https://docs.google.com/forms/d/1HjKY8j_RqIJ1qRgqfxbIwqsNmAhclGNUdf6CofqQKIQ/edit',
-              forceSafariVC: true,
-              forceWebView: true,
-            );
-            break;
-          case '技追加の申請':
-            launch(
-              'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-              forceSafariVC: true,
-              forceWebView: true,
-            );
-            break;
-          default:
-            Navigator.push<Object>(
-              context,
-              MaterialPageRoute(builder: (_) => nextScreen!),
-            );
-        }
-      },
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: () {
+          switch (title) {
+            case 'ログアウト':
+              showDialog<Dialog>(
+                context: context,
+                builder: (context) {
+                  return OkCancelDialog(
+                    onOk: () async {
+                      ref.watch(performanceListModelProvider).resetScores();
+                      await ref.watch(loginModelProvider).signOut();
+                      await Navigator.pushAndRemoveUntil<Object>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                          (_) => false);
+                    },
+                    onCancel: () => Navigator.pop(context),
+                    title: 'ログアウトしてもよろしいですか？',
+                    content: 'メールアドレスとパスワードを入力すると再度ログインできます。',
+                  );
+                },
+              );
+              break;
+            case 'プライバシー・ポリシー':
+              launch(
+                ' https://dscore-app-a72cf.web.app',
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+              break;
+            case 'お問い合わせ':
+              launch(
+                'https://docs.google.com/forms/d/1HjKY8j_RqIJ1qRgqfxbIwqsNmAhclGNUdf6CofqQKIQ/edit',
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+              break;
+            case '技追加の申請':
+              launch(
+                'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+              break;
+            default:
+              Navigator.push<Object>(
+                context,
+                MaterialPageRoute(builder: (_) => nextScreen!),
+              );
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Row(
@@ -176,7 +177,7 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(width: 24),
               Text(
                 title,
-                style: TextStyle(fontSize: Utilities.isMobile() ? 18 : 24),
+                style: const TextStyle(fontSize: 18),
               ),
             ],
           ),

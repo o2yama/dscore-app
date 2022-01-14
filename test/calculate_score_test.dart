@@ -1,7 +1,9 @@
+import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
+import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // final editPerformanceModel = EditPerformanceModel();
+  final editPerformanceModel = EditPerformanceModel();
 
   final phTechList = [
     'バックセアー',
@@ -20,9 +22,10 @@ void main() {
       expect(phTechList.length, 9);
     });
 
-    // test('calculate egr', () {
-    //   final egr = editPerformanceModel.calculateEGR(phTechList, Event.ph);
-    //   expect(egr, 2.0);
-    // });
+    test('calculate egr', () {
+      final egr =
+          editPerformanceModel.calculateEGR(phTechList, false, Event.ph);
+      expect(egr, 2.0);
+    });
   });
 }

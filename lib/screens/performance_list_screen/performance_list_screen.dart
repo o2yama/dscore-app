@@ -78,9 +78,7 @@ class PerformanceListScreen extends ConsumerWidget {
         IconButton(
           icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
           onPressed: () {
-            ref.watch(editPerformanceModelProvider)
-              ..selectEvent(event)
-              ..resetScore();
+            ref.watch(editPerformanceModelProvider).resetScore();
             Navigator.push<Object>(
               context,
               MaterialPageRoute(

@@ -2,13 +2,19 @@ import 'package:dscore_app/repository/user_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final loginModelProvider = ChangeNotifierProvider((ref) => LoginModel());
+final loginModelProvider = ChangeNotifierProvider(
+  (ref) => LoginModel()..init(),
+);
 
 class LoginModel extends ChangeNotifier {
-  final userRepository = UserRepository();
+  late final UserRepository userRepository;
 
   String email = '';
   String password = '';
+
+  init() {
+    userRepository = UserRepository();
+  }
 
   void onEmailEdited(String text) {
     email = text;

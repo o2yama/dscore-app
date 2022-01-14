@@ -3,14 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final signUpModelProvider = ChangeNotifierProvider(
-  (ref) => SignUpModel(),
+  (ref) => SignUpModel()..init(),
 );
 
 class SignUpModel extends ChangeNotifier {
-  final userRepository = UserRepository();
+  late final UserRepository userRepository;
 
   String email = '';
   String password = '';
+
+  init() {
+    userRepository = UserRepository();
+  }
 
   void onEmailEdited(String text) {
     email = text;

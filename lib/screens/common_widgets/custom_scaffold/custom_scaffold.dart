@@ -21,7 +21,6 @@ class CustomScaffold extends Scaffold {
               GestureDetector(
                 onTap: FocusManager.instance.primaryFocus?.unfocus,
                 child: SafeArea(
-                  bottom: false,
                   child: super.body!,
                 ),
               ),

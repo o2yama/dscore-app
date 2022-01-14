@@ -8,26 +8,21 @@ import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/widget/vt_tech_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common/utilities.dart';
 
-class VTScoreSelectScreen extends StatelessWidget {
+class VTScoreSelectScreen extends ConsumerWidget {
   const VTScoreSelectScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return CustomScaffold(
       context: context,
-      body: Consumer(
-        builder: (context, ref, child) {
-          return Column(
-            children: [
-              const BannerAdWidget(),
-              _backButton(context, ref),
-              _dScoreDisplay(context, ref),
-              const VTTechListView(),
-            ],
-          );
-        },
+      body: Column(
+        children: [
+          const BannerAdWidget(),
+          _backButton(context, ref),
+          _dScoreDisplay(context, ref),
+          const VTTechListView(),
+        ],
       ),
     );
   }
@@ -99,9 +94,7 @@ class VTScoreSelectScreen extends StatelessWidget {
           children: [
             Text(
               vtScoreModel.techName,
-              style: TextStyle(
-                fontSize: Utilities.isMobile() ? 24 : 30,
-              ),
+              style: const TextStyle(fontSize: 24),
             ),
             Text(
               '${vtScoreModel.difficulty}',

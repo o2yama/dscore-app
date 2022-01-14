@@ -1,10 +1,9 @@
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/common/utilities.dart';
-import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
-import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:dscore_app/screens/performance_list_screen/performance_list_screen.dart';
@@ -107,7 +106,6 @@ class HomeScreen extends ConsumerWidget {
           child: Card(
             child: InkWell(
               onTap: () async {
-                ref.watch(editPerformanceModelProvider).selectEvent(event);
                 if (event == Event.vt) {
                   await ref.watch(vtScoreModelProvider).getVTScore();
                   await Navigator.push<Object>(
@@ -207,7 +205,7 @@ class HomeScreen extends ConsumerWidget {
         return Text(
           homeModel.vt == null
               ? '0.0'
-              : vtTech[homeModel.vt!.techName].toString(),
+              : vtTechs[homeModel.vt!.techName].toString(),
           style: Theme.of(context).textTheme.headline6,
         );
       case Event.pb:
