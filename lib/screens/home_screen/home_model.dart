@@ -1,5 +1,5 @@
 import 'package:app_review/app_review.dart';
-import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/domain/vt_tech.dart';

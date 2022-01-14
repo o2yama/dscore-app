@@ -65,7 +65,6 @@ class EditPerformanceScreen extends ConsumerWidget {
                   )
                 : Icon(Icons.clear, color: Theme.of(context).primaryColor),
           ),
-          Container(),
           TextButton(
             onPressed: () => _onStoreButtonPressed(context, ref),
             child: Text(
@@ -97,6 +96,7 @@ class EditPerformanceScreen extends ConsumerWidget {
           children: [
             const VerticalDivider(color: Colors.black54),
             GroupCount(
+              group: 'Ⅰ',
               count: editPerformanceModel.countGroup1(
                 editPerformanceModel.decidedTechList,
                 event,
@@ -104,6 +104,7 @@ class EditPerformanceScreen extends ConsumerWidget {
             ),
             const VerticalDivider(color: Colors.black54),
             GroupCount(
+              group: 'Ⅱ',
               count: editPerformanceModel.countGroup2(
                 editPerformanceModel.decidedTechList,
                 event,
@@ -111,6 +112,7 @@ class EditPerformanceScreen extends ConsumerWidget {
             ),
             const VerticalDivider(color: Colors.black54),
             GroupCount(
+              group: 'Ⅲ',
               count: editPerformanceModel.countGroup3(
                 editPerformanceModel.decidedTechList,
                 event,
@@ -119,18 +121,14 @@ class EditPerformanceScreen extends ConsumerWidget {
             const VerticalDivider(color: Colors.black54),
             event == Event.fx
                 ? const SizedBox()
-                : Row(
-                    children: [
-                      Text(
-                        difficultyOfGroup4 == 0
-                            ? 'Ⅳ : -'
-                            : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                      const VerticalDivider(color: Colors.black54),
-                    ],
+                : Text(
+                    difficultyOfGroup4 == 0
+                        ? 'Ⅳ : -'
+                        : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey),
                   ),
+            const VerticalDivider(color: Colors.black54),
             Container(
               padding: const EdgeInsets.only(left: 8, right: 24),
               child: Column(
@@ -222,10 +220,7 @@ class EditPerformanceScreen extends ConsumerWidget {
                   },
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.add,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                      Icon(Icons.add, color: Theme.of(context).primaryColor),
                       Text(
                         '技の追加',
                         style: TextStyle(color: Theme.of(context).primaryColor),
@@ -268,9 +263,11 @@ class EditPerformanceScreen extends ConsumerWidget {
           children: editPerformanceModel.decidedTechList
               .map(
                 (tech) => TechTile(
-                  key: Key(editPerformanceModel.decidedTechList
-                      .indexOf(tech)
-                      .toString()),
+                  key: Key(
+                    editPerformanceModel.decidedTechList
+                        .indexOf(tech)
+                        .toString(),
+                  ),
                   techName: tech,
                   order: editPerformanceModel.decidedTechList.indexOf(tech) + 1,
                   event: event,
@@ -294,9 +291,7 @@ class EditPerformanceScreen extends ConsumerWidget {
             Navigator.pop(context);
             Navigator.pop(context);
           },
-          onCancel: () {
-            Navigator.pop(context);
-          },
+          onCancel: () => Navigator.pop(context),
           title: '保存せずに戻ってもよろしいですか？',
           content: '変更した内容は破棄されます。',
         ),

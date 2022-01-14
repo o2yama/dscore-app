@@ -1,9 +1,9 @@
-import 'package:dscore_app/data/fx.dart';
-import 'package:dscore_app/data/hb.dart';
-import 'package:dscore_app/data/pb.dart';
-import 'package:dscore_app/data/ph.dart';
-import 'package:dscore_app/data/sr.dart';
-import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/data/fx/fx.dart';
+import 'package:dscore_app/data/hb/hb.dart';
+import 'package:dscore_app/data/pb/pb.dart';
+import 'package:dscore_app/data/ph/ph.dart';
+import 'package:dscore_app/data/sr/sr.dart';
+import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -232,8 +232,8 @@ class EditPerformanceModel extends ChangeNotifier {
     if (techList.isEmpty) {
       egr = 0;
     } else {
+      //床の要求点の計算
       if (event == Event.fx) {
-        //床の要求点の計算
         final group1 = <String>[];
         final group2 = <String>[];
         final group3 = <String>[];

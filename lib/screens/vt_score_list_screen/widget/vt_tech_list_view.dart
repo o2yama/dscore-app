@@ -1,4 +1,4 @@
-import 'package:dscore_app/data/vt.dart';
+import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

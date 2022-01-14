@@ -25,15 +25,13 @@ class SearchScreen extends StatelessWidget {
         context: context,
         body: Consumer(
           builder: (context, ref, child) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  _backButton(context, event),
-                  _searchBar(context, ref),
-                  _searchChips(context, event, ref),
-                  _searchResults(context, event, ref),
-                ],
-              ),
+            return Column(
+              children: [
+                _backButton(context, event),
+                _searchBar(context, ref),
+                _searchChips(context, event, ref),
+                _searchResults(context, event, ref),
+              ],
             );
           },
         ),
@@ -141,46 +139,38 @@ class SearchScreen extends StatelessWidget {
     final searchModel = ref.watch(searchModelProvider);
 
     return searchModel.searchResult.isEmpty
-        ? Padding(
-            padding: const EdgeInsets.only(top: 40),
-            child: SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: () => launch(
-                  'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                  forceSafariVC: true,
-                  forceWebView: true,
-                ),
-                child: const Text('登録したい技がない場合はこちら'),
-              ),
-            ),
-          )
-        : SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ListView(
-                children: searchModel.searchResult
-                    .map(
-                      (score) => resultTile(
-                        context,
-                        score,
-                        searchModel.searchResult.indexOf(score),
-                        ref,
-                      ),
-                    )
-                    .toList(),
-              ),
+        ? _requestLink
+        : Expanded(
+            child: ListView(
+              children: searchModel.searchResult
+                  .map(
+                    (score) => _techTile(context, score, ref),
+                  )
+                  .toList()
+                ..add(_requestLink)
+                ..add(const SizedBox(height: 300)),
             ),
           );
   }
 
-  Widget resultTile(
-    BuildContext context,
-    String techName,
-    int index,
-    WidgetRef ref,
-  ) {
+  Widget get _requestLink {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24),
+      child: SizedBox(
+        height: 50,
+        child: TextButton(
+          onPressed: () => launch(
+            'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+            forceSafariVC: true,
+            forceWebView: true,
+          ),
+          child: const Text('登録したい技がない場合はこちら'),
+        ),
+      ),
+    );
+  }
+
+  Widget _techTile(BuildContext context, String techName, WidgetRef ref) {
     final scoreEditModel = ref.watch(editPerformanceModelProvider);
     final group = scoreEditModel.groupData(event)[techName];
     final difficulty = scoreEditModel.difficultyData(event)[techName];
@@ -231,25 +221,29 @@ class SearchScreen extends StatelessWidget {
             ],
           ),
         ),
-        onTap: () async => _onResultTileTapped(context, techName, order, ref),
+        onTap: () async => _onTechSelected(context, techName, ref),
       ),
     );
   }
 
-  Future<void> _onResultTileTapped(
+  Future<void> _onTechSelected(
     BuildContext context,
     String techName,
-    int? order,
     WidgetRef ref,
   ) async {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
     final searchModel = ref.watch(searchModelProvider);
 
-    if (searchModel.isSameTechSelected(
-        editPerformanceModel.decidedTechList, techName)) {
+    final validateText = searchModel.validTech(
+      event,
+      editPerformanceModel.decidedTechList,
+      techName,
+    );
+
+    if (validateText != null) {
       await showOkAlertDialog(
         context: context,
-        title: 'すでに同じ技が登録されています。',
+        title: validateText,
       );
     } else {
       searchModel.setTech(

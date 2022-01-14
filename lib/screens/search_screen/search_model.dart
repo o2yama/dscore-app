@@ -1,8 +1,12 @@
-import 'package:dscore_app/data/fx.dart';
-import 'package:dscore_app/data/hb.dart';
-import 'package:dscore_app/data/pb.dart';
-import 'package:dscore_app/data/ph.dart';
-import 'package:dscore_app/data/sr.dart';
+import 'package:dscore_app/data/fx/fx.dart';
+import 'package:dscore_app/data/fx/fx_rule.dart';
+import 'package:dscore_app/data/hb/hb.dart';
+import 'package:dscore_app/data/hb/hb_rule.dart';
+import 'package:dscore_app/data/pb/pb.dart';
+import 'package:dscore_app/data/pb/pb_rule.dart';
+import 'package:dscore_app/data/ph/ph.dart';
+import 'package:dscore_app/data/ph/ph_rule.dart';
+import 'package:dscore_app/data/sr/sr.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
@@ -84,6 +88,23 @@ class SearchModel extends ChangeNotifier {
     controller.clear();
     searchResult.clear();
     notifyListeners();
+  }
+
+  String? validTech(Event event, List<String> techList, String techName) {
+    switch (event) {
+      case Event.fx:
+        return FxRule.validTech(techList, techName);
+      case Event.ph:
+        return PhRule.validTech(techList, techName);
+      case Event.sr:
+        return null;
+      case Event.vt:
+        return null;
+      case Event.pb:
+        return PbRule.validTech(techList, techName);
+      case Event.hb:
+        return HbRule.validTech(techList, techName);
+    }
   }
 
   bool isSameTechSelected(List<String> techList, String techName) {
