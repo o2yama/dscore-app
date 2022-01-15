@@ -18,7 +18,6 @@ class EditPerformanceModel extends ChangeNotifier {
 
   bool isEdited = false;
   List<String> decidedTechList = [];
-  // num totalScore = 0.0;
   num cv = 0.0;
   bool isUnder16 = false; //高校生ルールかどうか
 
@@ -224,8 +223,8 @@ class EditPerformanceModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  int countGroup1(List<String> techList, Event event) {
-    final techs = techList
+  int countGroup1(Event event) {
+    final techs = decidedTechList
         .where(
           (tech) => groupData(event)[tech] == 1,
         )
@@ -233,8 +232,8 @@ class EditPerformanceModel extends ChangeNotifier {
     return techs.length;
   }
 
-  int countGroup2(List<String> techList, Event event) {
-    final techs = techList
+  int countGroup2(Event event) {
+    final techs = decidedTechList
         .where(
           (tech) => groupData(event)[tech] == 2,
         )
@@ -242,8 +241,8 @@ class EditPerformanceModel extends ChangeNotifier {
     return techs.length;
   }
 
-  int countGroup3(List<String> techList, Event event) {
-    final techs = techList
+  int countGroup3(Event event) {
+    final techs = decidedTechList
         .where(
           (tech) => groupData(event)[tech] == 3,
         )

@@ -59,6 +59,7 @@ class SettingsScreen extends StatelessWidget {
                   //     ? _settingTile(
                   //         context, 'パスワード', EditPasswordScreen(), Icons.vpn_key)
                   //     : Container(),
+                  _settingTile(context, '2022年版新ルール', Icons.rule, ref),
                   _settingTile(
                     context,
                     'メールアドレス',
@@ -158,6 +159,13 @@ class SettingsScreen extends StatelessWidget {
             case '技追加の申請':
               launch(
                 'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+              break;
+            case '2022年版新ルール':
+              launch(
+                'https://www.jpn-gym.or.jp/artistic/wp-content/uploads/sites/2/2021/11/fe50cd796f5adc2c6bee264a726ff587.pdf',
                 forceSafariVC: true,
                 forceWebView: true,
               );

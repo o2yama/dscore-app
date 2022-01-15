@@ -17,8 +17,6 @@ class HomeModel extends ChangeNotifier {
   late final PerformanceRepository performanceRepository;
 
   bool isFetched = false;
-  bool isAppReviewDialogShowed = false;
-  bool isFetchedToken = false;
   NotificationSettings? settings;
 
   PerformanceWithCV? favoriteFx;
@@ -89,10 +87,9 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getIsAppReviewDialogShowed() async {
+  Future<bool> getIsAppReviewDialogShowed() async {
     final prefs = await SharedPreferences.getInstance();
-    isAppReviewDialogShowed = prefs.getBool('isAppReviewDialogShowed') ?? false;
-    notifyListeners();
+    return prefs.getBool('isAppReviewDialogShowed') ?? false;
   }
 
   Future<void> setAppReviewDialogShowed() async {

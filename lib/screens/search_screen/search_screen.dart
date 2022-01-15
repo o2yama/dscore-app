@@ -102,12 +102,7 @@ class SearchScreen extends StatelessWidget {
               .watch(editPerformanceModelProvider)
               .searchWords(event)
               .map(
-                (chipsText) => _techChip(
-                  context,
-                  chipsText,
-                  event,
-                  ref,
-                ),
+                (chipsText) => _techChip(context, chipsText, event, ref),
               )
               .toList()),
     );
@@ -184,17 +179,8 @@ class SearchScreen extends StatelessWidget {
           techName,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        trailing: SizedBox(
-          width: 110,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(Convertor.difficulty[difficulty]!),
-              const SizedBox(width: 24),
-              Text(Convertor.group[group]!),
-            ],
-          ),
+        trailing: Text(
+          '${Convertor.difficulty[difficulty]} / ${Convertor.group[group]}',
         ),
         onTap: () async => _onTechSelected(context, techName, ref),
       ),

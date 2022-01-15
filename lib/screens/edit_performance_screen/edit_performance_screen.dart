@@ -97,26 +97,17 @@ class EditPerformanceScreen extends ConsumerWidget {
             const VerticalDivider(color: Colors.black54),
             GroupCount(
               group: 'Ⅰ',
-              count: editPerformanceModel.countGroup1(
-                editPerformanceModel.decidedTechList,
-                event,
-              ),
+              count: editPerformanceModel.countGroup1(event),
             ),
             const VerticalDivider(color: Colors.black54),
             GroupCount(
               group: 'Ⅱ',
-              count: editPerformanceModel.countGroup2(
-                editPerformanceModel.decidedTechList,
-                event,
-              ),
+              count: editPerformanceModel.countGroup2(event),
             ),
             const VerticalDivider(color: Colors.black54),
             GroupCount(
               group: 'Ⅲ',
-              count: editPerformanceModel.countGroup3(
-                editPerformanceModel.decidedTechList,
-                event,
-              ),
+              count: editPerformanceModel.countGroup3(event),
             ),
             const VerticalDivider(color: Colors.black54),
             event == Event.fx
@@ -339,18 +330,9 @@ class EditPerformanceScreen extends ConsumerWidget {
   //グループが５つを超えた場合の処理
   bool _validCountOfGroup(WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
-    final countGroup1 = editPerformanceModel.countGroup1(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
-    final countGroup2 = editPerformanceModel.countGroup2(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
-    final countGroup3 = editPerformanceModel.countGroup3(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
+    final countGroup1 = editPerformanceModel.countGroup1(event);
+    final countGroup2 = editPerformanceModel.countGroup2(event);
+    final countGroup3 = editPerformanceModel.countGroup3(event);
 
     return countGroup1 > 5 || countGroup2 > 5 || countGroup3 > 5;
   }

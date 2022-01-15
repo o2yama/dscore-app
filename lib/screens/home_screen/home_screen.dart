@@ -34,14 +34,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         await homeModel.getUserData();
         await homeModel.getFavoritePerformances();
 
-        //プッシュ通知の許可ダイアログ
-        if (homeModel.settings == null) {
-          await homeModel.requestNotificationPermission();
-        }
-
         //トータルが20点超えたら、レビュー用のダイアログ
-        await homeModel.getIsAppReviewDialogShowed();
-        if (!homeModel.isAppReviewDialogShowed && homeModel.totalScore >= 20) {
+        final isAppReviewDialogShowed =
+            await homeModel.getIsAppReviewDialogShowed();
+        if (!isAppReviewDialogShowed && homeModel.totalScore >= 20) {
           await homeModel.showAppReviewDialog();
           await homeModel.setAppReviewDialogShowed();
         }
