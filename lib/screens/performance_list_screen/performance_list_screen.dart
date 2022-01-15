@@ -27,7 +27,7 @@ class PerformanceListScreen extends ConsumerWidget {
       context: context,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               const BannerAdWidget(),
@@ -181,59 +181,71 @@ class PerformanceListScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            child: Card(
-              child: InkWell(
-                onTap: () async {
-                  ref.watch(loadingStateProvider.notifier).startLoading();
-                  await ref
-                      .watch(editPerformanceModelProvider)
-                      .getPerformanceData(
-                        score == null ? scoreWithCV!.scoreId : score.scoreId,
-                        event,
-                      );
-                  ref.watch(loadingStateProvider.notifier).endLoading();
-                  await Navigator.push<Object>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditPerformanceScreen(
-                        event: event,
-                        scoreId: score == null
-                            ? scoreWithCV!.scoreId
-                            : score.scoreId,
+            child: SizedBox(
+              height: 150,
+              child: Card(
+                child: InkWell(
+                  onTap: () async {
+                    ref.watch(loadingStateProvider.notifier).startLoading();
+
+                    await ref
+                        .watch(editPerformanceModelProvider)
+                        .getPerformanceData(
+                          score == null ? scoreWithCV!.scoreId : score.scoreId,
+                          event,
+                        );
+
+                    ref.watch(loadingStateProvider.notifier).endLoading();
+                    await Navigator.push<Object>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditPerformanceScreen(
+                          event: event,
+                          scoreId: score == null
+                              ? scoreWithCV!.scoreId
+                              : score.scoreId,
+                        ),
                       ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 16),
+                        Text(
+                          '${score == null ? scoreWithCV!.total : score.total}',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        const SizedBox(width: 16),
+                        _techsListView(
+                          context,
+                          score == null ? scoreWithCV!.techs : score.techs,
+                        ),
+                        const SizedBox(width: 8),
+                        Column(
+                          children: [
+                            _star(
+                              context,
+                              score == null
+                                  ? scoreWithCV!.isFavorite
+                                  : score.isFavorite,
+                              score == null
+                                  ? scoreWithCV!.scoreId
+                                  : score.scoreId,
+                              ref,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${score == null ? scoreWithCV!.total : score.total}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      const SizedBox(width: 16),
-                      _techsListView(
-                        context,
-                        score == null ? scoreWithCV!.techs : score.techs,
-                      ),
-                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        _star(
-          context,
-          score == null ? scoreWithCV!.isFavorite : score.isFavorite,
-          score == null ? scoreWithCV!.scoreId : score.scoreId,
-          ref,
         ),
       ],
     );
@@ -285,14 +297,13 @@ class PerformanceListScreen extends ConsumerWidget {
   }
 
   Widget _star(
-      BuildContext context, bool isFavorite, String scoreId, WidgetRef ref) {
-    return IconButton(
-      padding: EdgeInsets.zero,
-      icon: Icon(
-        Icons.star,
-        color: isFavorite ? Theme.of(context).primaryColor : Colors.white,
-      ),
-      onPressed: () async {
+    BuildContext context,
+    bool isFavorite,
+    String scoreId,
+    WidgetRef ref,
+  ) {
+    return InkWell(
+      onTap: () async {
         ref.watch(loadingStateProvider.notifier).startLoading();
 
         await ref
@@ -303,6 +314,10 @@ class PerformanceListScreen extends ConsumerWidget {
 
         ref.watch(loadingStateProvider.notifier).endLoading();
       },
+      child: Icon(
+        Icons.star,
+        color: isFavorite ? Colors.orangeAccent : Colors.grey,
+      ),
     );
   }
 
@@ -310,10 +325,9 @@ class PerformanceListScreen extends ConsumerWidget {
   Widget _techsListView(BuildContext context, List<String> techs) {
     return Expanded(
       child: Container(
-        height: 80,
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: ListView(
           children: techs

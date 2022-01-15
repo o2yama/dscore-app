@@ -15,11 +15,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum Event { fx, ph, sr, vt, pb, hb }
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
     final homeModel = ref.watch(homeModelProvider);
 
     if (!homeModel.isFetched) {
@@ -54,7 +59,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const BannerAdWidget(),
               _settingButtons(context),
-              _eventsList(context, homeModel),
+              _eventsList(context),
             ],
           ),
         ),
@@ -80,29 +85,23 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _eventsList(BuildContext context, HomeModel homeModel) {
+  Widget _eventsList(BuildContext context) {
     return Column(
-      children: [
-        _eventCard(context, Event.fx),
-        _eventCard(context, Event.ph),
-        _eventCard(context, Event.sr),
-        _eventCard(context, Event.vt),
-        _eventCard(context, Event.pb),
-        _eventCard(context, Event.hb),
-        _totalScore(context, homeModel),
-        Container(height: 100),
-      ],
+      children: Event.values
+          .map(
+            (event) => _eventCard(context, event),
+          )
+          .toList()
+        ..add(_totalScore(context))
+        ..add(Container(height: 150)),
     );
   }
 
   Widget _eventCard(BuildContext context, Event event) {
     return Consumer(
       builder: (context, ref, child) {
-        final performanceListModel = ref.watch(performanceListModelProvider);
-        final homeModel = ref.watch(homeModelProvider);
-
         return SizedBox(
-          height: 130,
+          height: 150,
           child: Card(
             child: InkWell(
               onTap: () async {
@@ -116,7 +115,9 @@ class HomeScreen extends ConsumerWidget {
                   );
                 } else {
                   ref.watch(loadingStateProvider.notifier).startLoading();
-                  await performanceListModel.getPerformances(event);
+                  await ref
+                      .watch(performanceListModelProvider)
+                      .getPerformances(event);
                   ref.watch(loadingStateProvider.notifier).endLoading();
                   await Navigator.push<Object>(
                     context,
@@ -128,53 +129,9 @@ class HomeScreen extends ConsumerWidget {
               },
               child: Row(
                 children: [
+                  _cardHeader(context, event),
+                  Expanded(child: _techsList(event, context)),
                   const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
-                    child: Column(children: [
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 15, top: 20),
-                          child: Text(
-                            Convertor.eventName[event]!,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 15, top: 10),
-                          child: Text(
-                            Convertor.eventNameEn[event]!,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ]),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      padding: const EdgeInsets.only(left: 30),
-                      child: _score(context, homeModel, event),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 4,
-                    child: SizedBox(
-                      width: Utilities.screenWidth(context) * 0.4,
-                      child: _techsList(event, context, homeModel),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
                 ],
               ),
             ),
@@ -184,43 +141,88 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _score(BuildContext context, HomeModel homeModel, Event event) {
+  Widget _cardHeader(BuildContext context, Event event) {
+    return SizedBox(
+      width: 80,
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          Text(
+            Convertor.eventNameEn[event]!,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            Convertor.eventName[event]!,
+            style: const TextStyle(fontSize: 16),
+          ),
+          _score(context, event),
+        ],
+      ),
+    );
+  }
+
+  Widget _score(BuildContext context, Event event) {
+    final homeModel = ref.watch(homeModelProvider);
+
     switch (event) {
       case Event.fx:
         return Text(
           '${homeModel.favoriteFxScore}',
-          style: Theme.of(context).textTheme.headline6,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         );
       case Event.ph:
         return Text(
           '${homeModel.favoritePhScore}',
-          style: Theme.of(context).textTheme.headline6,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         );
       case Event.sr:
         return Text(
           '${homeModel.favoriteSrScore}',
-          style: Theme.of(context).textTheme.headline6,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         );
       case Event.vt:
         return Text(
           homeModel.vt == null
               ? '0.0'
               : vtTechs[homeModel.vt!.techName].toString(),
-          style: Theme.of(context).textTheme.headline6,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         );
       case Event.pb:
-        return Text('${homeModel.favoritePbScore}',
-            style: Theme.of(context).textTheme.headline6);
+        return Text(
+          '${homeModel.favoritePbScore}',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        );
       case Event.hb:
         return Text(
           '${homeModel.favoriteHbScore}',
-          style: Theme.of(context).textTheme.headline6,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         );
     }
   }
 
   //  6種目の合計
-  Widget _totalScore(BuildContext context, HomeModel homeModel) {
+  Widget _totalScore(BuildContext context) {
     return Column(
       children: [
         Container(
@@ -238,7 +240,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
               Text(
-                homeModel.totalScore.toString(),
+                ref.watch(homeModelProvider).totalScore.toString(),
                 style: TextStyle(
                   fontSize: Utilities.isMobile() ? 30 : 50,
                   fontWeight: FontWeight.bold,
@@ -254,11 +256,9 @@ class HomeScreen extends ConsumerWidget {
   }
 
   //技のリスト表示
-  Widget _techsList(
-    Event event,
-    BuildContext context,
-    HomeModel homeModel,
-  ) {
+  Widget _techsList(Event event, BuildContext context) {
+    final homeModel = ref.watch(homeModelProvider);
+
     switch (event) {
       case Event.fx:
         return _customListView(
@@ -331,6 +331,7 @@ class HomeScreen extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: child,
       ),

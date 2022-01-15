@@ -50,47 +50,13 @@ class TechTile extends ConsumerWidget {
               Flexible(
                 child: Text(
                   techName,
-                  style: const TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
           ),
-          trailing: SizedBox(
-            width: 110,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    const Expanded(
-                      child: Text('難度', style: TextStyle(fontSize: 10)),
-                    ),
-                    Expanded(
-                      child: Text(
-                        Convertor.difficulty[difficulty].toString(),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 24),
-                Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    const Expanded(
-                      child: Text('グループ', style: TextStyle(fontSize: 10)),
-                    ),
-                    Expanded(
-                      child: Text(Convertor.group[group].toString()),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          trailing: Text(
+            '${Convertor.difficulty[difficulty]} / ${Convertor.group[group]}',
           ),
           onTap: () {
             searchController.clear();

@@ -34,13 +34,7 @@ class CvMenu extends ConsumerWidget {
                   child: SizedBox(
                     child: TextButton(
                       onPressed: () {
-                        editPerformanceModel
-                          ..onCVSelected(cv)
-                          ..calculateScore(
-                            editPerformanceModel.decidedTechList,
-                            editPerformanceModel.isUnder16,
-                            event,
-                          );
+                        editPerformanceModel.onCVSelected(cv);
                         Navigator.pop(context);
                       },
                       child: Text(

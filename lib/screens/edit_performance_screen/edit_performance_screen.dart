@@ -136,11 +136,7 @@ class EditPerformanceScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '${editPerformanceModel.calcTotalScore(
-                      editPerformanceModel.decidedTechList,
-                      editPerformanceModel.isUnder16,
-                      event,
-                    )}',
+                    '${editPerformanceModel.calcTotalScore(event)}',
                     style: const TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -169,7 +165,7 @@ class EditPerformanceScreen extends ConsumerWidget {
           children: [
             const Text('難度点'),
             Text(
-              '${editPerformanceModel.difficultyPoint}',
+              '${editPerformanceModel.calculateDifficulty(event)}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
             ),
           ],
@@ -178,7 +174,11 @@ class EditPerformanceScreen extends ConsumerWidget {
           children: [
             const Text('要求点'),
             Text(
-              '${editPerformanceModel.egr}',
+              '${editPerformanceModel.calculateEGR(
+                editPerformanceModel.decidedTechList,
+                editPerformanceModel.isUnder16,
+                event,
+              )}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
             ),
           ],
@@ -306,20 +306,8 @@ class EditPerformanceScreen extends ConsumerWidget {
     final loadingStateModel = ref.watch(loadingStateProvider.notifier);
     final performanceListModel = ref.watch(performanceListModelProvider);
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
-    final countGroup1 = editPerformanceModel.countGroup1(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
-    final countGroup2 = editPerformanceModel.countGroup2(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
-    final countGroup3 = editPerformanceModel.countGroup3(
-      editPerformanceModel.decidedTechList,
-      event,
-    );
 
-    if (countGroup1 > 5 || countGroup2 > 5 || countGroup3 > 5) {
+    if (_validCountOfGroup(ref)) {
       await showOkAlertDialog(
         context: context,
         title: '同一グループが6つ以上登録されています。',
@@ -346,5 +334,24 @@ class EditPerformanceScreen extends ConsumerWidget {
 
       Navigator.pop(context);
     }
+  }
+
+  //グループが５つを超えた場合の処理
+  bool _validCountOfGroup(WidgetRef ref) {
+    final editPerformanceModel = ref.watch(editPerformanceModelProvider);
+    final countGroup1 = editPerformanceModel.countGroup1(
+      editPerformanceModel.decidedTechList,
+      event,
+    );
+    final countGroup2 = editPerformanceModel.countGroup2(
+      editPerformanceModel.decidedTechList,
+      event,
+    );
+    final countGroup3 = editPerformanceModel.countGroup3(
+      editPerformanceModel.decidedTechList,
+      event,
+    );
+
+    return countGroup1 > 5 || countGroup2 > 5 || countGroup3 > 5;
   }
 }

@@ -7,6 +7,7 @@ import 'package:dscore_app/data/pb/pb_rule.dart';
 import 'package:dscore_app/data/ph/ph.dart';
 import 'package:dscore_app/data/ph/ph_rule.dart';
 import 'package:dscore_app/data/sr/sr.dart';
+import 'package:dscore_app/data/sr/sr_rule.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
@@ -30,8 +31,10 @@ class SearchModel extends ChangeNotifier {
       searchResult.clear();
     } else {
       searchResult.clear(); //addしているため毎回クリアする必要がある
+
       final inputCharacters = <String>[];
       inputText.characters.forEach(inputCharacters.add);
+
       if (event == Event.fx) {
         searchResult = searchLogic(fxSearchWords, inputCharacters);
       }
@@ -52,7 +55,9 @@ class SearchModel extends ChangeNotifier {
   }
 
   List<String> searchLogic(
-      Map<String, String> searchWords, List<String> characters) {
+    Map<String, String> searchWords,
+    List<String> characters,
+  ) {
     final techsContainingFirstChar = <String>[];
     final techsToRemove = <String>[];
 
@@ -97,7 +102,7 @@ class SearchModel extends ChangeNotifier {
       case Event.ph:
         return PhRule.validTech(techList, techName);
       case Event.sr:
-        return null;
+        return SrRule.validTech(techList, techName);
       case Event.vt:
         return null;
       case Event.pb:
@@ -107,14 +112,8 @@ class SearchModel extends ChangeNotifier {
     }
   }
 
-  bool isSameTechSelected(List<String> techList, String techName) {
-    var isExist = false;
-    for (final tech in techList) {
-      if (techName == tech) {
-        isExist = true;
-      }
-    }
-    return isExist;
+  bool isContainGroup4(List<String> techList, String techName) {
+    return techList.contains(techName);
   }
 
   void setTech(List techList, String techName, int? order) {
@@ -123,6 +122,7 @@ class SearchModel extends ChangeNotifier {
     } else {
       techList.add(techName);
     }
+
     notifyListeners();
   }
 }

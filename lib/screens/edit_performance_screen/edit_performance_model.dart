@@ -18,9 +18,7 @@ class EditPerformanceModel extends ChangeNotifier {
 
   bool isEdited = false;
   List<String> decidedTechList = [];
-  num totalScore = 0.0;
-  num difficultyPoint = 0.0;
-  num egr = 0.0;
+  // num totalScore = 0.0;
   num cv = 0.0;
   bool isUnder16 = false; //高校生ルールかどうか
 
@@ -84,9 +82,6 @@ class EditPerformanceModel extends ChangeNotifier {
 
   void resetScore() {
     decidedTechList = [];
-    totalScore = 0.0;
-    difficultyPoint = 0.0;
-    egr = 0.0;
     cv = 0.0;
     notifyListeners();
   }
@@ -94,13 +89,11 @@ class EditPerformanceModel extends ChangeNotifier {
   void deleteTech(int index, Event event) {
     decidedTechList.remove(decidedTechList[index]);
     isEdited = true;
-    calculateScore(decidedTechList, isUnder16, event);
     notifyListeners();
   }
 
   void setRule(Event event, bool isUnder16) {
     this.isUnder16 = isUnder16;
-    calculateScore(decidedTechList, isUnder16, event);
     isEdited = true;
     notifyListeners();
   }
@@ -133,52 +126,95 @@ class EditPerformanceModel extends ChangeNotifier {
       cv = hbScore.cv;
       isUnder16 = hbScore.isUnder16;
     }
-    calculateScore(decidedTechList, isUnder16, event);
   }
 
   Future<void> setPerformance(Event event, bool isFirst) async {
     if (event == Event.fx) {
       await performanceRepository.setFxPerformance(
-          totalScore, decidedTechList, cv, isFirst, isUnder16);
+        calcTotalScore(event),
+        decidedTechList,
+        cv,
+        isFirst,
+        isUnder16,
+      );
     }
     if (event == Event.ph) {
       await performanceRepository.setPhPerformance(
-          totalScore, decidedTechList, isFirst, isUnder16);
+        calcTotalScore(event),
+        decidedTechList,
+        isFirst,
+        isUnder16,
+      );
     }
     if (event == Event.sr) {
       await performanceRepository.setSrPerformance(
-          totalScore, decidedTechList, isFirst, isUnder16);
+        calcTotalScore(event),
+        decidedTechList,
+        isFirst,
+        isUnder16,
+      );
     }
     if (event == Event.pb) {
       await performanceRepository.setPbPerformance(
-          totalScore, decidedTechList, isFirst, isUnder16);
+        calcTotalScore(event),
+        decidedTechList,
+        isFirst,
+        isUnder16,
+      );
     }
     if (event == Event.hb) {
       await performanceRepository.setHbPerformance(
-          totalScore, decidedTechList, cv, isFirst, isUnder16);
+        calcTotalScore(event),
+        decidedTechList,
+        cv,
+        isFirst,
+        isUnder16,
+      );
     }
   }
 
   Future<void> updatePerformance(Event event, String scoreId) async {
     if (event == Event.fx) {
       await performanceRepository.updateFxPerformance(
-          scoreId, totalScore, decidedTechList, cv, isUnder16);
+        scoreId,
+        calcTotalScore(event),
+        decidedTechList,
+        cv,
+        isUnder16,
+      );
     }
     if (event == Event.ph) {
       await performanceRepository.updatePhPerformance(
-          scoreId, totalScore, decidedTechList, isUnder16);
+        scoreId,
+        calcTotalScore(event),
+        decidedTechList,
+        isUnder16,
+      );
     }
     if (event == Event.sr) {
       await performanceRepository.updateSrPerformance(
-          scoreId, totalScore, decidedTechList, isUnder16);
+        scoreId,
+        calcTotalScore(event),
+        decidedTechList,
+        isUnder16,
+      );
     }
     if (event == Event.pb) {
       await performanceRepository.updatePbPerformance(
-          scoreId, totalScore, decidedTechList, isUnder16);
+        scoreId,
+        calcTotalScore(event),
+        decidedTechList,
+        isUnder16,
+      );
     }
     if (event == Event.hb) {
       await performanceRepository.updateHbPerformance(
-          scoreId, totalScore, decidedTechList, cv, isUnder16);
+        scoreId,
+        calcTotalScore(event),
+        decidedTechList,
+        cv,
+        isUnder16,
+      );
     }
   }
 
@@ -354,11 +390,11 @@ class EditPerformanceModel extends ChangeNotifier {
   }
 
   //難度点の計算
-  num calculateDifficulty(List<String> techList, Event event) {
+  num calculateDifficulty(Event event) {
     var difficultyPoint = 0.0;
 
-    if (techList.isNotEmpty) {
-      for (final tech in techList) {
+    if (decidedTechList.isNotEmpty) {
+      for (final tech in decidedTechList) {
         difficultyPoint = difficultyPoint * 10 + difficultyData(event)[tech]!;
         difficultyPoint /= 10;
       }
@@ -367,23 +403,12 @@ class EditPerformanceModel extends ChangeNotifier {
     return difficultyPoint;
   }
 
-  //Dスコア計算
-  num calcTotalScore(List<String> techList, bool isUnder16, Event event) {
-    var egr = calculateEGR(techList, isUnder16, event);
-    var difficulty = calculateDifficulty(techList, event);
+  num calcTotalScore(Event event) {
+    var egr = calculateEGR(decidedTechList, isUnder16, event);
+    var difficulty = calculateDifficulty(event);
 
     var tenTimesTotalScore = difficulty * 10 + egr * 10 + cv * 10;
     return tenTimesTotalScore / 10;
-  }
-
-  void calculateScore(List<String> techList, bool isUnder16, Event event) {
-    egr = calculateEGR(techList, isUnder16, event);
-    difficultyPoint = calculateDifficulty(techList, event);
-
-    totalScore = difficultyPoint * 10 + egr * 10 + cv * 10;
-    totalScore /= 10;
-
-    notifyListeners();
   }
 
   void onReOrder(int oldIndex, int newIndex, Event event) {
@@ -393,7 +418,6 @@ class EditPerformanceModel extends ChangeNotifier {
     } else {
       decidedTechList.insert(newIndex, numberChangedTech);
     }
-    calculateScore(decidedTechList, isUnder16, event);
     isEdited = true;
 
     notifyListeners();

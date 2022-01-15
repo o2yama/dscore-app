@@ -1,6 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dscore_app/common/convertor.dart';
-import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
@@ -135,7 +134,11 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  Widget _searchResults(BuildContext context, Event event, WidgetRef ref) {
+  Widget _searchResults(
+    BuildContext context,
+    Event event,
+    WidgetRef ref,
+  ) {
     final searchModel = ref.watch(searchModelProvider);
 
     return searchModel.searchResult.isEmpty
@@ -179,10 +182,7 @@ class SearchScreen extends StatelessWidget {
       child: ListTile(
         title: Text(
           techName,
-          style: TextStyle(
-            fontSize: Utilities.isMobile() ? 14.0 : 18.0,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         trailing: SizedBox(
           width: 110,
@@ -190,34 +190,9 @@ class SearchScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Column(
-                children: [
-                  const SizedBox(height: 8),
-                  const Expanded(
-                    child: Text('難度', style: TextStyle(fontSize: 10)),
-                  ),
-                  Expanded(
-                    child: Text(
-                      Convertor.difficulty[difficulty].toString(),
-                    ),
-                  ),
-                ],
-              ),
+              Text(Convertor.difficulty[difficulty]!),
               const SizedBox(width: 24),
-              Column(
-                children: [
-                  const SizedBox(height: 8),
-                  const Expanded(
-                    child: Text(
-                      'グループ',
-                      style: TextStyle(fontSize: 10),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(Convertor.group[group].toString()),
-                  ),
-                ],
-              ),
+              Text(Convertor.group[group]!),
             ],
           ),
         ),
@@ -250,11 +225,6 @@ class SearchScreen extends StatelessWidget {
         editPerformanceModel.decidedTechList,
         techName,
         order,
-      );
-      editPerformanceModel.calculateScore(
-        editPerformanceModel.decidedTechList,
-        editPerformanceModel.isUnder16,
-        event,
       );
     }
     Navigator.pop(context);
