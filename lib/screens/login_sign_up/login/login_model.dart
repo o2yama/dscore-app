@@ -9,21 +9,8 @@ final loginModelProvider = ChangeNotifierProvider(
 class LoginModel extends ChangeNotifier {
   late final UserRepository userRepository;
 
-  String email = '';
-  String password = '';
-
   init() {
     userRepository = UserRepository();
-  }
-
-  void onEmailEdited(String text) {
-    email = text;
-    notifyListeners();
-  }
-
-  void onPasswordEdited(String text) {
-    password = text;
-    notifyListeners();
   }
 
   Future<void> logIn(String email, String password) async {

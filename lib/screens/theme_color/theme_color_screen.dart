@@ -85,12 +85,12 @@ class ThemeColorScreen extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-          child: InkWell(
-            onTap: () async {
-              await themeColorModel.setThemeColor(color);
-              await themeColorModel.getThemeColor();
-            },
-            child: Card(
+          child: Card(
+            child: InkWell(
+              onTap: () async {
+                await themeColorModel.setThemeColor(color);
+                await themeColorModel.getThemeColor();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(

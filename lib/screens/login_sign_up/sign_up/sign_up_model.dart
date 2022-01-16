@@ -9,24 +9,11 @@ final signUpModelProvider = ChangeNotifierProvider(
 class SignUpModel extends ChangeNotifier {
   late final UserRepository userRepository;
 
-  String email = '';
-  String password = '';
-
   init() {
     userRepository = UserRepository();
   }
 
-  void onEmailEdited(String text) {
-    email = text;
-    notifyListeners();
-  }
-
-  void onPasswordEdited(String text) {
-    password = text;
-    notifyListeners();
-  }
-
-  Future<void> signUpWithEmailAndPassword() async {
+  Future<void> signUpWithEmailAndPassword(String email, String password) async {
     try {
       await userRepository.signUpWithEmailAndPassWord(email, password);
       await userRepository.getCurrentUserData();

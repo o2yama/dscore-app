@@ -1,6 +1,8 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
+import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
+import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
+import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/common/validator.dart';
@@ -8,115 +10,115 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'login_model.dart';
 
-GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
 TextEditingController emailController = TextEditingController();
-TextEditingController passwordController = TextEditingController();
+final _passwordController = TextEditingController();
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      context: context,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                child: Consumer(builder: (context, ref, child) {
-                  return Column(
-                    children: [
-                      const SizedBox(height: 24),
-                      _description(context),
-                      const SizedBox(height: 24),
-                      _emailController(context, ref),
-                      const SizedBox(height: 24),
-                      _passwordController(context, ref),
-                      const SizedBox(height: 50),
-                      _loginButton(context, ref),
-                      const SizedBox(height: 30),
-                      _toSignUpScreenButton(context),
-                      const SizedBox(height: 300),
-                    ],
-                  );
-                }),
+    return Scaffold(
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Stack(
+                children: [
+                  Image.asset('images/splash.png'),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          return Column(
+                            children: [
+                              const SizedBox(height: 24),
+                              _title(context),
+                              _emailTextField(context, ref),
+                              _passwordTextField(context, ref),
+                              SizedBox(
+                                height: Utilities.screenHeight(context) * 0.3,
+                              ),
+                              _loginButton(context, ref),
+                              const SizedBox(height: 24),
+                              _toSignUpScreenButton(context),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
+          const LoadingView(),
+        ],
+      ),
+    );
+  }
+
+  Widget _title(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: const [
+        Text(
+          'ログイン',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 28,
+          ),
+        ),
+        SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _emailTextField(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32),
+      child: TextField(
+        controller: emailController,
+        cursorColor: Theme.of(context).primaryColor,
+        decoration: const InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.all(10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          hintText: 'メールアドレス',
         ),
       ),
     );
   }
 
-  Widget _description(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text('ログイン', style: Theme.of(context).textTheme.headline5),
-      const SizedBox(height: 24),
-      SizedBox(
-        height: 150,
-        child: Image.asset('images/splash_image.JPG'),
-      ),
-      const SizedBox(height: 24),
-      const Text('ログインして、Dスコアを管理しましょう！'),
-    ]);
-  }
-
-  Widget _emailController(BuildContext context, WidgetRef ref) {
+  Widget _passwordTextField(BuildContext context, WidgetRef ref) {
     return TextField(
-      controller: emailController,
+      controller: _passwordController,
       cursorColor: Theme.of(context).primaryColor,
       autofocus: true,
       decoration: const InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 10),
-        prefixIcon: Icon(Icons.mail),
+        fillColor: Colors.white,
+        filled: true,
+        contentPadding: EdgeInsets.all(10),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-          borderSide: BorderSide(
-            color: Colors.grey,
-          ),
-        ),
-        hintText: 'メールアドレス',
-      ),
-      onChanged: ref.read(loginModelProvider).onEmailEdited,
-    );
-  }
-
-  Widget _passwordController(BuildContext context, WidgetRef ref) {
-    return TextField(
-      controller: passwordController,
-      cursorColor: Theme.of(context).primaryColor,
-      autofocus: true,
-      decoration: const InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 10),
-        prefixIcon: Icon(Icons.vpn_key_sharp),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-          borderSide: BorderSide(
-            color: Colors.grey,
-          ),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: Colors.grey),
         ),
         hintText: 'パスワード',
       ),
-      onChanged: ref.read(loginModelProvider).onPasswordEdited,
     );
   }
 
@@ -126,11 +128,11 @@ class LoginScreen extends StatelessWidget {
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.white),
       ),
-      child: Text(
+      child: const Text(
         'ログイン',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).primaryColor,
+          color: Colors.black54,
           fontSize: 18,
         ),
       ),
@@ -143,16 +145,23 @@ class LoginScreen extends StatelessWidget {
   ) async {
     final loginModel = ref.watch(loginModelProvider);
     final loadingStateModel = ref.watch(loadingStateProvider.notifier);
+    final homeModel = ref.watch(homeModelProvider);
 
-    loadingStateModel.startLoading();
-
-    if (!Validator().validEmail(loginModel.email)) {
+    if (!Validator().validEmail(emailController.text)) {
       showValidMessage(context, 'メールアドレスをご確認ください。');
-    } else if (!Validator().validPassword(loginModel.password)) {
+    } else if (!Validator().validPassword(_passwordController.text)) {
       showValidMessage(context, 'パスワードは半角英数字6文字以上です。');
     } else {
       try {
-        await loginModel.logIn(loginModel.email, loginModel.password);
+        loadingStateModel.startLoading();
+        await loginModel.logIn(
+          emailController.text,
+          _passwordController.text,
+        );
+
+        await homeModel.getUserData();
+        await homeModel.getFavoritePerformances();
+
         await showOkAlertDialog(
           barrierDismissible: true,
           context: context,
@@ -160,11 +169,12 @@ class LoginScreen extends StatelessWidget {
           message: 'Dスコアを登録しましょう！',
         );
         Navigator.pushAndRemoveUntil<Object>(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
-            (_) => false);
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (_) => false,
+        );
+        emailController.clear();
+        _passwordController.clear();
       } on Exception catch (e) {
         await showOkAlertDialog(
           barrierDismissible: true,
@@ -180,13 +190,17 @@ class LoginScreen extends StatelessWidget {
 
   Widget _toSignUpScreenButton(BuildContext context) {
     return TextButton(
-      onPressed: () => Navigator.pushAndRemoveUntil<Object>(
+      onPressed: () {
+        _passwordController.clear();
+        Navigator.pushAndRemoveUntil<Object>(
           context,
           MaterialPageRoute(builder: (context) => const SignUpScreen()),
-          (_) => false),
+          (_) => false,
+        );
+      },
       child: const Text(
         'ユーザー登録がまだの方はこちら',
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   final editPerformanceModel = EditPerformanceModel();
 
-  final phTechList = [
+  final phPerformanceA = [
     'バックセアー',
     'Cセアー',
     'ロス',
@@ -17,14 +17,11 @@ void main() {
     '倒立2回ひねり下り',
   ];
 
-  group('スコア計算のテスト', () {
-    test('length of performance', () {
-      expect(phTechList.length, 9);
-    });
-
-    test('calculate egr', () {
-      final egr =
-          editPerformanceModel.calculateEGR(phTechList, false, Event.ph);
+  group('calculation test', () {
+    test('calculate egr PhA', () {
+      editPerformanceModel.decidedTechList = phPerformanceA;
+      final egr = editPerformanceModel.calculateEGR(
+          editPerformanceModel.decidedTechList, false, Event.ph);
       expect(egr, 2.0);
     });
   });
