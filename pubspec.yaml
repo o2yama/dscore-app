@@ -36,7 +36,6 @@ dev_dependencies:
   flutter_native_splash: ^1.1.8+4
   flutter_test:
     sdk: flutter
-  pedantic_mono: any
 
 flutter_icons:
   android: true

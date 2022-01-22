@@ -33,6 +33,15 @@ android {
         disable 'InvalidPackage'
     }
 
+    defaultConfig {
+        applicationId "com.o2yamagym.dscore_app"
+        minSdkVersion 25
+        targetSdkVersion 31
+        versionCode 19
+        versionName '2.0.0'
+        multiDexEnabled true
+    }
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -41,16 +50,6 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
-
-    defaultConfig {
-        applicationId "com.o2yamagym.dscore_app"
-        minSdkVersion 25
-        targetSdkVersion 29
-        versionCode 6
-        versionName '0.1.1'
-        multiDexEnabled true
-    }
-
     buildTypes {
         release {
             minifyEnabled true
