@@ -1,6 +1,8 @@
+import 'package:dscore_app/common/att.dart';
 import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/data/vt/vt.dart';
+import 'package:dscore_app/repository/prefs_repository.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dart';
@@ -15,39 +17,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum Event { fx, ph, sr, vt, pb, hb }
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() {
-    return _HomeScreenState();
-  }
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
-    final homeModel = ref.watch(homeModelProvider);
-
-    if (!homeModel.isFetched) {
-      Future(() async {
-        ref.watch(loadingStateProvider.notifier).startLoading();
-
-        await homeModel.getUserData();
-        await homeModel.getFavoritePerformances();
-
-        //トータルが20点超えたら、レビュー用のダイアログ
-        final isAppReviewDialogShowed =
-            await homeModel.getIsAppReviewDialogShowed();
-        if (!isAppReviewDialogShowed && homeModel.totalScore >= 20) {
-          await homeModel.showAppReviewDialog();
-          await homeModel.setAppReviewDialogShowed();
-        }
-
-        ref.watch(loadingStateProvider.notifier).endLoading();
-      });
-    }
-
     return CustomScaffold(
       context: context,
       body: SingleChildScrollView(
@@ -71,75 +45,106 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         IconButton(
           icon: Icon(Icons.settings, color: Theme.of(context).primaryColor),
-          onPressed: () => Navigator.push<Object>(
+          onPressed: () => Navigator.push<Widget>(
             context,
             MaterialPageRoute(
               builder: (context) => const SettingsScreen(),
               fullscreenDialog: true,
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
   Widget _eventsList(BuildContext context) {
-    return Column(
-      children: Event.values
-          .map(
-            (event) => _eventCard(context, event),
-          )
-          .toList()
-        ..add(_totalScore(context))
-        ..add(Container(height: 150)),
-    );
-  }
-
-  Widget _eventCard(BuildContext context, Event event) {
     return Consumer(
       builder: (context, ref, child) {
-        return SizedBox(
-          height: 150,
-          child: Card(
-            child: InkWell(
-              onTap: () async {
-                if (event == Event.vt) {
-                  await ref.watch(vtScoreModelProvider).getVTScore();
-                  await Navigator.push<Object>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const VTScoreSelectScreen(),
-                    ),
+        final homeModel = ref.watch(homeModelProvider);
+
+        return FutureBuilder(
+          future: Future(() async {
+            if (!homeModel.isFetched) {
+              ref.watch(loadingStateProvider.notifier).startLoading();
+              await homeModel.getUserData();
+              await homeModel.getFavoritePerformances();
+
+              final isPermitted = await ATT.requestPermission();
+              await PrefsRepository().setAttPermission(isPermitted).then(
+                (_) async {
+                  //トータルが20点超えたら、レビュー用のダイアログ
+                  await homeModel.getIsAppReviewDialogShowed().then(
+                    (result) async {
+                      if (!result && homeModel.totalScore >= 20) {
+                        await homeModel.showAppReviewDialog();
+                      }
+                    },
                   );
-                } else {
-                  ref.watch(loadingStateProvider.notifier).startLoading();
-                  await ref
-                      .watch(performanceListModelProvider)
-                      .getPerformances(event);
-                  ref.watch(loadingStateProvider.notifier).endLoading();
-                  await Navigator.push<Object>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PerformanceListScreen(event: event),
-                    ),
-                  );
-                }
-              },
-              child: Row(
-                children: [
-                  _cardHeader(context, event),
-                  Expanded(child: _techsList(event, context)),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ),
-          ),
+                },
+              );
+
+              homeModel.doneFetch();
+
+              ref.watch(loadingStateProvider.notifier).endLoading();
+            }
+          }),
+          builder: (context, snapshot) {
+            return Column(
+              children: Event.values
+                  .map(
+                    (event) => _eventCard(context, event, ref),
+                  )
+                  .toList()
+                ..add(_totalScore(context, ref))
+                ..add(Container(height: 150)),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _cardHeader(BuildContext context, Event event) {
+  Widget _eventCard(BuildContext context, Event event, WidgetRef ref) {
+    return SizedBox(
+      height: 150,
+      child: Card(
+        child: InkWell(
+          onTap: () async {
+            if (event == Event.vt) {
+              await ref.watch(vtScoreModelProvider).getVTScore();
+              await Navigator.push<Object>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const VTScoreSelectScreen(),
+                ),
+              );
+            } else {
+              ref.watch(loadingStateProvider.notifier).startLoading();
+              await ref
+                  .watch(performanceListModelProvider)
+                  .getPerformances(event);
+              ref.watch(loadingStateProvider.notifier).endLoading();
+              await Navigator.push<Object>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PerformanceListScreen(event: event),
+                ),
+              );
+            }
+          },
+          child: Row(
+            children: [
+              _cardHeader(context, event, ref),
+              Expanded(child: _techsList(event, context, ref)),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _cardHeader(BuildContext context, Event event, WidgetRef ref) {
     return SizedBox(
       width: 80,
       child: Column(
@@ -156,13 +161,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Convertor.eventName[event]!,
             style: const TextStyle(fontSize: 16),
           ),
-          _score(context, event),
+          _score(context, event, ref),
         ],
       ),
     );
   }
 
-  Widget _score(BuildContext context, Event event) {
+  Widget _score(BuildContext context, Event event, WidgetRef ref) {
     final homeModel = ref.watch(homeModelProvider);
 
     switch (event) {
@@ -220,7 +225,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   //  6種目の合計
-  Widget _totalScore(BuildContext context) {
+  Widget _totalScore(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Container(
@@ -254,7 +259,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   //技のリスト表示
-  Widget _techsList(Event event, BuildContext context) {
+  Widget _techsList(Event event, BuildContext context, WidgetRef ref) {
     final homeModel = ref.watch(homeModelProvider);
 
     switch (event) {

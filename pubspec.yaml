@@ -45,7 +45,9 @@ flutter_icons:
   adaptive_icon_foreground: "images/icon.png"
 
 flutter_native_splash:
-  background_image: "images/splash.png"
+  background_image: "images/background.jpg"
+  image: "images/logo.png"
+  fullscreen: true
 
 flutter:
   uses-material-design: true

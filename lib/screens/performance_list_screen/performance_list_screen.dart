@@ -291,7 +291,7 @@ class PerformanceListScreen extends ConsumerWidget {
         },
         onCancel: () => Navigator.pop(context),
         title: 'この演技を削除してもよろしいですか？',
-        content: '削除した演技は元には戻りません。',
+        content: const Text('削除した演技は元には戻りません。'),
       ),
     );
   }

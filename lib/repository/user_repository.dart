@@ -15,7 +15,7 @@ class UserRepository {
   User? get authUser => _auth.currentUser;
   AppUser? appUser;
 
-  Future<void> signUpWithEmailAndPassWord(String email, String password) async {
+  Future<void> signUpWithEmailAndPassword(String email, String password) async {
     try {
       final user = (await _auth.createUserWithEmailAndPassword(
               email: email, password: password))
@@ -83,8 +83,10 @@ class UserRepository {
   Future<bool> reAuthenticate(String password) async {
     try {
       final user = _auth.currentUser;
-      final credential =
-          EmailAuthProvider.credential(email: user!.email!, password: password);
+      final credential = EmailAuthProvider.credential(
+        email: user!.email!,
+        password: password,
+      );
       await user.reauthenticateWithCredential(credential);
       return true;
     } on FirebaseAuthException catch (e) {
@@ -96,8 +98,7 @@ class UserRepository {
 
   Future<void> updateEmail(String newEmail) async {
     try {
-      final user = _auth.currentUser!;
-      await user.updateEmail(newEmail);
+      await authUser!.updateEmail(newEmail);
     } on FirebaseAuthException catch (e) {
       throw AuthException(_convertErrorMessage(e.code));
     } on Exception {
@@ -107,10 +108,20 @@ class UserRepository {
 
   Future<void> updateEmailInDB() async {
     try {
-      final user = _auth.currentUser!;
-      await _db.collection('user').doc(user.uid).update(<String, dynamic>{
-        'email': user.email,
+      await _db.collection('user').doc(authUser!.uid).update(<String, dynamic>{
+        'email': authUser!.email,
       });
+    } on FirebaseAuthException catch (e) {
+      throw AuthException(_convertErrorMessage(e.code));
+    } on Exception {
+      throw AuthException('不明なエラーです');
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _db.collection('users').doc(authUser!.uid).delete();
+      await authUser!.delete();
     } on FirebaseAuthException catch (e) {
       throw AuthException(_convertErrorMessage(e.code));
     } on Exception {

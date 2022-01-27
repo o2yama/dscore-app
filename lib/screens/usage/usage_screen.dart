@@ -20,15 +20,15 @@ class UsageScreen extends StatelessWidget {
               _backButton(context),
               const SizedBox(height: 16),
               Padding(
-                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 120),
                 child: Image.asset('images/tutorial_2.png'),
               ),
               Padding(
-                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 120),
                 child: Image.asset('images/tutorial_3.png'),
               ),
               Padding(
-                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 32),
+                padding: EdgeInsets.all(Utilities.isMobile() ? 8 : 120),
                 child: Image.asset('images/tutorial_4.png'),
               ),
             ],

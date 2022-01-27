@@ -176,9 +176,9 @@ class EditPerformanceScreen extends ConsumerWidget {
         ),
         event == Event.fx || event == Event.hb
             ? Column(
-                children: [
-                  const Text('組み合わせ'),
-                  CvMenu(event: event),
+                children: const [
+                  Text('組み合わせ'),
+                  CvMenu(),
                 ],
               )
             : const SizedBox(),
@@ -284,7 +284,7 @@ class EditPerformanceScreen extends ConsumerWidget {
           },
           onCancel: () => Navigator.pop(context),
           title: '保存せずに戻ってもよろしいですか？',
-          content: '変更した内容は破棄されます。',
+          content: const Text('変更した内容は破棄されます。'),
         ),
       );
     } else {

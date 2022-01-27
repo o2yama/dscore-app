@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'login_model.dart';
 
-TextEditingController emailController = TextEditingController();
+final emailController = TextEditingController();
 final _passwordController = TextEditingController();
 
 class LoginScreen extends StatelessWidget {
@@ -21,37 +21,44 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          SizedBox(
+            width: Utilities.screenWidth(context),
+            height: Utilities.screenHeight(context),
+            child: Image.asset('images/background.jpg', fit: BoxFit.fill),
+          ),
+          Center(
+            child: SizedBox(
+              width: Utilities.isMobile() ? 200 : 300,
+              height: Utilities.isMobile() ? 200 : 300,
+              child: Image.asset('images/logo.png'),
+            ),
+          ),
           GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
-              child: Stack(
-                children: [
-                  Image.asset('images/splash.png'),
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          return Column(
-                            children: [
-                              const SizedBox(height: 24),
-                              _title(context),
-                              _emailTextField(context, ref),
-                              _passwordTextField(context, ref),
-                              SizedBox(
-                                height: Utilities.screenHeight(context) * 0.3,
-                              ),
-                              _loginButton(context, ref),
-                              const SizedBox(height: 24),
-                              _toSignUpScreenButton(context),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      return Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          _title(context),
+                          _emailTextField(context, ref),
+                          _passwordTextField(context, ref),
+                          SizedBox(
+                            height: Utilities.screenHeight(context) * 0.3,
+                          ),
+                          _loginButton(context, ref),
+                          const SizedBox(height: 24),
+                          _toSignUpScreenButton(context),
+                        ],
+                      );
+                    },
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -162,19 +169,21 @@ class LoginScreen extends StatelessWidget {
         await homeModel.getUserData();
         await homeModel.getFavoritePerformances();
 
+        loadingStateModel.endLoading();
         await showOkAlertDialog(
           barrierDismissible: true,
           context: context,
           title: 'ログインできました。',
           message: 'Dスコアを登録しましょう！',
-        );
-        Navigator.pushAndRemoveUntil<Object>(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (_) => false,
-        );
-        emailController.clear();
-        _passwordController.clear();
+        ).then((value) {
+          emailController.clear();
+          _passwordController.clear();
+          Navigator.pushAndRemoveUntil<Object>(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (_) => false,
+          );
+        });
       } on Exception catch (e) {
         await showOkAlertDialog(
           barrierDismissible: true,
@@ -192,10 +201,9 @@ class LoginScreen extends StatelessWidget {
     return TextButton(
       onPressed: () {
         _passwordController.clear();
-        Navigator.pushAndRemoveUntil<Object>(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SignUpScreen()),
-          (_) => false,
         );
       },
       child: const Text(

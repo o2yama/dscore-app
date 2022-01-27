@@ -38,6 +38,11 @@ class HomeModel extends ChangeNotifier {
     performanceRepository = PerformanceRepository();
   }
 
+  void doneFetch() {
+    isFetched = true;
+    notifyListeners();
+  }
+
   Future<void> getUserData() async {
     await userRepository.getCurrentUserData();
   }
@@ -71,7 +76,6 @@ class HomeModel extends ChangeNotifier {
         : favoriteHbScore = 0.0;
 
     setTotalScore();
-    isFetched = true;
     notifyListeners();
   }
 
@@ -92,15 +96,11 @@ class HomeModel extends ChangeNotifier {
     return prefs.getBool('isAppReviewDialogShowed') ?? false;
   }
 
-  Future<void> setAppReviewDialogShowed() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isAppReviewDialogShowed', true);
-  }
-
   //ユーザーにアプリを評価してもらうためのダイアログ
   Future<void> showAppReviewDialog() async {
     await AppReview.requestReview;
-    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isAppReviewDialogShowed', true);
   }
 
   //プッシュ通知の許可

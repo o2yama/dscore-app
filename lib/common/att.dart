@@ -1,13 +1,12 @@
 import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class ATT {
   ATT._();
   static final ATT instance = ATT._();
 
-  Future<bool> requestPermission() async {
+  static Future<bool> requestPermission() async {
     var result = false;
 
     if (Platform.isIOS) {
@@ -33,9 +32,6 @@ class ATT {
     } else {
       result = true;
     }
-
-    final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
-    debugPrint(idfa);
 
     return result;
   }

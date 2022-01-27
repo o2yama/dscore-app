@@ -1,3 +1,4 @@
+import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class VTTechListView extends StatelessWidget {
           return ListWheelScrollView.useDelegate(
             physics: const FixedExtentScrollPhysics(),
             diameterRatio: 1.3,
-            squeeze: 2,
+            squeeze: Utilities.isMobile() ? 2 : 1,
             controller: vtController,
             itemExtent: 100,
             perspective: 0.001,
@@ -43,17 +44,20 @@ class VTTechListView extends StatelessWidget {
 
   Widget _vtTile(BuildContext context, String techName) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: Utilities.isMobile() ? 16 : 40),
       child: Row(
         children: [
-          Text('${vtTechs[techName]}'),
+          Text(
+            '${vtTechs[techName]}',
+            style: TextStyle(fontSize: Utilities.isMobile() ? 16 : 20),
+          ),
           const SizedBox(width: 16),
           Flexible(
             child: Text(
               techName,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: Utilities.isMobile() ? 16 : 24,
               ),
             ),
           ),

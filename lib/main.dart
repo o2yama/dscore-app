@@ -1,3 +1,4 @@
+import 'package:dscore_app/repository/prefs_repository.dart';
 import 'package:dscore_app/repository/user_repository.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
+  await PrefsRepository().getInstance();
   await SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   ).then((_) {

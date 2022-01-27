@@ -15,14 +15,14 @@ class OkCancelDialog extends StatelessWidget {
   final VoidCallback onOk;
   final VoidCallback onCancel;
   final String title;
-  final String? content;
+  final Widget? content;
 
   @override
   Widget build(BuildContext context) {
     return Platform.isIOS
         ? CupertinoAlertDialog(
             title: Text(title),
-            content: Text(content ?? ''),
+            content: content,
             actions: [
               TextButton(
                 onPressed: onCancel,
@@ -36,7 +36,7 @@ class OkCancelDialog extends StatelessWidget {
           )
         : AlertDialog(
             title: Text(title),
-            content: Text(content ?? ''),
+            content: content,
             actions: [
               TextButton(
                 onPressed: onCancel,

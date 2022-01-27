@@ -19,37 +19,44 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          SizedBox(
+            width: Utilities.screenWidth(context),
+            height: Utilities.screenHeight(context),
+            child: Image.asset('images/background.jpg', fit: BoxFit.fill),
+          ),
+          Center(
+            child: SizedBox(
+              width: Utilities.isMobile() ? 200 : 300,
+              height: Utilities.isMobile() ? 200 : 300,
+              child: Image.asset('images/logo.png'),
+            ),
+          ),
           GestureDetector(
-            onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: Consumer(
                 builder: (context, ref, child) {
-                  return Stack(
-                    children: [
-                      Image.asset('images/splash.png'),
-                      SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 24),
-                              _title(context),
-                              const SizedBox(height: 24),
-                              _emailTextField(context, ref),
-                              const SizedBox(height: 24),
-                              _passwordTextField(context, ref),
-                              SizedBox(
-                                height: Utilities.screenHeight(context) * 0.3,
-                              ),
-                              _resisterButton(context, ref),
-                              const SizedBox(height: 10),
-                              _toLoginScreenButton(context),
-                            ],
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          _title(context),
+                          const SizedBox(height: 24),
+                          _emailTextField(context, ref),
+                          const SizedBox(height: 24),
+                          _passwordTextField(context, ref),
+                          SizedBox(
+                            height: Utilities.screenHeight(context) * 0.3,
                           ),
-                        ),
+                          _resisterButton(context, ref),
+                          const SizedBox(height: 10),
+                          _toLoginScreenButton(context),
+                        ],
                       ),
-                    ],
+                    ),
                   );
                 },
               ),
@@ -145,7 +152,9 @@ class SignUpScreen extends StatelessWidget {
   }
 
   Future<void> _onResisterButtonPressed(
-      BuildContext context, WidgetRef ref) async {
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final signUpModel = ref.watch(signUpModelProvider);
     final loadingStateModel = ref.watch(loadingStateProvider.notifier);
 
@@ -160,18 +169,20 @@ class SignUpScreen extends StatelessWidget {
           emailController.text,
           _passwordController.text,
         );
+        loadingStateModel.endLoading();
         await showOkAlertDialog(
           context: context,
           title: '登録が完了しました。',
           message: 'Dスコアを登録しましょう！',
-        );
-        emailController.clear();
-        _passwordController.clear();
-        Navigator.pushAndRemoveUntil<Object>(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (_) => false,
-        );
+        ).then((value) {
+          emailController.clear();
+          _passwordController.clear();
+          Navigator.pushAndRemoveUntil<Object>(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (_) => false,
+          );
+        });
       } on Exception catch (e) {
         await showOkAlertDialog(
           context: context,
@@ -188,10 +199,9 @@ class SignUpScreen extends StatelessWidget {
     return TextButton(
       onPressed: () {
         _passwordController.clear();
-        Navigator.pushAndRemoveUntil<Object>(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (_) => false,
         );
       },
       child: const Text(

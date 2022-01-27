@@ -1,12 +1,9 @@
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CvMenu extends ConsumerWidget {
-  const CvMenu({Key? key, required this.event}) : super(key: key);
-
-  final Event event;
+  const CvMenu({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,10 +23,11 @@ class CvMenu extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: 16),
-        PopupMenuButton(
+        PopupMenuButton<double>(
+          onSelected: editPerformanceModel.onCVSelected,
           itemBuilder: (context) => cvs
               .map(
-                (cv) => PopupMenuItem<Widget>(
+                (cv) => PopupMenuItem<double>(
                   height: 32,
                   child: SizedBox(
                     child: TextButton(

@@ -15,7 +15,7 @@ class SignUpModel extends ChangeNotifier {
 
   Future<void> signUpWithEmailAndPassword(String email, String password) async {
     try {
-      await userRepository.signUpWithEmailAndPassWord(email, password);
+      await userRepository.signUpWithEmailAndPassword(email, password);
       await userRepository.getCurrentUserData();
     } on Exception {
       rethrow;
