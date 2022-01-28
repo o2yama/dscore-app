@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
           SizedBox(
             width: Utilities.screenWidth(context),
             height: Utilities.screenHeight(context),
-            child: Image.asset('images/background.jpg', fit: BoxFit.fill),
+            child: Image.asset('images/background.png', fit: BoxFit.fill),
           ),
           Center(
             child: SizedBox(
