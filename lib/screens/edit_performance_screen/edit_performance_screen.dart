@@ -165,11 +165,7 @@ class EditPerformanceScreen extends ConsumerWidget {
           children: [
             const Text('要求点'),
             Text(
-              '${editPerformanceModel.calculateEGR(
-                editPerformanceModel.decidedTechList,
-                editPerformanceModel.isUnder16,
-                event,
-              )}',
+              '${editPerformanceModel.calculateEGR(event)}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
             ),
           ],
