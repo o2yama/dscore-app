@@ -15,13 +15,12 @@ final editPerformanceModelProvider = ChangeNotifierProvider(
 
 class EditPerformanceModel extends ChangeNotifier {
   late final PerformanceRepository performanceRepository;
+  init() => performanceRepository = PerformanceRepository();
 
   bool isEdited = false;
   List<String> decidedTechList = [];
   num cv = 0.0;
   bool isUnder16 = false; //高校生ルールかどうか
-
-  init() => performanceRepository = PerformanceRepository();
 
   Map<String, num> difficultyData(Event event) {
     switch (event) {
@@ -261,18 +260,18 @@ class EditPerformanceModel extends ChangeNotifier {
   }
 
   //要求点の計算
-  num calculateEGR(List<String> techList, bool isUnder16, Event event) {
+  num calculateEGR(Event event) {
     var egr = 0.0;
 
-    if (techList.isEmpty) {
+    if (decidedTechList.isEmpty) {
       egr = 0;
     } else {
-      //床の要求点の計算
+      ///床の要求点の計算
       if (event == Event.fx) {
         final group1 = <String>[];
         final group2 = <String>[];
         final group3 = <String>[];
-        for (final tech in techList) {
+        for (final tech in decidedTechList) {
           switch (groupData(event)[tech]) {
             case 1:
               group1.add(tech);
@@ -285,6 +284,7 @@ class EditPerformanceModel extends ChangeNotifier {
               break;
           }
         }
+
         if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
         } else if (group1.isNotEmpty && group2.isNotEmpty ||
@@ -297,20 +297,15 @@ class EditPerformanceModel extends ChangeNotifier {
           egr = 0.5;
         }
         //終末技
-        if (groupData(event)[techList.last]! != 1) {
-          switch (difficultyData(event)[techList.last]!) {
-            case 4:
-              egr = egr * 10 + 5;
-              egr /= 10;
-              break;
-            case 3:
-              egr = egr * 10 + 3;
-              egr /= 10;
-              break;
-          }
-
-          if (isUnder16) {
-            switch (difficultyData(event)[techList.last]!) {
+        if (groupData(event)[decidedTechList.last]! != 1) {
+          if (difficultyData(event)[decidedTechList.last]! >= 4) {
+            egr = egr * 10 + 5;
+            egr /= 10;
+          } else if (difficultyData(event)[decidedTechList.last]! == 3) {
+            egr = egr * 10 + 3;
+            egr /= 10;
+          } else if (isUnder16) {
+            switch (difficultyData(event)[decidedTechList.last]!) {
               case 2:
                 egr = egr * 10 + 2;
                 egr /= 10;
@@ -323,13 +318,13 @@ class EditPerformanceModel extends ChangeNotifier {
           }
         }
       } else {
-        //床以外の要求点の計算
+        ///床以外の要求点の計算
         final group1 = <String>[];
         final group2 = <String>[];
         final group3 = <String>[];
         var group4 = '';
 
-        for (final tech in techList) {
+        for (final tech in decidedTechList) {
           if (groupData(event)[tech] == 1) {
             group1.add(tech);
           }
@@ -343,6 +338,7 @@ class EditPerformanceModel extends ChangeNotifier {
             group4 = tech;
           }
         }
+
         if (group1.isNotEmpty && group2.isNotEmpty && group3.isNotEmpty) {
           egr = 1.5;
         } else {
@@ -359,17 +355,13 @@ class EditPerformanceModel extends ChangeNotifier {
 
         //終末技
         if (group4 != '') {
-          switch (difficultyData(event)[group4]!) {
-            case 4:
-              egr = egr * 10 + 5;
-              egr /= 10;
-              break;
-            case 3:
-              egr = egr * 10 + 3;
-              egr /= 10;
-              break;
-          }
-          if (isUnder16) {
+          if (difficultyData(event)[group4]! >= 4) {
+            egr = egr * 10 + 5;
+            egr /= 10;
+          } else if (difficultyData(event)[group4] == 3) {
+            egr = egr * 10 + 3;
+            egr /= 10;
+          } else if (isUnder16) {
             switch (difficultyData(event)[group4]!) {
               case 2:
                 egr = egr * 10 + 2;
@@ -403,7 +395,7 @@ class EditPerformanceModel extends ChangeNotifier {
   }
 
   num calcTotalScore(Event event) {
-    var egr = calculateEGR(decidedTechList, isUnder16, event);
+    var egr = calculateEGR(event);
     var difficulty = calculateDifficulty(event);
 
     var tenTimesTotalScore = difficulty * 10 + egr * 10 + cv * 10;
