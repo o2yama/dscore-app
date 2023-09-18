@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/consts/event.dart';
+import 'package:dscore_app/extentions/difficulty_extention.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
@@ -10,7 +11,6 @@ import 'package:dscore_app/screens/edit_performance_screen/components/group_coun
 import 'package:dscore_app/screens/edit_performance_screen/components/tech_tile.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
@@ -27,15 +27,17 @@ class EditPerformanceScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CustomScaffold(
       context: context,
-      body: Column(
-        children: [
-          const BannerAdWidget(),
-          _header(context, event, ref),
-          _totalScore(context, ref),
-          _scoreDetails(context, ref),
-          _utils(context, ref),
-          _techList(context, ref),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const BannerAdWidget(),
+            _header(context, event, ref),
+            _totalScore(context, ref),
+            _scoreDetails(context, ref),
+            _utils(context, ref),
+            _techList(context, ref),
+          ],
+        ),
       ),
     );
   }
@@ -56,7 +58,7 @@ class EditPerformanceScreen extends ConsumerWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                       Text(
-                        '${Convertor.eventName[event]}スコア一覧',
+                        '${event.name} スコア一覧',
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                         ),
@@ -110,16 +112,19 @@ class EditPerformanceScreen extends ConsumerWidget {
               count: editPerformanceModel.countGroup3(event),
             ),
             const VerticalDivider(color: Colors.black54),
-            event == Event.fx
-                ? const SizedBox()
-                : Text(
+            if (event != Event.fx)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
                     difficultyOfGroup4 == 0
                         ? 'Ⅳ : -'
-                        : 'Ⅳ : ${Convertor.difficulty[difficultyOfGroup4]}',
+                        : 'Ⅳ : ${DifficultyEx.getLabel(difficultyOfGroup4)}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(color: Colors.grey),
                   ),
-            const VerticalDivider(color: Colors.black54),
+                ],
+              ),
             Container(
               padding: const EdgeInsets.only(left: 8, right: 24),
               child: Column(
@@ -171,8 +176,8 @@ class EditPerformanceScreen extends ConsumerWidget {
           ],
         ),
         event == Event.fx || event == Event.hb
-            ? Column(
-                children: const [
+            ? const Column(
+                children: [
                   Text('組み合わせ'),
                   CvMenu(),
                 ],
@@ -241,27 +246,25 @@ class EditPerformanceScreen extends ConsumerWidget {
   Widget _techList(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
 
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: ReorderableListView(
-          onReorder: (int oldIndex, int newIndex) =>
-              editPerformanceModel.onReOrder(oldIndex, newIndex, event),
-          children: editPerformanceModel.decidedTechList
-              .map(
-                (tech) => TechTile(
-                  key: Key(
-                    editPerformanceModel.decidedTechList
-                        .indexOf(tech)
-                        .toString(),
-                  ),
-                  techName: tech,
-                  order: editPerformanceModel.decidedTechList.indexOf(tech) + 1,
-                  event: event,
-                ),
-              )
-              .toList(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ReorderableListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        onReorder: (int oldIndex, int newIndex) =>
+            editPerformanceModel.onReOrder(oldIndex, newIndex, event),
+        itemBuilder: (context, index) {
+          final tech = editPerformanceModel.decidedTechList[index];
+          return TechTile(
+            key: Key(
+              editPerformanceModel.decidedTechList.indexOf(tech).toString(),
+            ),
+            techName: tech,
+            order: editPerformanceModel.decidedTechList.indexOf(tech) + 1,
+            event: event,
+          );
+        },
+        itemCount: editPerformanceModel.decidedTechList.length,
       ),
     );
   }

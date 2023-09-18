@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class Utilities {
   static bool isMobile() {
-    final data = MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     var isMobile = true;
     if (data.size.shortestSide < 600) {
       isMobile = true;

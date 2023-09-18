@@ -1,6 +1,7 @@
-import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/consts/event.dart';
+import 'package:dscore_app/extentions/difficulty_extention.dart';
+import 'package:dscore_app/extentions/int_extension.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +23,13 @@ class TechTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final editPerformanceModel = ref.watch(editPerformanceModelProvider);
-    final group = editPerformanceModel.groupData(event)[techName];
-    final difficulty = editPerformanceModel.difficultyData(event)[techName];
+    final group = editPerformanceModel.allGroupDataOf(event)[techName];
+    final difficulty =
+        editPerformanceModel.allDifficultyDataOf(event)[techName];
 
     return Slidable(
       key: Key(
-        editPerformanceModel.decidedTechList.indexOf(techName).toString(),
-      ),
+          editPerformanceModel.decidedTechList.indexOf(techName).toString()),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
@@ -56,7 +57,7 @@ class TechTile extends ConsumerWidget {
             ],
           ),
           trailing: Text(
-            '${Convertor.difficulty[difficulty]} / ${Convertor.group[group]}',
+            '${DifficultyEx.getLabel(difficulty!)} / ${group!.techGroupLabel}',
           ),
           onTap: () {
             searchController.clear();

@@ -1,11 +1,10 @@
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/data/fx/fx.dart';
 import 'package:dscore_app/data/hb/hb.dart';
 import 'package:dscore_app/data/pb/pb.dart';
 import 'package:dscore_app/data/ph/ph.dart';
 import 'package:dscore_app/data/sr/sr.dart';
-import 'package:dscore_app/data/vt/vt.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,9 +19,9 @@ class EditPerformanceModel extends ChangeNotifier {
   bool isEdited = false;
   List<String> decidedTechList = [];
   num cv = 0.0;
-  bool isUnder16 = false; //高校生ルールかどうか
+  bool isUnder16 = false; // 高校生ルールかどうか
 
-  Map<String, num> difficultyData(Event event) {
+  Map<String, int> allDifficultyDataOf(Event event) {
     switch (event) {
       case Event.fx:
         return fxDifficulty;
@@ -31,7 +30,8 @@ class EditPerformanceModel extends ChangeNotifier {
       case Event.sr:
         return srDifficulty;
       case Event.vt:
-        return vtTechs;
+        // 跳馬はなし
+        return <String, int>{};
       case Event.pb:
         return pbDifficulty;
       case Event.hb:
@@ -39,7 +39,7 @@ class EditPerformanceModel extends ChangeNotifier {
     }
   }
 
-  Map<String, int> groupData(Event event) {
+  Map<String, int> allGroupDataOf(Event event) {
     switch (event) {
       case Event.fx:
         return fxGroup;
@@ -56,7 +56,7 @@ class EditPerformanceModel extends ChangeNotifier {
     }
   }
 
-  List<String> searchWords(Event event) {
+  List<String> suggestionWordsOf(Event event) {
     switch (event) {
       case Event.fx:
         return fxChipWords;
@@ -224,36 +224,30 @@ class EditPerformanceModel extends ChangeNotifier {
 
   int countGroup1(Event event) {
     final techs = decidedTechList
-        .where(
-          (tech) => groupData(event)[tech] == 1,
-        )
+        .where((tech) => allGroupDataOf(event)[tech] == 1)
         .toList();
     return techs.length;
   }
 
   int countGroup2(Event event) {
     final techs = decidedTechList
-        .where(
-          (tech) => groupData(event)[tech] == 2,
-        )
+        .where((tech) => allGroupDataOf(event)[tech] == 2)
         .toList();
     return techs.length;
   }
 
   int countGroup3(Event event) {
     final techs = decidedTechList
-        .where(
-          (tech) => groupData(event)[tech] == 3,
-        )
+        .where((tech) => allGroupDataOf(event)[tech] == 3)
         .toList();
     return techs.length;
   }
 
-  num difficultyGroup4(List<String> techList, Event event) {
-    num difficulty = 0;
+  int difficultyGroup4(List<String> techList, Event event) {
+    int difficulty = 0;
     for (final tech in techList) {
-      if (event != Event.fx && groupData(event)[tech] == 4) {
-        difficulty = difficultyData(event)[tech]!;
+      if (event != Event.fx && allGroupDataOf(event)[tech] == 4) {
+        difficulty = allDifficultyDataOf(event)[tech]!;
       }
     }
     return difficulty;
@@ -272,7 +266,7 @@ class EditPerformanceModel extends ChangeNotifier {
         final group2 = <String>[];
         final group3 = <String>[];
         for (final tech in decidedTechList) {
-          switch (groupData(event)[tech]) {
+          switch (allGroupDataOf(event)[tech]) {
             case 1:
               group1.add(tech);
               break;
@@ -297,15 +291,15 @@ class EditPerformanceModel extends ChangeNotifier {
           egr = 0.5;
         }
         //終末技
-        if (groupData(event)[decidedTechList.last]! != 1) {
-          if (difficultyData(event)[decidedTechList.last]! >= 4) {
+        if (allGroupDataOf(event)[decidedTechList.last]! != 1) {
+          if (allDifficultyDataOf(event)[decidedTechList.last]! >= 4) {
             egr = egr * 10 + 5;
             egr /= 10;
-          } else if (difficultyData(event)[decidedTechList.last]! == 3) {
+          } else if (allDifficultyDataOf(event)[decidedTechList.last]! == 3) {
             egr = egr * 10 + 3;
             egr /= 10;
           } else if (isUnder16) {
-            switch (difficultyData(event)[decidedTechList.last]!) {
+            switch (allDifficultyDataOf(event)[decidedTechList.last]!) {
               case 2:
                 egr = egr * 10 + 2;
                 egr /= 10;
@@ -325,16 +319,16 @@ class EditPerformanceModel extends ChangeNotifier {
         var group4 = '';
 
         for (final tech in decidedTechList) {
-          if (groupData(event)[tech] == 1) {
+          if (allGroupDataOf(event)[tech] == 1) {
             group1.add(tech);
           }
-          if (groupData(event)[tech] == 2) {
+          if (allGroupDataOf(event)[tech] == 2) {
             group2.add(tech);
           }
-          if (groupData(event)[tech] == 3) {
+          if (allGroupDataOf(event)[tech] == 3) {
             group3.add(tech);
           }
-          if (groupData(event)[tech] == 4) {
+          if (allGroupDataOf(event)[tech] == 4) {
             group4 = tech;
           }
         }
@@ -355,14 +349,14 @@ class EditPerformanceModel extends ChangeNotifier {
 
         //終末技
         if (group4 != '') {
-          if (difficultyData(event)[group4]! >= 4) {
+          if (allDifficultyDataOf(event)[group4]! >= 4) {
             egr = egr * 10 + 5;
             egr /= 10;
-          } else if (difficultyData(event)[group4] == 3) {
+          } else if (allDifficultyDataOf(event)[group4] == 3) {
             egr = egr * 10 + 3;
             egr /= 10;
           } else if (isUnder16) {
-            switch (difficultyData(event)[group4]!) {
+            switch (allDifficultyDataOf(event)[group4]!) {
               case 2:
                 egr = egr * 10 + 2;
                 egr /= 10;
@@ -386,7 +380,8 @@ class EditPerformanceModel extends ChangeNotifier {
 
     if (decidedTechList.isNotEmpty) {
       for (final tech in decidedTechList) {
-        difficultyPoint = difficultyPoint * 10 + difficultyData(event)[tech]!;
+        difficultyPoint =
+            difficultyPoint * 10 + allDifficultyDataOf(event)[tech]!;
         difficultyPoint /= 10;
       }
     }

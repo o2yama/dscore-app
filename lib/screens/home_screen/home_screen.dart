@@ -1,7 +1,8 @@
 import 'package:dscore_app/common/att.dart';
-import 'package:dscore_app/common/convertor.dart';
 import 'package:dscore_app/common/utilities.dart';
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/data/vt/vt.dart';
+import 'package:dscore_app/extentions/event_extension.dart';
 import 'package:dscore_app/repository/prefs_repository.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
@@ -14,8 +15,6 @@ import 'package:dscore_app/screens/vt_score_list_screen/vt_score_list_screen.dar
 import 'package:dscore_app/screens/vt_score_list_screen/vt_score_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-enum Event { fx, ph, sr, vt, pb, hb }
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -112,7 +111,7 @@ class HomeScreen extends StatelessWidget {
           onTap: () async {
             if (event == Event.vt) {
               await ref.watch(vtScoreModelProvider).getVTScore();
-              await Navigator.push<Object>(
+              Navigator.push<Object>(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const VTScoreSelectScreen(),
@@ -124,7 +123,7 @@ class HomeScreen extends StatelessWidget {
                   .watch(performanceListModelProvider)
                   .getPerformances(event);
               ref.watch(loadingStateProvider.notifier).endLoading();
-              await Navigator.push<Object>(
+              Navigator.push<Object>(
                 context,
                 MaterialPageRoute(
                   builder: (context) => PerformanceListScreen(event: event),
@@ -151,14 +150,14 @@ class HomeScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           Text(
-            Convertor.eventNameEn[event]!,
+            event.enName,
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 12,
             ),
           ),
           Text(
-            Convertor.eventName[event]!,
+            event.name,
             style: const TextStyle(fontSize: 16),
           ),
           _score(context, event, ref),

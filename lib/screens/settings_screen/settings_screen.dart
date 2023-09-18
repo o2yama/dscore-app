@@ -1,10 +1,8 @@
+import 'package:dscore_app/repository/user_repository.dart';
+import 'package:dscore_app/screens/admin/admin_home_screen.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
-import 'package:dscore_app/screens/common_widgets/custom_dialog/ok_cancel_dialog.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/account_info_screen/account_info_screen.dart';
-import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
-import 'package:dscore_app/screens/login_sign_up/login/login_screen.dart';
-import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_screen.dart';
 import 'package:dscore_app/screens/usage/usage_screen.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +25,8 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   const BannerAdWidget(),
                   _backButton(context),
+                  const SizedBox(height: 24),
+                  _adminTile(context, ref),
                   const SizedBox(height: 24),
                   _settingTile(
                     context,
@@ -103,6 +103,21 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Widget _adminTile(BuildContext context, WidgetRef ref) {
+    if (UserRepository().appUser == null ||
+        !UserRepository().appUser!.isAdmin) {
+      return const SizedBox();
+    }
+
+    return _settingTile(
+      context,
+      '管理画面',
+      Icons.admin_panel_settings,
+      ref,
+      nextScreen: const AdminHomeScreen(),
+    );
+  }
+
   Widget _settingTile(
     BuildContext context,
     String title,
@@ -115,38 +130,23 @@ class SettingsScreen extends StatelessWidget {
         onTap: () {
           switch (title) {
             case 'プライバシー・ポリシー':
-              launch(
-                'https://dscore-app-a72cf.web.app',
-                forceSafariVC: true,
-                forceWebView: true,
-              );
+              launchUrl(Uri.parse('https://dscore-app-a72cf.web.app'));
               break;
             case 'お問い合わせ':
-              launch(
-                'https://docs.google.com/forms/d/1HjKY8j_RqIJ1qRgqfxbIwqsNmAhclGNUdf6CofqQKIQ/edit',
-                forceSafariVC: true,
-                forceWebView: true,
-              );
+              launchUrl(Uri.parse(
+                  'https://docs.google.com/forms/d/1HjKY8j_RqIJ1qRgqfxbIwqsNmAhclGNUdf6CofqQKIQ/edit'));
               break;
             case '技追加の申請':
-              launch(
-                'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-                forceSafariVC: true,
-                forceWebView: true,
-              );
+              launchUrl(Uri.parse(
+                  'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit'));
               break;
             case '2022年版新ルール':
-              launch(
-                'https://www.jpn-gym.or.jp/artistic/wp-content/uploads/sites/2/2021/11/fe50cd796f5adc2c6bee264a726ff587.pdf',
-                forceSafariVC: true,
-                forceWebView: true,
-              );
+              launchUrl(Uri.parse(
+                  'https://www.jpn-gym.or.jp/artistic/wp-content/uploads/sites/2/2021/11/fe50cd796f5adc2c6bee264a726ff587.pdf'));
               break;
             default:
               Navigator.push<Object>(
-                context,
-                MaterialPageRoute(builder: (_) => nextScreen!),
-              );
+                  context, MaterialPageRoute(builder: (_) => nextScreen!));
           }
         },
         child: Padding(
@@ -155,10 +155,7 @@ class SettingsScreen extends StatelessWidget {
             children: [
               Icon(icon, color: Theme.of(context).primaryColor),
               const SizedBox(width: 24),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 18),
-              ),
+              Text(title, style: const TextStyle(fontSize: 18)),
             ],
           ),
         ),
