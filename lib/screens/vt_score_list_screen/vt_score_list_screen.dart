@@ -20,8 +20,11 @@ class VTScoreSelectScreen extends ConsumerWidget {
         children: [
           const BannerAdWidget(),
           _backButton(context, ref),
-          _dScoreDisplay(context, ref),
-          const VTTechListView(),
+          Expanded(child: _dScoreDisplay(context, ref)),
+          const Expanded(
+            flex: 3,
+            child: VTTechListView(),
+          ),
         ],
       ),
     );
@@ -87,24 +90,18 @@ class VTScoreSelectScreen extends ConsumerWidget {
   Widget _dScoreDisplay(BuildContext context, WidgetRef ref) {
     final vtScoreModel = ref.watch(vtScoreModelProvider);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32),
-      child: SizedBox(
-        height: 100,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              vtScoreModel.techName,
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text(
-              '${vtScoreModel.difficulty}',
-              style: const TextStyle(fontSize: 40),
-            ),
-          ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          vtScoreModel.techName,
+          style: const TextStyle(fontSize: 24),
         ),
-      ),
+        Text(
+          '${vtScoreModel.difficulty}',
+          style: const TextStyle(fontSize: 40),
+        ),
+      ],
     );
   }
 }
