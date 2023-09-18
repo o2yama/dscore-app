@@ -201,17 +201,19 @@ class PerformanceListScreen extends ConsumerWidget {
                         );
 
                     ref.watch(loadingStateProvider.notifier).endLoading();
-                    await Navigator.push<Object>(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditPerformanceScreen(
-                          event: event,
-                          scoreId: performance == null
-                              ? performanceWithCV!.scoreId
-                              : performance.scoreId,
+                    if (context.mounted) {
+                      await Navigator.push<Object>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditPerformanceScreen(
+                            event: event,
+                            scoreId: performance == null
+                                ? performanceWithCV!.scoreId
+                                : performance.scoreId,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8),
@@ -294,7 +296,7 @@ class PerformanceListScreen extends ConsumerWidget {
               .watch(performanceListModelProvider)
               .deletePerformance(event, scoreId);
           await ref.watch(homeModelProvider).getFavoritePerformances();
-          Navigator.pop(context);
+          if (context.mounted) Navigator.pop(context);
         },
         onCancel: () => Navigator.pop(context),
         title: 'この演技を削除してもよろしいですか？',

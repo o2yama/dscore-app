@@ -317,12 +317,14 @@ class EditPerformanceScreen extends ConsumerWidget {
       await ref.watch(homeModelProvider).getFavoritePerformances();
 
       loadingStateModel.endLoading();
-      await showOkAlertDialog(
-        context: context,
-        title: '保存しました。',
-      );
+      if (context.mounted) {
+        await showOkAlertDialog(
+          context: context,
+          title: '保存しました。',
+        );
+      }
 
-      Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
     }
   }
 

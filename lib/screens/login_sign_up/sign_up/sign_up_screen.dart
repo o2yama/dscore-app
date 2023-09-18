@@ -69,9 +69,9 @@ class SignUpScreen extends StatelessWidget {
   }
 
   Widget _title(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: const [
+      children: [
         Text(
           'ユーザー登録',
           style: TextStyle(
@@ -170,19 +170,21 @@ class SignUpScreen extends StatelessWidget {
           _passwordController.text,
         );
         loadingStateModel.endLoading();
-        await showOkAlertDialog(
-          context: context,
-          title: '登録が完了しました。',
-          message: 'Dスコアを登録しましょう！',
-        ).then((value) {
-          emailController.clear();
-          _passwordController.clear();
-          Navigator.pushAndRemoveUntil<Object>(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-            (_) => false,
-          );
-        });
+        if (context.mounted) {
+          await showOkAlertDialog(
+            context: context,
+            title: '登録が完了しました。',
+            message: 'Dスコアを登録しましょう！',
+          ).then((value) {
+            emailController.clear();
+            _passwordController.clear();
+            Navigator.pushAndRemoveUntil<Object>(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (_) => false,
+            );
+          });
+        }
       } on Exception catch (e) {
         await showOkAlertDialog(
           context: context,

@@ -4,11 +4,11 @@ import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dar
 import 'package:dscore_app/screens/common_widgets/loading_view/loading_view.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
 import 'package:dscore_app/screens/home_screen/home_screen.dart';
+import 'package:dscore_app/screens/login_sign_up/login/login_model.dart';
 import 'package:dscore_app/screens/login_sign_up/sign_up/sign_up_screen.dart';
 import 'package:dscore_app/common/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'login_model.dart';
 
 final emailController = TextEditingController();
 final _passwordController = TextEditingController();
@@ -69,9 +69,9 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _title(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: const [
+      children: [
         Text(
           'ログイン',
           style: TextStyle(
@@ -170,20 +170,23 @@ class LoginScreen extends StatelessWidget {
         await homeModel.getFavoritePerformances();
 
         loadingStateModel.endLoading();
-        await showOkAlertDialog(
-          barrierDismissible: true,
-          context: context,
-          title: 'ログインできました。',
-          message: 'Dスコアを登録しましょう！',
-        ).then((value) {
-          emailController.clear();
-          _passwordController.clear();
-          Navigator.pushAndRemoveUntil<Object>(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-            (_) => false,
-          );
-        });
+        emailController.clear();
+        _passwordController.clear();
+
+        if (context.mounted) {
+          await showOkAlertDialog(
+            barrierDismissible: true,
+            context: context,
+            title: 'ログインできました。',
+            message: 'Dスコアを登録しましょう！',
+          ).then((value) {
+            Navigator.pushAndRemoveUntil<Object>(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (_) => false,
+            );
+          });
+        }
       } on Exception catch (e) {
         await showOkAlertDialog(
           barrierDismissible: true,

@@ -77,9 +77,11 @@ class VTScoreSelectScreen extends ConsumerWidget {
     await ref.watch(homeModelProvider).getFavoritePerformances();
 
     ref.watch(loadingStateProvider.notifier).endLoading();
-    await showOkAlertDialog(context: context, title: '保存しました');
-
-    Navigator.pop(context);
+    if (context.mounted) {
+      await showOkAlertDialog(context: context, title: '保存しました').then(
+        (_) => Navigator.pop(context),
+      );
+    }
   }
 
   Widget _dScoreDisplay(BuildContext context, WidgetRef ref) {

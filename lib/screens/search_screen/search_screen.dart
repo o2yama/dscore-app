@@ -213,6 +213,6 @@ class SearchScreen extends StatelessWidget {
         order,
       );
     }
-    Navigator.pop(context);
+    if (context.mounted) Navigator.pop(context);
   }
 }
