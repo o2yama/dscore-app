@@ -1,3 +1,4 @@
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/data/fx/fx.dart';
 import 'package:dscore_app/data/fx/fx_rule.dart';
 import 'package:dscore_app/data/hb/hb.dart';
@@ -9,7 +10,6 @@ import 'package:dscore_app/data/ph/ph_rule.dart';
 import 'package:dscore_app/data/sr/sr.dart';
 import 'package:dscore_app/data/sr/sr_rule.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/search_screen/search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

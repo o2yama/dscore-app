@@ -1,10 +1,10 @@
 import 'dart:io';
+import 'package:dscore_app/common/utilities.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
 import 'package:dscore_app/screens/theme_color/theme_color_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../common/utilities.dart';
 
 class ThemeColorScreen extends ConsumerWidget {
   const ThemeColorScreen({Key? key}) : super(key: key);

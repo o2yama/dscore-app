@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dscore_app/domain/current_user.dart';
+import 'package:dscore_app/domain/app_user.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/domain/vt_tech.dart';
@@ -33,6 +33,7 @@ class PerformanceRepository {
           .map((doc) => PerformanceWithCV(doc))
           .toList()[0];
     }
+    return null;
   }
 
   Future<Performance?> getStarPhPerformance() async {
@@ -45,6 +46,7 @@ class PerformanceRepository {
     if (performanceList.size > 0) {
       return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
+    return null;
   }
 
   Future<Performance?> getStarSrPerformance() async {
@@ -57,6 +59,7 @@ class PerformanceRepository {
     if (performanceList.size > 0) {
       return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
+    return null;
   }
 
   Future<VTTech?> getVTPerformance() async {
@@ -68,6 +71,7 @@ class PerformanceRepository {
     if (techs.size > 0) {
       return techs.docs.map((doc) => VTTech(doc)).toList()[0];
     }
+    return null;
   }
 
   Future<Performance?> getStarPbPerformance() async {
@@ -80,6 +84,7 @@ class PerformanceRepository {
     if (performanceList.size > 0) {
       return performanceList.docs.map((doc) => Performance(doc)).toList()[0];
     }
+    return null;
   }
 
   Future<PerformanceWithCV?> getStarHbPerformance() async {
@@ -94,6 +99,7 @@ class PerformanceRepository {
           .map((doc) => PerformanceWithCV(doc))
           .toList()[0];
     }
+    return null;
   }
 
   ///FavoriteScoreの更新

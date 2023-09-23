@@ -1,7 +1,8 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/consts/event.dart';
+import 'package:dscore_app/extentions/difficulty_extention.dart';
+import 'package:dscore_app/extentions/int_extension.dart';
 import 'package:dscore_app/screens/common_widgets/custom_scaffold/custom_scaffold.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/search_screen/search_model.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +101,7 @@ class SearchScreen extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           children: ref
               .watch(editPerformanceModelProvider)
-              .searchWords(event)
+              .suggestionWordsOf(event)
               .map(
                 (chipsText) => _techChip(context, chipsText, event, ref),
               )
@@ -157,10 +158,9 @@ class SearchScreen extends StatelessWidget {
       child: SizedBox(
         height: 50,
         child: TextButton(
-          onPressed: () => launch(
-            'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit',
-            forceSafariVC: true,
-            forceWebView: true,
+          onPressed: () => launchUrl(
+            Uri.parse(
+                'https://docs.google.com/forms/d/1skhzHLRlNjMVCXZ3HjLQlMHxyZswp6v_enIj_bR4hwY/edit'),
           ),
           child: const Text('登録したい技がない場合はこちら'),
         ),
@@ -170,8 +170,8 @@ class SearchScreen extends StatelessWidget {
 
   Widget _techTile(BuildContext context, String techName, WidgetRef ref) {
     final scoreEditModel = ref.watch(editPerformanceModelProvider);
-    final group = scoreEditModel.groupData(event)[techName];
-    final difficulty = scoreEditModel.difficultyData(event)[techName];
+    final group = scoreEditModel.allGroupDataOf(event)[techName];
+    final difficulty = scoreEditModel.allDifficultyDataOf(event)[techName];
 
     return Card(
       child: ListTile(
@@ -180,7 +180,7 @@ class SearchScreen extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         trailing: Text(
-          '${Convertor.difficulty[difficulty]} / ${Convertor.group[group]}',
+          '${DifficultyEx.getLabel(difficulty!)} / ${group!.techGroupLabel}',
         ),
         onTap: () async => _onTechSelected(context, techName, ref),
       ),
@@ -213,6 +213,6 @@ class SearchScreen extends StatelessWidget {
         order,
       );
     }
-    Navigator.pop(context);
+    if (context.mounted) Navigator.pop(context);
   }
 }

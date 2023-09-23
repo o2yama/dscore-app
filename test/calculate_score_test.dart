@@ -1,5 +1,5 @@
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_data.dart';

@@ -1,8 +1,8 @@
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/domain/vt_tech.dart';
 import 'package:dscore_app/repository/performance_repository.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

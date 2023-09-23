@@ -14,12 +14,11 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await MobileAds.instance.initialize();
   await PrefsRepository().getInstance();
-  await SystemChrome.setPreferredOrientations(
-    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
-  ).then((_) {
-    runApp(
-      const ProviderScope(child: MyApp()),
-    );
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const ProviderScope(child: MyApp()));
   });
 }
 
@@ -30,14 +29,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final _themeColorModel = ref.watch(themeModelProvider);
+        final themeColorModel = ref.watch(themeModelProvider);
 
-        Future(() async => _themeColorModel.getThemeColor());
+        Future(() async => themeColorModel.getThemeColor());
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primaryColor: _themeColorModel.themeColor,
-            backgroundColor: _themeColorModel.themeColor.withOpacity(0.1),
+            primaryColor: themeColorModel.themeColor,
+            backgroundColor: themeColorModel.themeColor.withOpacity(0.1),
             cardTheme: CardTheme(
               color: Colors.white,
               elevation: 1,

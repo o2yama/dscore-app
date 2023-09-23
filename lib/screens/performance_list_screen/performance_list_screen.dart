@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:dscore_app/common/convertor.dart';
+import 'package:dscore_app/consts/event.dart';
 import 'package:dscore_app/domain/performance.dart';
 import 'package:dscore_app/domain/performance_with_cv.dart';
 import 'package:dscore_app/screens/common_widgets/ad/banner_ad.dart';
@@ -9,7 +9,6 @@ import 'package:dscore_app/screens/common_widgets/loading_view/loading_state.dar
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_model.dart';
 import 'package:dscore_app/screens/edit_performance_screen/edit_performance_screen.dart';
 import 'package:dscore_app/screens/home_screen/home_model.dart';
-import 'package:dscore_app/screens/home_screen/home_screen.dart';
 import 'package:dscore_app/screens/performance_list_screen/performance_list_mode.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +66,7 @@ class PerformanceListScreen extends ConsumerWidget {
                 ),
         ),
         Text(
-          Convertor.eventName[event]!,
+          event.name,
           style: TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
@@ -99,7 +98,7 @@ class PerformanceListScreen extends ConsumerWidget {
         return Column(
           children: performanceListModel.fxPerformanceList
               .map(
-                (score) => _scoreTile(context, ref, scoreWithCV: score),
+                (score) => _scoreTile(context, ref, performanceWithCV: score),
               )
               .toList(),
         );
@@ -107,7 +106,7 @@ class PerformanceListScreen extends ConsumerWidget {
         return Column(
           children: performanceListModel.phPerformanceList
               .map(
-                (score) => _scoreTile(context, ref, score: score),
+                (score) => _scoreTile(context, ref, performance: score),
               )
               .toList(),
         );
@@ -115,7 +114,7 @@ class PerformanceListScreen extends ConsumerWidget {
         return Column(
           children: performanceListModel.srPerformanceList
               .map(
-                (score) => _scoreTile(context, ref, score: score),
+                (score) => _scoreTile(context, ref, performance: score),
               )
               .toList(),
         );
@@ -123,7 +122,7 @@ class PerformanceListScreen extends ConsumerWidget {
         return Column(
           children: performanceListModel.pbPerformanceList
               .map(
-                (score) => _scoreTile(context, ref, score: score),
+                (score) => _scoreTile(context, ref, performance: score),
               )
               .toList(),
         );
@@ -134,7 +133,7 @@ class PerformanceListScreen extends ConsumerWidget {
                 (score) => _scoreTile(
                   context,
                   ref,
-                  scoreWithCV: score,
+                  performanceWithCV: score,
                 ),
               )
               .toList(),
@@ -147,8 +146,8 @@ class PerformanceListScreen extends ConsumerWidget {
   Widget _scoreTile(
     BuildContext context,
     WidgetRef ref, {
-    Performance? score,
-    PerformanceWithCV? scoreWithCV,
+    Performance? performance,
+    PerformanceWithCV? performanceWithCV,
   }) {
     return Row(
       children: [
@@ -164,7 +163,9 @@ class PerformanceListScreen extends ConsumerWidget {
                   icon: CupertinoIcons.plus_square_fill_on_square_fill,
                   onPressed: (context) => _onCopyButtonPressed(
                     context,
-                    score == null ? scoreWithCV!.scoreId : score.scoreId,
+                    performance == null
+                        ? performanceWithCV!.scoreId
+                        : performance.scoreId,
                     ref,
                   ),
                 ),
@@ -175,7 +176,9 @@ class PerformanceListScreen extends ConsumerWidget {
                   icon: Icons.remove,
                   onPressed: (context) => _onDeleteButtonPressed(
                     context,
-                    score == null ? scoreWithCV!.scoreId : score.scoreId,
+                    performance == null
+                        ? performanceWithCV!.scoreId
+                        : performance.scoreId,
                     ref,
                   ),
                 ),
@@ -191,22 +194,26 @@ class PerformanceListScreen extends ConsumerWidget {
                     await ref
                         .watch(editPerformanceModelProvider)
                         .getPerformanceData(
-                          score == null ? scoreWithCV!.scoreId : score.scoreId,
+                          performance == null
+                              ? performanceWithCV!.scoreId
+                              : performance.scoreId,
                           event,
                         );
 
                     ref.watch(loadingStateProvider.notifier).endLoading();
-                    await Navigator.push<Object>(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditPerformanceScreen(
-                          event: event,
-                          scoreId: score == null
-                              ? scoreWithCV!.scoreId
-                              : score.scoreId,
+                    if (context.mounted) {
+                      await Navigator.push<Object>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditPerformanceScreen(
+                            event: event,
+                            scoreId: performance == null
+                                ? performanceWithCV!.scoreId
+                                : performance.scoreId,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8),
@@ -215,26 +222,28 @@ class PerformanceListScreen extends ConsumerWidget {
                       children: [
                         const SizedBox(width: 16),
                         Text(
-                          '${score == null ? scoreWithCV!.total : score.total}',
+                          '${performance == null ? performanceWithCV!.total : performance.total}',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         const SizedBox(width: 16),
                         _techsListView(
                           context,
-                          score == null ? scoreWithCV!.techs : score.techs,
+                          performance == null
+                              ? performanceWithCV!.techs
+                              : performance.techs,
                         ),
                         const SizedBox(width: 8),
                         Column(
                           children: [
                             _star(
                               context,
-                              score == null
-                                  ? scoreWithCV!.isFavorite
-                                  : score.isFavorite,
-                              score == null
-                                  ? scoreWithCV!.scoreId
-                                  : score.scoreId,
+                              performance == null
+                                  ? performanceWithCV!.isFavorite
+                                  : performance.isFavorite,
+                              performance == null
+                                  ? performanceWithCV!.scoreId
+                                  : performance.scoreId,
                               ref,
                             ),
                           ],
@@ -287,7 +296,7 @@ class PerformanceListScreen extends ConsumerWidget {
               .watch(performanceListModelProvider)
               .deletePerformance(event, scoreId);
           await ref.watch(homeModelProvider).getFavoritePerformances();
-          Navigator.pop(context);
+          if (context.mounted) Navigator.pop(context);
         },
         onCancel: () => Navigator.pop(context),
         title: 'この演技を削除してもよろしいですか？',

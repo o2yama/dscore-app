@@ -119,12 +119,15 @@ class AccountInfoScreen extends StatelessWidget {
               onOk: () async {
                 ref.watch(performanceListModelProvider).resetScores();
                 await ref.watch(loginModelProvider).signOut();
-                await Navigator.pushAndRemoveUntil<Object>(
+                if (context.mounted) {
+                  await Navigator.pushAndRemoveUntil<Object>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LoginScreen(),
                     ),
-                    (_) => false);
+                    (_) => false,
+                  );
+                }
               },
               onCancel: () => Navigator.pop(context),
               title: 'ログアウトしてもよろしいですか？',
@@ -138,7 +141,7 @@ class AccountInfoScreen extends StatelessWidget {
   }
 
   Widget _deleteAccountButton(BuildContext context, WidgetRef ref) {
-    final _accountInfoModel = ref.watch(accountInfoModelProvider);
+    final accountInfoModel = ref.watch(accountInfoModelProvider);
 
     return TextButton(
       onPressed: () {
@@ -162,28 +165,31 @@ class AccountInfoScreen extends StatelessWidget {
                               .startLoading();
 
                           try {
-                            await _accountInfoModel.reAuthAndDeleteAccount(
+                            await accountInfoModel.reAuthAndDeleteAccount(
                               passwordController.text,
                             );
                             passwordController.clear();
-                            await showOkAlertDialog(
-                              context: context,
-                              title: 'アカウントの削除が完了しました。',
-                              message: 'ご利用いただきありがとうございました。'
-                                  '\nまた演技のスコアを計算したい！と思ったら、ぜひご利用ください。',
-                              barrierDismissible: true,
-                            ).then((_) {
-                              ref
-                                  .watch(loadingStateProvider.notifier)
-                                  .endLoading();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen(),
-                                ),
-                                (route) => false,
-                              );
-                            });
+                            ref
+                                .watch(loadingStateProvider.notifier)
+                                .endLoading();
+
+                            if (context.mounted) {
+                              await showOkAlertDialog(
+                                context: context,
+                                title: 'アカウントの削除が完了しました。',
+                                message: 'ご利用いただきありがとうございました。'
+                                    '\nまた演技のスコアを計算したい！と思ったら、ぜひご利用ください。',
+                                barrierDismissible: true,
+                              ).then((_) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignUpScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              });
+                            }
                           } on Exception catch (e) {
                             await showOkAlertDialog(
                               context: context,

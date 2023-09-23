@@ -21,5 +21,6 @@ class FxRule {
         return '「${integrates[tech]}」\nと同枠の技のため登録できません。';
       }
     }
+    return null;
   }
 }
