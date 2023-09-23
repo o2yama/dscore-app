@@ -25,7 +25,7 @@ dependencies:
   fluttertoast:
   google_mobile_ads:
   intro_slider:
-  package_info_plus:
+  package_info_plus: ^4.1.0
   shared_preferences:
   state_notifier:
   url_launcher:
